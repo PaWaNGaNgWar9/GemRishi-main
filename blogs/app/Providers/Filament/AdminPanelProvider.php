@@ -26,8 +26,11 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('auth/admin')
             ->login()
+            ->profile()
+            ->brandName('Gemrishi')
+            ->sidebarCollapsibleOnDesktop()
             ->colors([
                 'primary' => Color::Amber,
             ])
@@ -39,7 +42,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
                 AccountWidget::class,
-                FilamentInfoWidget::class,
+                // FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
