@@ -205,7 +205,7 @@
                         <div class="h-72 overflow-hidden">
 
                             <img
-                                src="{{ asset('storage/' . $blog->featured_image) }}"
+                                src="{{ asset('uploads/blogs/' . $blog->featured_image) }}"
                                 alt="{{ $blog->featured_image_alt }}"
                                 class="w-full h-full object-cover
                                        group-hover:scale-105
@@ -297,7 +297,7 @@
                     <div class="h-64 overflow-hidden">
 
                         <img
-                            src="{{ asset('storage/' . $blog->featured_image) }}"
+                            src="{{ asset('uploads/blogs/' . $blog->featured_image) }}"
                             alt="{{ $blog->featured_image_alt }}"
                             class="w-full h-full object-cover
                                    group-hover:scale-105

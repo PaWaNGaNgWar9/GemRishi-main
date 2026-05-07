@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
+use App\Http\Controllers\CategoryController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -23,6 +24,30 @@ use Illuminate\Support\Facades\Route;
     });
 
     Route::middleware('auth')->group(function () {
+
+        Route::get('/myblogs', [BlogController::class, 'list'])
+            ->name('blogs.list');
+
+        Route::get('/myblogs/create', [BlogController::class, 'create'])
+            ->name('blogs.create');
+
+        Route::post('/myblogs', [BlogController::class, 'store'])
+            ->name('blogs.store');
+
+        Route::get('/myblogs/{id}/edit', [BlogController::class, 'edit'])
+            ->name('blogs.edit');
+
+        Route::put('/myblogs/{id}', [BlogController::class, 'update'])
+            ->name('blogs.update');
+
+        Route::get('/categories', [CategoryController::class, 'index'])
+            ->name('categories.index');
+
+        Route::post('/categories', [CategoryController::class, 'store'])
+            ->name('categories.store');
+
+        Route::delete('/categories/{id}', [CategoryController::class, 'destroy'])
+            ->name('categories.destroy');
 
         Route::get('/dashboard', function () {
             return view('dashboard');

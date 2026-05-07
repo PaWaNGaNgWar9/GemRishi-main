@@ -8,6 +8,8 @@
         @yield('title', 'Dashboard')
     </title>
 
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -24,10 +26,10 @@
             <div class="h-18 flex items-center justify-between">
 
                 <!-- LOGO -->
-                <a href="/dashboard"
+                <a href="{{ route('dashboard') }}"
                    class="flex items-center gap-3">
 
-                    <div class="w-11 h-11 rounded-2xl bg-black text-white flex items-center justify-center font-bold text-lg">
+                    <div class="w-11 h-11 rounded-2xl bg-green-900 text-white flex items-center justify-center font-bold text-lg">
                         G
                     </div>
 
@@ -46,29 +48,19 @@
                 <!-- DESKTOP NAV -->
                 <nav class="hidden lg:flex items-center gap-2">
 
-                    <a href="/dashboard"
+                    <a href="{{ route('dashboard') }}"
                        class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
                         Dashboard
                     </a>
 
-                    <a href="/blogs"
+                    <a href="{{ route('blogs.list') }}"
                        class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
                         Blogs
                     </a>
 
-                    <a href="/categories"
+                    <a href="{{ route('categories.index') }}"
                        class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
                         Categories
-                    </a>
-
-                    <a href="/subcategories"
-                       class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
-                        Subcategories
-                    </a>
-
-                    <a href="/profile"
-                       class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
-                        Profile
                     </a>
 
                 </nav>
@@ -79,7 +71,7 @@
                     <!-- USER -->
                     <div class="flex items-center gap-3 border border-zinc-200 rounded-2xl px-4 py-2 bg-zinc-50">
 
-                        <div class="w-10 h-10 rounded-xl bg-black text-white flex items-center justify-center font-semibold">
+                        <div class="w-10 h-10 rounded-xl bg-green-900 text-white flex items-center justify-center font-semibold">
 
                             {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
 
@@ -100,12 +92,12 @@
                     </div>
 
                     <!-- LOGOUT -->
-                    <form method="POST" action="/logout">
+                    <form method="POST" action="{{ route('logout') }}">
 
                         @csrf
 
                         <button type="submit"
-                                class="px-5 py-2.5 rounded-xl bg-black text-white text-sm font-medium hover:opacity-90 transition">
+                                class="px-5 py-2.5 rounded-xl bg-red-500 text-white text-sm font-medium hover:opacity-90 transition">
 
                             Logout
 
@@ -134,34 +126,24 @@
                     Dashboard
                 </a>
 
-                <a href="/blogs"
+                <a href="{{ route('blogs.list') }}"
                    class="block px-4 py-3 rounded-2xl hover:bg-zinc-100 transition">
                     Blogs
                 </a>
 
-                <a href="/categories"
+                <a href="{{ route('categories.index') }}"
                    class="block px-4 py-3 rounded-2xl hover:bg-zinc-100 transition">
                     Categories
                 </a>
 
-                <a href="/subcategories"
-                   class="block px-4 py-3 rounded-2xl hover:bg-zinc-100 transition">
-                    Subcategories
-                </a>
-
-                <a href="/profile"
-                   class="block px-4 py-3 rounded-2xl hover:bg-zinc-100 transition">
-                    Profile
-                </a>
-
                 <form method="POST"
-                      action="/logout"
+                      action="{{ route('logout') }}"
                       class="pt-2">
 
                     @csrf
 
                     <button type="submit"
-                            class="w-full px-4 py-3 rounded-2xl bg-black text-white transition">
+                            class="w-full px-4 py-3 rounded-2xl bg-red-500 text-white transition">
 
                         Logout
 
@@ -196,7 +178,7 @@
                     </h3>
 
                     <p class="text-sm text-zinc-500 mt-2">
-                        Modern Laravel Blog Management System
+                        Gemrishi Blog Management System
                     </p>
 
                 </div>
@@ -232,6 +214,65 @@
 
     </footer>
 
+
+    <!-- TOAST -->
+@if(session('success'))
+
+    <div id="toastSuccess"
+         class="fixed top-6 right-6 z-[9999] flex items-center gap-4 px-6 py-4 rounded-2xl bg-green-900 text-white shadow-2xl translate-y-[-20px] opacity-0 transition duration-500">
+
+        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">
+
+            ✓
+
+        </div>
+
+        <div>
+
+            <h3 class="font-bold">
+                Success
+            </h3>
+
+            <p class="text-sm text-white/80">
+                {{ session('success') }}
+            </p>
+
+        </div>
+
+    </div>
+
+@endif
+
+
+
+<script>
+
+    const toast = document.getElementById('toastSuccess');
+
+    if (toast)
+    {
+        setTimeout(() => {
+
+            toast.classList.remove('opacity-0');
+            toast.classList.remove('-translate-y-5');
+
+        }, 100);
+
+        setTimeout(() => {
+
+            toast.classList.add('opacity-0');
+
+        }, 3500);
+
+        setTimeout(() => {
+
+            toast.remove();
+
+        }, 4000);
+    }
+
+</script>
+
     <!-- MOBILE SCRIPT -->
     <script>
 
@@ -245,6 +286,8 @@
         });
 
     </script>
+
+
 
 </body>
 </html>

@@ -162,7 +162,7 @@
         </div>
 
         {{-- CONTENT --}}
-        <div class="relative z-10">
+        <div class="relative z-10 pb-10">
 
             <div class="max-w-7xl mx-auto px-4 md:px-6 pt-24 md:pt-36 pb-16 md:pb-20">
 
@@ -235,7 +235,7 @@
                         shadow-2xl">
 
                 <img
-                    src="{{ asset('storage/' . $blog->featured_image) }}"
+                    src="{{ asset('uploads/blogs/' . $blog->featured_image) }}"
                     alt="{{ $blog->featured_image_alt }}"
                     class="w-full max-h-[420px] object-cover"
                 >
@@ -307,7 +307,7 @@
 
                     <div class="flex flex-wrap gap-3">
 
-                        @foreach($blog->tags as $tag)
+                        @foreach(explode(',', $blog->tags) as $tag)
 
                             <div class="px-4 py-2 rounded-full
                                         bg-emerald-500/10
