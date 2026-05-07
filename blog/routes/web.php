@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BlogController;
 use Illuminate\Support\Facades\Route;
 
@@ -11,9 +12,23 @@ use Illuminate\Support\Facades\Route;
         ->name('blogs.show');
 
 
+Route::middleware('guest')->group(function () {
+
+    Route::get('/login', [AuthController::class, 'showLogin'])
+        ->name('login');
+
+    Route::post('/login', [AuthController::class, 'login']);
+
+    Route::get('/register', [AuthController::class, 'showRegister']);
+
+    Route::post('/register', [AuthController::class, 'register']);
+});
+
 Route::middleware('auth')->group(function () {
 
-    Route::resource('/admin/blogs', BlogController::class);
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    });
 
-    Route::resource('/admin/categories', CategoryController::class);
-});        
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
