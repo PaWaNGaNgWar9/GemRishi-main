@@ -62,7 +62,6 @@ class BlogForm
                                                 'redo',
                                                 'strike',
                                                 'underline',
-                                                'undo',
                                         ])
                             ->columnSpanFull(),
 

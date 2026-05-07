@@ -31,8 +31,7 @@ class BlogsTable
 
                 ToggleColumn::make('is_published'),
 
-                IconColumn::make('is_featured')
-                    ->boolean(),
+                ToggleColumn::make('is_featured'),
 
                 TextColumn::make('views')
                     ->sortable(),
