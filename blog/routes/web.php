@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 
+    Route::prefix('blogs')->group(function () {
 
         Route::get('/login', [AuthController::class, 'showLogin'])
             ->name('login');
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
             Route::post('/logout', [AuthController::class, 'logout']);
         });
 
-    
+    });
 
     Route::get('/', [BlogController::class, 'index'])
         ->name('blogs.index');
