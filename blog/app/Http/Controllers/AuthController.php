@@ -11,11 +11,23 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
+        if (Auth::check()) {
+
+            return redirect()->route('dashboard');
+
+        }
+
         return view('auth.login');
     }
 
     public function showRegister()
     {
+        if (Auth::check()) {
+
+            return redirect()->route('dashboard');
+
+        }
+
         return view('auth.register');
     }
 
@@ -33,7 +45,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect('/login')
+        return redirect()->route('login')
             ->with('success', 'Account created');
     }
 
@@ -48,7 +60,7 @@ class AuthController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect('/dashboard');
+            return redirect()->route('dashboard');
         }
 
         return back()->withErrors([
@@ -64,6 +76,6 @@ class AuthController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }

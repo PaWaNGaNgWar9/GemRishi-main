@@ -7,27 +7,26 @@ use Illuminate\Support\Facades\Route;
 
 
 
-Route::middleware('guest')->group(function () {
 
-    Route::get('/login', [AuthController::class, 'showLogin'])
-        ->name('login');
+        Route::get('/login', [AuthController::class, 'showLogin'])
+            ->name('login');
 
-    Route::post('/login', [AuthController::class, 'login']);
+        Route::post('/login', [AuthController::class, 'login']);
 
-    Route::get('/register', [AuthController::class, 'showRegister']);
+        Route::get('/register', [AuthController::class, 'showRegister']);
 
-    Route::post('/register', [AuthController::class, 'register']);
-});
+        Route::post('/register', [AuthController::class, 'register']);
 
-Route::middleware('auth')->group(function () {
+        Route::middleware('auth')->group(function () {
 
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    });
+            Route::get('/dashboard', function () {
+                return view('dashboard');
+            })->name('dashboard');
 
-    Route::post('/logout', [AuthController::class, 'logout']);
-});
+            Route::post('/logout', [AuthController::class, 'logout']);
+        });
 
+    
 
     Route::get('/', [BlogController::class, 'index'])
         ->name('blogs.index');
