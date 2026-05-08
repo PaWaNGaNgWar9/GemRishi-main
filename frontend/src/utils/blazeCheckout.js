@@ -278,108 +278,193 @@
 // };
 
 
+// let initialized = false;
+
+// export const initBlaze = () => {
+
+//   if (initialized) return;
+
+//   const interval = setInterval(() => {
+
+//     // IMPORTANT
+
+//     if (
+//       window.BlazeSDK &&
+//       typeof window.BlazeSDK.initiate === "function"
+//     ) {
+
+//       clearInterval(interval);
+
+//       console.log(
+//         "SDK LOADED:",
+//         window.BlazeSDK
+//       );
+
+//       window.BlazeSDK.initiate(
+//         {
+//           requestId: "init_" + Date.now(),
+
+//           service: "in.breeze.onecco",
+
+//           payload: {
+//             merchantId: "gemrishi",
+
+//             env: "release",
+
+//             shopUrl:
+//               "https://gemrishi.com",
+//           },
+//         },
+
+//         (response) => {
+
+//           console.log(
+//             "BLAZE INIT:",
+//             response
+//           );
+//         }
+//       );
+
+//       initialized = true;
+//     }
+
+//   }, 500);
+// };
+
+// export const openBlazeCheckout = async ({
+//   cart,
+//   signature,
+// }) => {
+
+//   // WAIT FOR SDK
+
+//   let retries = 0;
+
+//   while (
+//     (
+//       !window.BlazeSDK ||
+//       typeof window.BlazeSDK.process !==
+//         "function"
+//     ) &&
+//     retries < 20
+//   ) {
+
+//     console.log(
+//       "Waiting for BlazeSDK..."
+//     );
+
+//     await new Promise((resolve) =>
+//       setTimeout(resolve, 500)
+//     );
+
+//     retries++;
+//   }
+
+//   // FINAL CHECK
+
+//   if (
+//     !window.BlazeSDK ||
+//     typeof window.BlazeSDK.process !==
+//       "function"
+//   ) {
+
+//     console.error(
+//       "BlazeSDK process missing"
+//     );
+
+//     return;
+//   }
+
+//   console.log(
+//     "PROCESSING PAYMENT..."
+//   );
+
+//   window.BlazeSDK.process(
+//     {
+//       requestId:
+//         "process_" + Date.now(),
+
+//       service: "in.breeze.onecco",
+
+//       payload: {
+//         action: "startPayment",
+
+//         merchantId: "gemrishi",
+
+//         env: "release",
+
+//         shopUrl:
+//           "https://gemrishi.com",
+
+//         cart,
+
+//         signature,
+//       },
+//     },
+
+//     (response) => {
+
+//       console.log(
+//         "PROCESS RESPONSE:",
+//         response
+//       );
+//     }
+//   );
+// };
+
+
+import BlazeSDK from "@juspay/blaze-sdk-web";
+
 let initialized = false;
 
 export const initBlaze = () => {
 
   if (initialized) return;
 
-  const interval = setInterval(() => {
+  console.log(
+    "SDK OBJECT:",
+    BlazeSDK
+  );
 
-    // IMPORTANT
+  BlazeSDK.initiate(
+    {
+      requestId: "init_" + Date.now(),
 
-    if (
-      window.BlazeSDK &&
-      typeof window.BlazeSDK.initiate === "function"
-    ) {
+      service: "in.breeze.onecco",
 
-      clearInterval(interval);
+      payload: {
+        merchantId: "gemrishi",
+
+        env: "release",
+
+        shopUrl:
+          "https://gemrishi.com",
+      },
+    },
+
+    (response) => {
 
       console.log(
-        "SDK LOADED:",
-        window.BlazeSDK
+        "BLAZE INIT:",
+        response
       );
-
-      window.BlazeSDK.initiate(
-        {
-          requestId: "init_" + Date.now(),
-
-          service: "in.breeze.onecco",
-
-          payload: {
-            merchantId: "gemrishi",
-
-            env: "release",
-
-            shopUrl:
-              "https://gemrishi.com",
-          },
-        },
-
-        (response) => {
-
-          console.log(
-            "BLAZE INIT:",
-            response
-          );
-        }
-      );
-
-      initialized = true;
     }
+  );
 
-  }, 500);
+  initialized = true;
 };
 
-export const openBlazeCheckout = async ({
+export const openBlazeCheckout = ({
   cart,
   signature,
 }) => {
 
-  // WAIT FOR SDK
-
-  let retries = 0;
-
-  while (
-    (
-      !window.BlazeSDK ||
-      typeof window.BlazeSDK.process !==
-        "function"
-    ) &&
-    retries < 20
-  ) {
-
-    console.log(
-      "Waiting for BlazeSDK..."
-    );
-
-    await new Promise((resolve) =>
-      setTimeout(resolve, 500)
-    );
-
-    retries++;
-  }
-
-  // FINAL CHECK
-
-  if (
-    !window.BlazeSDK ||
-    typeof window.BlazeSDK.process !==
-      "function"
-  ) {
-
-    console.error(
-      "BlazeSDK process missing"
-    );
-
-    return;
-  }
-
   console.log(
-    "PROCESSING PAYMENT..."
+    "PROCESS SDK:",
+    BlazeSDK
   );
 
-  window.BlazeSDK.process(
+  BlazeSDK.process(
     {
       requestId:
         "process_" + Date.now(),
@@ -411,3 +496,4 @@ export const openBlazeCheckout = async ({
     }
   );
 };
+
