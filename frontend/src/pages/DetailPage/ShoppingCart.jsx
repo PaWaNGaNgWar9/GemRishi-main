@@ -365,19 +365,25 @@ function ShoppingCart() {
 
       // OPEN CHECKOUT
 
-      window.BlazeSDK.process({
-        requestId: "process_" + Date.now(),
+      // window.BlazeSDK.process({
+      //   requestId: "process_" + Date.now(),
 
-        service: "in.breeze.onecco",
+      //   service: "in.breeze.onecco",
 
-        payload: {
-          action: "startPayment",
+      //   payload: {
+      //     action: "startPayment",
 
-          cart: response.data.cart,
+      //     cart: response.data.cart,
 
-          signature:
-            response.data.signature,
-        },
+      //     signature:
+      //       response.data.signature,
+      //   },
+      // });
+
+      openBlazeCheckout({
+        cart: response.data.cart,
+
+        signature: response.data.signature,
       });
 
     } catch (err) {
