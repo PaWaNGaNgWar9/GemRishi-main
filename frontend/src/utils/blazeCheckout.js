@@ -196,6 +196,88 @@
 // };
 
 
+// let initialized = false;
+
+// export const initBlaze = () => {
+
+//   if (initialized) return;
+
+//   const interval = setInterval(() => {
+
+//     if (window.BlazeSDK) {
+
+//       clearInterval(interval);
+
+//       window.BlazeSDK.initiate(
+//         {
+//           requestId: "init_" + Date.now(),
+
+//           service: "in.breeze.onecco",
+
+//           payload: {
+//             merchantId: "gemrishi",
+
+//             env: "release",
+
+//             shopUrl: "https://gemrishi.com",
+//           },
+//         },
+
+//         (response) => {
+//           console.log(
+//             "BLAZE INIT:",
+//             JSON.stringify(response)
+//           );
+//         }
+//       );
+
+//       initialized = true;
+//     }
+
+//   }, 500);
+// };
+
+// export const openBlazeCheckout = ({
+//   cart,
+//   signature,
+// }) => {
+
+//   if (!window.BlazeSDK) {
+//     console.error("BlazeSDK missing");
+//     return;
+//   }
+
+//   window.BlazeSDK.process(
+//     {
+//       requestId: "process_" + Date.now(),
+
+//       service: "in.breeze.onecco",
+
+//       payload: {
+//         action: "startPayment",
+
+//         cart,
+
+//         signature,
+
+//         merchantId: "gemrishi",
+
+//         env: "release",
+
+//         shopUrl: "https://gemrishi.com",
+//       },
+//     },
+
+//     (response) => {
+//       console.log(
+//         "PROCESS RESPONSE:",
+//         JSON.stringify(response)
+//       );
+//     }
+//   );
+// };
+
+
 let initialized = false;
 
 export const initBlaze = () => {
@@ -204,9 +286,19 @@ export const initBlaze = () => {
 
   const interval = setInterval(() => {
 
-    if (window.BlazeSDK) {
+    // IMPORTANT
+
+    if (
+      window.BlazeSDK &&
+      typeof window.BlazeSDK.initiate === "function"
+    ) {
 
       clearInterval(interval);
+
+      console.log(
+        "SDK LOADED:",
+        window.BlazeSDK
+      );
 
       window.BlazeSDK.initiate(
         {
@@ -219,14 +311,16 @@ export const initBlaze = () => {
 
             env: "release",
 
-            shopUrl: "https://gemrishi.com",
+            shopUrl:
+              "https://gemrishi.com",
           },
         },
 
         (response) => {
+
           console.log(
             "BLAZE INIT:",
-            JSON.stringify(response)
+            response
           );
         }
       );
@@ -237,43 +331,83 @@ export const initBlaze = () => {
   }, 500);
 };
 
-export const openBlazeCheckout = ({
+export const openBlazeCheckout = async ({
   cart,
   signature,
 }) => {
 
-  if (!window.BlazeSDK) {
-    console.error("BlazeSDK missing");
+  // WAIT FOR SDK
+
+  let retries = 0;
+
+  while (
+    (
+      !window.BlazeSDK ||
+      typeof window.BlazeSDK.process !==
+        "function"
+    ) &&
+    retries < 20
+  ) {
+
+    console.log(
+      "Waiting for BlazeSDK..."
+    );
+
+    await new Promise((resolve) =>
+      setTimeout(resolve, 500)
+    );
+
+    retries++;
+  }
+
+  // FINAL CHECK
+
+  if (
+    !window.BlazeSDK ||
+    typeof window.BlazeSDK.process !==
+      "function"
+  ) {
+
+    console.error(
+      "BlazeSDK process missing"
+    );
+
     return;
   }
 
+  console.log(
+    "PROCESSING PAYMENT..."
+  );
+
   window.BlazeSDK.process(
     {
-      requestId: "process_" + Date.now(),
+      requestId:
+        "process_" + Date.now(),
 
       service: "in.breeze.onecco",
 
       payload: {
         action: "startPayment",
 
-        cart,
-
-        signature,
-
         merchantId: "gemrishi",
 
         env: "release",
 
-        shopUrl: "https://gemrishi.com",
+        shopUrl:
+          "https://gemrishi.com",
+
+        cart,
+
+        signature,
       },
     },
 
     (response) => {
+
       console.log(
         "PROCESS RESPONSE:",
-        JSON.stringify(response)
+        response
       );
     }
   );
 };
-
