@@ -1,37 +1,39 @@
-import BlazeSDK from "@juspay/blaze-sdk-web";
-
 let initialized = false;
 
 export const initBlaze = () => {
 
   if (initialized) return;
 
-  if (!window.BlazeSDK) {
-    console.error("BlazeSDK not loaded");
-    return;
-  }
+  const checkSDK = setInterval(() => {
 
-  window.BlazeSDK.initiate(
-    {
-      requestId: "init_" + Date.now(),
+    if (window.BlazeSDK) {
 
-      service: "in.breeze.onecco",
+      clearInterval(checkSDK);
 
-      payload: {
-        merchantId: "gemrishi",
+      window.BlazeSDK.initiate(
+        {
+          requestId: "init_" + Date.now(),
 
-        env: "release",
+          service: "in.breeze.onecco",
 
-        shopUrl: "https://gemrishi.com",
-      },
-    },
+          payload: {
+            merchantId: "gemrishi",
 
-    (response) => {
-      console.log("BLAZE INIT:", response);
+            env: "release",
+
+            shopUrl: "https://gemrishi.com",
+          },
+        },
+
+        (response) => {
+          console.log("BLAZE INIT:", response);
+        }
+      );
+
+      initialized = true;
     }
-  );
 
-  initialized = true;
+  }, 500);
 };
 
 export const openBlazeCheckout = ({
@@ -39,14 +41,21 @@ export const openBlazeCheckout = ({
   signature,
 }) => {
 
-  BlazeSDK.process({
+  if (!window.BlazeSDK) {
+    console.error("BlazeSDK missing");
+    return;
+  }
+
+  window.BlazeSDK.process({
     requestId: "process_" + Date.now(),
 
     service: "in.breeze.onecco",
 
     payload: {
       action: "startPayment",
+
       cart,
+
       signature,
     },
   });
