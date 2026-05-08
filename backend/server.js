@@ -11,7 +11,7 @@ import breezeRoutes from "./routers/breeze.route.js";
 import os from 'os'; // Import the os module
 const server = http.createServer(app);
 
-app.use("/breeze", breezeRoutes);
+app.use("/api/v1/breeze", breezeRoutes);
 // ioHandler(server);           //<-- socket.io setup file
 
 const green = '\x1b[32m';    // Green

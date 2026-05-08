@@ -282,8 +282,14 @@ function ShoppingCart() {
 
       // CALL YOUR BACKEND
 
+      // const response = await axios.post(
+      //   "https://api.gemrishi.com/breeze/sign-cart",
+      //   {
+      //     cart,
+      //   }
+      // );
       const response = await axios.post(
-        "https://gemrishi.com/breeze/sign-cart",
+        `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
         {
           cart,
         }
