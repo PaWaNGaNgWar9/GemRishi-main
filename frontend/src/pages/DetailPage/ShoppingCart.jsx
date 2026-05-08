@@ -246,144 +246,67 @@ function ShoppingCart() {
   // };
 
   // --- BLAZE CHECKOUT INTEGRATION ---
-  // const handleProceedToCheckout = async () => {
-
-  //   try {
-
-  //     const payload = {
-  //       merchantId: "gemrishi",
-
-  //       env: "release",
-
-  //       shopUrl: "https://gemrishi.com",
-
-  //       cart: {
-  //         id: "cart_" + Date.now(),
-
-  //         currency: "INR",
-
-  //         itemCount: cartData.length,
-
-  //         initialPrice: totalAmount,
-
-  //         totalPrice: totalAmount,
-
-  //         totalDiscount: 0,
-
-  //         items: cartData.map((item) => ({
-  //           id: item.item._id,
-
-  //           title:
-  //             item.item.name ||
-  //             item.item.jewelryName,
-
-  //           quantity: item.quantity,
-
-  //           initialPrice: item.totalPrice,
-
-  //           finalPrice: item.totalPrice,
-
-  //           discount: 0,
-  //         })),
-  //       },
-  //     };
-
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-  //       payload
-  //     );
-
-  //     console.log("SIGN RESPONSE:", response.data);
-
-  //     window.BlazeSDK.process({
-  //       requestId: "process_" + Date.now(),
-
-  //       service: "in.breeze.onecco",
-
-  //       payload: {
-  //         action: "startPayment",
-
-  //         cart: response.data.cart,
-
-  //         signature: response.data.signature,
-  //       },
-  //     });
-
-  //   } catch (err) {
-
-  //     console.error(err);
-
-  //     alert("Checkout failed");
-  //   }
-  // };
-
-
   const handleProceedToCheckout = async () => {
 
     try {
 
-      const breezeCart = {
-        id: "cart_" + Date.now(),
+      const payload = {
+        merchantId: "gemrishi",
 
-        initialPrice: totalAmount,
+        env: "release",
 
-        totalPrice: totalAmount,
+        shopUrl: "https://gemrishi.com",
 
-        totalDiscount: 0,
+        cart: {
+          id: "cart_" + Date.now(),
 
-        itemCount: cartData.length,
+          currency: "INR",
 
-        currency: "INR",
+          itemCount: cartData.length,
 
-        items: cartData.map((item) => ({
-          id: item.item._id,
+          initialPrice: totalAmount,
 
-          title:
-            item.item.name ||
-            item.item.jewelryName,
+          totalPrice: totalAmount,
 
-          quantity: item.quantity,
+          totalDiscount: 0,
 
-          discount: 0,
+          items: cartData.map((item) => ({
+            id: item.item._id,
 
-          initialPrice: item.totalPrice,
+            title:
+              item.item.name ||
+              item.item.jewelryName,
 
-          finalPrice: item.totalPrice,
-        })),
+            quantity: item.quantity,
+
+            initialPrice: item.totalPrice,
+
+            finalPrice: item.totalPrice,
+
+            discount: 0,
+          })),
+        },
       };
-
-      // GET SIGNATURE
 
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-        {
-          cart: breezeCart,
-        }
+        payload
       );
 
-      console.log(response.data);
+      console.log("SIGN RESPONSE:", response.data);
 
-      // OPEN CHECKOUT
+      window.BlazeSDK.process({
+        requestId: "process_" + Date.now(),
 
-      // window.BlazeSDK.process({
-      //   requestId: "process_" + Date.now(),
+        service: "in.breeze.onecco",
 
-      //   service: "in.breeze.onecco",
+        payload: {
+          action: "startPayment",
 
-      //   payload: {
-      //     action: "startPayment",
+          cart: response.data.cart,
 
-      //     cart: response.data.cart,
-
-      //     signature:
-      //       response.data.signature,
-      //   },
-      // });
-
-      openBlazeCheckout({
-        cart: response.data.cart,
-
-        signature: response.data.signature,
+          signature: response.data.signature,
+        },
       });
 
     } catch (err) {
@@ -393,6 +316,7 @@ function ShoppingCart() {
       alert("Checkout failed");
     }
   };
+
 
   // --- BLAZE CHECKOUT INTEGRATION ---
   // const handleProceedToCheckout = () => {
