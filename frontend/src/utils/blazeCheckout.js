@@ -1,72 +1,46 @@
 let initialized = false;
 
-export const initBlaze = async () => {
+export const initBlaze = () => {
 
   if (initialized) return;
 
-  // LOAD SDK DYNAMICALLY
+  // WAIT UNTIL SDK LOADS
 
-  if (!window.BlazeSDK) {
+  const interval = setInterval(() => {
 
-    await new Promise((resolve, reject) => {
+    if (window.BlazeSDK) {
 
-      const script =
-        document.createElement("script");
+      clearInterval(interval);
 
-      script.src =
-        "https://sdk.breeze.in/packages/blaze/0.1.0/cdn.js";
+      window.BlazeSDK.initiate(
+        {
+          requestId: "init_" + Date.now(),
 
-      script.async = true;
+          service: "in.breeze.onecco",
 
-      script.onload = () => {
-        resolve();
-      };
+          payload: {
+            action: "initiate",
 
-      script.onerror = () => {
-        reject(
-          new Error("SDK failed to load")
-        );
-      };
+            merchantId: "gemrishi",
 
-      document.body.appendChild(script);
-    });
-  }
+            environment: "production",
 
-  // CHECK AGAIN
+            integrationType: "redirection",
+          },
+        },
 
-  if (!window.BlazeSDK) {
-    console.error("BlazeSDK missing");
-    return;
-  }
-
-  // INITIATE
-
-  window.BlazeSDK.initiate(
-    {
-      requestId: "init_" + Date.now(),
-
-      service: "in.breeze.onecco",
-
-      payload: {
-        action: "initiate",
-
-        merchantId: "gemrishi",
-
-        environment: "production",
-
-        integrationType: "redirection",
-      },
-    },
-
-    (response) => {
-      console.log(
-        "BLAZE INIT:",
-        response
+        (response) => {
+          console.log(
+            "BLAZE INIT:",
+            response
+          );
+        }
       );
-    }
-  );
 
-  initialized = true;
+      initialized = true;
+    }
+
+  }, 300);
 };
 
 export const openBlazeCheckout = ({
