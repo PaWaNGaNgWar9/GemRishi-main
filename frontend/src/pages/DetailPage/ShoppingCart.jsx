@@ -283,7 +283,7 @@ function ShoppingCart() {
       // CALL YOUR BACKEND
 
       const response = await axios.post(
-        "https://YOUR_NODE_DOMAIN/breeze/sign-cart",
+        "https://gemrishi.com/breeze/sign-cart",
         {
           cart,
         }
