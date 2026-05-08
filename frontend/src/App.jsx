@@ -62,6 +62,7 @@ import PurposeCollection from "./components/filters/PurposeCollection";
 import RandomWrapper from "./components/RandomWrapper";
 import { generateRandomString } from "./utils/randomString";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
+import { initBlaze } from "./utils/blazeCheckout";
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -307,15 +308,38 @@ function AppWrapper() {
 }
 
 // --- Main App Component ---
+// function App() {
+//   return (
+//     <Provider store={store}>
+//       <Router basename={BASE_URL || "/gemstone/user/"}>
+//         <ForgotPasswordProvider>
+//           <ScrollToTop />
+
+//           <AppWrapper />
+
+
+//         </ForgotPasswordProvider>
+//       </Router>
+//     </Provider>
+//   );
+// }
+
 function App() {
+
+  useEffect(() => {
+
+    initBlaze();
+
+  }, []);
+
   return (
     <Provider store={store}>
       <Router basename={BASE_URL || "/gemstone/user/"}>
         <ForgotPasswordProvider>
+
           <ScrollToTop />
 
           <AppWrapper />
-
 
         </ForgotPasswordProvider>
       </Router>

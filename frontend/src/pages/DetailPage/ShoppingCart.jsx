@@ -9,6 +9,9 @@ import { toast } from "react-toastify";
 import { appendRandomString } from "../../utils/randomString";
 import { startBlazeCheckout } from "../../utils/blazeCheckout";
 import BlazeSDK from "@juspay/blaze-sdk-web";
+import {
+  openBlazeCheckout,
+} from "../utils/blazeCheckout";
 
 
 
@@ -225,80 +228,82 @@ function ShoppingCart() {
   };
 
   // --- PROCEED TO CHECKOUT ---
-  const handleProceedToCheckout = () => {
-    const userInfoString = localStorage.getItem("userInfo");
-    let userToken = null;
+  // const handleProceedToCheckout = () => {
+  //   const userInfoString = localStorage.getItem("userInfo");
+  //   let userToken = null;
 
-    if (userInfoString) {
-      try {
-        userToken = JSON.parse(userInfoString).token;
-      } catch (e) { }
-    }
+  //   if (userInfoString) {
+  //     try {
+  //       userToken = JSON.parse(userInfoString).token;
+  //     } catch (e) { }
+  //   }
 
-    if (userToken) {
-      navigate("/shipping/address", { state: { productId: location?.state?.productId } });
-    } else {
-      toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
-    }
-  };
-
-  // --- BLAZE CHECKOUT INTEGRATION ---
-  // const handleProceedToCheckout = async () => {
-  //   try {
-  //     const breezeCart = {
-  //       id: "cart_" + Date.now(),
-  //       initialPrice: totalAmount,
-  //       totalPrice: totalAmount,
-  //       totalDiscount: 0,
-  //       itemCount: cartData.length,
-  //       currency: "INR",
-  //       items: cartData.map((item) => ({
-  //         id: item.item._id,
-  //         title: item.item.name || item.item.jewelryName,
-  //         quantity: item.quantity,
-  //         discount: 0,
-  //         initialPrice: item.totalPrice,
-  //         finalPrice: item.totalPrice,
-  //       })),
-  //     };
-
-  //     // 🔥 call backend
-  //     const res = await axios.post("/api/v1/breeze/sign-cart", {
-  //       cart: breezeCart,
-  //     });
-
-  //     const { cart, signature } = res.data;
-
-  //     // 🔥 init SDK
-  //     BlazeSDK.initiate(
-  //       {
-  //         requestId: "init_" + Date.now(),
-  //         service: "in.breeze.onecco",
-  //         payload: {
-  //           merchantId: "gemrishi",
-  //           shopUrl: window.location.origin,
-  //           environment: "sandbox", // keep sandbox for now
-  //         },
-  //       },
-  //       (r) => console.log("INIT:", r)
-  //     );
-
-  //     // 🔥 start payment
-  //     BlazeSDK.process({
-  //       requestId: "process_" + Date.now(),
-  //       service: "in.breeze.onecco",
-  //       payload: {
-  //         action: "startPayment",
-  //         cart,
-  //         signature,
-  //       },
-  //     });
-
-  //   } catch (err) {
-  //     console.error(err);
-  //     alert("Checkout failed");
+  //   if (userToken) {
+  //     navigate("/shipping/address", { state: { productId: location?.state?.productId } });
+  //   } else {
+  //     toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
   //   }
   // };
+
+  // --- BLAZE CHECKOUT INTEGRATION ---
+  const handleProceedToCheckout = async () => {
+
+    try {
+
+      const breezeCart = {
+        id: "cart_" + Date.now(),
+
+        initialPrice: totalAmount,
+
+        totalPrice: totalAmount,
+
+        totalDiscount: 0,
+
+        itemCount: cartData.length,
+
+        currency: "INR",
+
+        items: cartData.map((item) => ({
+          id: item.item._id,
+
+          title:
+            item.item.name ||
+            item.item.jewelryName,
+
+          quantity: item.quantity,
+
+          discount: 0,
+
+          initialPrice: item.totalPrice,
+
+          finalPrice: item.totalPrice,
+        })),
+      };
+
+      const res = await axios.post(
+        "/breeze/sign-cart",
+        {
+          cart: breezeCart,
+        }
+      );
+
+      if (!res.data.success) {
+        alert("Signature failed");
+        return;
+      }
+
+      openBlazeCheckout({
+        cart: res.data.cart,
+        signature: res.data.signature,
+      });
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert("Checkout failed");
+    }
+  };
 
   // --- BLAZE CHECKOUT INTEGRATION ---
   // const handleProceedToCheckout = () => {

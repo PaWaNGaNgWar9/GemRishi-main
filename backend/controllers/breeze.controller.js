@@ -2,11 +2,10 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
-export const signCart = (req, res) => {
+export const signCart = async (req, res) => {
   try {
-    console.log("🔥 Incoming body:", req.body);
 
-    if (!req.body || !req.body.cart) {
+    if (!req.body?.cart) {
       return res.status(400).json({
         success: false,
         message: "Cart missing",
@@ -17,35 +16,33 @@ export const signCart = (req, res) => {
 
     const privateKeyPath = path.resolve("private-key.pem");
 
-    if (!fs.existsSync(privateKeyPath)) {
-      console.error("❌ Private key not found at:", privateKeyPath);
-      return res.status(500).json({
-        success: false,
-        message: "Private key missing",
-      });
-    }
-
     const privateKey = fs.readFileSync(privateKeyPath, "utf8");
 
-    const cartString = JSON.stringify(cart);
+    // IMPORTANT
+    const payload = JSON.stringify(cart);
 
     const signer = crypto.createSign("RSA-SHA256");
-    signer.update(cartString);
+
+    signer.update(payload);
+
     signer.end();
 
     const signature = signer.sign(privateKey, "base64");
 
     return res.json({
-      cart: cartString,
+      success: true,
+      cart,
       signature,
     });
 
   } catch (err) {
-    console.error("❌ SIGN CART ERROR:", err);
+
+    console.error(err);
+
     return res.status(500).json({
       success: false,
-      message: "Signing failed",
-      error: err.message,
+      message: err.message,
     });
+
   }
 };
