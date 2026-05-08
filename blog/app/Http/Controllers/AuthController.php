@@ -68,6 +68,35 @@ class AuthController extends Controller
         ]);
     }
 
+
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+
+            'password' => 'required|min:6',
+
+        ]);
+
+        Auth::user()->update([
+
+            'password' => Hash::make($request->password)
+
+        ]);
+
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return redirect()
+            ->route('login')
+            ->with(
+                'success',
+                'Password updated. Please login again.'
+            );
+    }    
+
     public function logout(Request $request)
     {
         Auth::logout();

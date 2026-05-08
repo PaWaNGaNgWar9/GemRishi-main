@@ -217,5 +217,61 @@
 
 </section>
 
+
+    @if(session('success'))
+
+        <div id="toastSuccess"
+            class="fixed top-6 right-6 z-[9999] flex items-center gap-4 px-6 py-4 rounded-2xl bg-green-900 text-white shadow-2xl translate-y-[-20px] opacity-0 transition duration-500">
+
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">
+
+                ✓
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold">
+                    Success
+                </h3>
+
+                <p class="text-sm text-white/80">
+                    {{ session('success') }}
+                </p>
+
+            </div>
+
+        </div>
+
+    @endif
+
+    <script>
+
+        const toast = document.getElementById('toastSuccess');
+
+        if (toast)
+        {
+            setTimeout(() => {
+
+                toast.classList.remove('opacity-0');
+                toast.classList.remove('-translate-y-5');
+
+            }, 100);
+
+            setTimeout(() => {
+
+                toast.classList.add('opacity-0');
+
+            }, 3500);
+
+            setTimeout(() => {
+
+                toast.remove();
+
+            }, 4000);
+        }
+
+    </script>
+
 </body>
 </html>

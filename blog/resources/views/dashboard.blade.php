@@ -42,8 +42,7 @@
 
                         <p class="mt-6 text-lg text-zinc-500 leading-relaxed max-w-xl">
 
-                            Create blogs, manage categories,
-                            organize subcategories, and control
+                            Create blogs, manage categories, and control
                             your entire content system from one dashboard.
 
                         </p>
@@ -51,14 +50,14 @@
                         <!-- ACTIONS -->
                         <div class="flex flex-wrap gap-4 mt-10">
 
-                            <a href="/blogs/create"
-                               class="px-6 py-3.5 rounded-2xl bg-black text-white font-semibold hover:opacity-90 transition">
+                            <a href="{{ route('blogs.create') }}"
+                               class="px-6 py-3.5 rounded-2xl bg-green-900 text-white font-semibold hover:opacity-90 transition">
 
                                 Create Blog
 
                             </a>
 
-                            <a href="/categories/create"
+                            <a href="{{ route('categories.index') }}"
                                class="px-6 py-3.5 rounded-2xl border border-zinc-300 hover:bg-zinc-100 transition font-medium">
 
                                 Add Category
@@ -74,10 +73,10 @@
 
                         <div class="grid grid-cols-2 gap-5">
 
-                            <!-- CARD -->
+                            <!-- TOTAL BLOGS -->
                             <div class="rounded-3xl border border-zinc-200 bg-zinc-50 p-6">
 
-                                <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center text-2xl mb-6">
+                                <div class="w-14 h-14 rounded-2xl bg-green-900 text-white flex items-center justify-center text-2xl mb-6">
                                     📝
                                 </div>
 
@@ -86,15 +85,17 @@
                                 </p>
 
                                 <h2 class="text-4xl font-black mt-2 text-zinc-900">
-                                    24
+
+                                    {{ $totalBlogs }}
+
                                 </h2>
 
                             </div>
 
-                            <!-- CARD -->
+                            <!-- CATEGORIES -->
                             <div class="rounded-3xl border border-zinc-200 bg-zinc-50 p-6">
 
-                                <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center text-2xl mb-6">
+                                <div class="w-14 h-14 rounded-2xl bg-green-900 text-white flex items-center justify-center text-2xl mb-6">
                                     📂
                                 </div>
 
@@ -103,32 +104,36 @@
                                 </p>
 
                                 <h2 class="text-4xl font-black mt-2 text-zinc-900">
-                                    12
+
+                                    {{ $totalCategories }}
+
                                 </h2>
 
                             </div>
 
-                            <!-- CARD -->
+                            <!-- FEATURED BLOGS -->
                             <div class="rounded-3xl border border-zinc-200 bg-zinc-50 p-6">
 
-                                <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center text-2xl mb-6">
-                                    🗂️
+                                <div class="w-14 h-14 rounded-2xl bg-green-900 text-white flex items-center justify-center text-2xl mb-6">
+                                    ⭐
                                 </div>
 
                                 <p class="text-zinc-500 text-sm">
-                                    Subcategories
+                                    Featured Blogs
                                 </p>
 
                                 <h2 class="text-4xl font-black mt-2 text-zinc-900">
-                                    48
+
+                                    {{ $featuredBlogs }}
+
                                 </h2>
 
                             </div>
 
-                            <!-- CARD -->
+                            <!-- TOTAL VIEWS -->
                             <div class="rounded-3xl border border-zinc-200 bg-zinc-50 p-6">
 
-                                <div class="w-14 h-14 rounded-2xl bg-black text-white flex items-center justify-center text-2xl mb-6">
+                                <div class="w-14 h-14 rounded-2xl bg-green-900 text-white flex items-center justify-center text-2xl mb-6">
                                     👁️
                                 </div>
 
@@ -137,7 +142,9 @@
                                 </p>
 
                                 <h2 class="text-4xl font-black mt-2 text-zinc-900">
-                                    14K
+
+                                    {{ number_format($totalViews) }}
+
                                 </h2>
 
                             </div>
@@ -145,7 +152,7 @@
                         </div>
 
                     </div>
-
+                    
                 </div>
 
             </div>

@@ -146,7 +146,8 @@
                                     </a>
 
                                     <form method="POST"
-                                          action="#">
+                                        action="{{ route('blogs.destroy', $blog->id) }}"
+                                        onsubmit="return confirm('Delete this blog?')">
 
                                         @csrf
                                         @method('DELETE')

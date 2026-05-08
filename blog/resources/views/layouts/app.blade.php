@@ -8,8 +8,7 @@
         @yield('title', 'Dashboard')
     </title>
 
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
-      rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css"rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/daisyui@5" rel="stylesheet" type="text/css" />
 
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -87,7 +86,8 @@
                 <div class="hidden lg:flex items-center gap-4">
 
                     <!-- USER -->
-                    <div class="flex items-center gap-3 border border-zinc-200 rounded-2xl px-4 py-2 bg-zinc-50">
+                    <button onclick="openPasswordModal()"
+                            class="flex items-center gap-3 border border-zinc-200 rounded-2xl px-4 py-2 bg-zinc-50 hover:bg-zinc-100 transition">
 
                         <div class="w-10 h-10 rounded-xl bg-green-900 text-white flex items-center justify-center font-semibold">
 
@@ -95,7 +95,7 @@
 
                         </div>
 
-                        <div>
+                        <div class="text-left">
 
                             <h4 class="text-sm font-semibold">
                                 {{ auth()->user()->name }}
@@ -107,7 +107,7 @@
 
                         </div>
 
-                    </div>
+                    </button>
 
                     <!-- LOGOUT -->
                     <form method="POST" action="{{ route('logout') }}">
@@ -185,46 +185,27 @@
     <!-- FOOTER -->
     <footer class="bg-white border-t border-zinc-200 mt-20">
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div class="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
 
-                <div>
+                <p class="text-sm text-zinc-500 text-center sm:text-left">
 
-                    <h3 class="text-lg font-bold">
-                        Gemrishi CMS
-                    </h3>
+                    © {{ date('Y') }}
+                    <span class="font-semibold text-zinc-800">
+                        Gemrishi
+                    </span>.
+                    All rights reserved.
 
-                    <p class="text-sm text-zinc-500 mt-2">
-                        Gemrishi Blog Management System
-                    </p>
+                </p>
 
-                </div>
+                <div class="flex items-center gap-2 text-sm text-zinc-400">
 
-                <div class="flex items-center gap-5 text-sm text-zinc-500">
+                    <span class="w-2 h-2 rounded-full bg-green-600"></span>
 
-                    <a href="#"
-                       class="hover:text-black transition">
-                        Documentation
-                    </a>
-
-                    <a href="#"
-                       class="hover:text-black transition">
-                        Support
-                    </a>
-
-                    <a href="#"
-                       class="hover:text-black transition">
-                        Settings
-                    </a>
+                    CMS v1.0
 
                 </div>
-
-            </div>
-
-            <div class="mt-8 pt-6 border-t border-zinc-200 text-sm text-zinc-500 text-center">
-
-                © {{ date('Y') }} Gemrishi. All rights reserved.
 
             </div>
 
@@ -232,64 +213,157 @@
 
     </footer>
 
+    <!-- PASSWORD MODAL -->
+    <div id="passwordModal"
+        class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+
+        <div class="w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden">
+
+            <!-- HEADER -->
+            <div class="p-8 border-b border-zinc-200">
+
+                <div class="flex items-center justify-between">
+
+                    <div>
+
+                        <h2 class="text-3xl font-black text-zinc-900">
+
+                            Change Password
+
+                        </h2>
+
+                        <p class="mt-2 text-zinc-500">
+
+                            Update your account password securely.
+
+                        </p>
+
+                    </div>
+
+                    <button onclick="closePasswordModal()"
+                            class="w-11 h-11 rounded-2xl hover:bg-zinc-100 transition">
+
+                        ✕
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- FORM -->
+            <form method="POST"
+                action="{{ route('password.update') }}"
+                class="p-8 space-y-6">
+
+                @csrf
+
+                <!-- NEW PASSWORD -->
+                <div>
+
+                    <label class="block text-sm font-bold text-zinc-700 mb-3">
+
+                        New Password
+
+                    </label>
+
+                    <input type="password"
+                        name="password"
+                        required
+                        placeholder="Enter new password"
+                        class="w-full h-14 px-5 rounded-2xl border border-zinc-300 bg-zinc-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-900">
+
+                </div>
+
+                <!-- BUTTON -->
+                <button type="submit"
+                        class="w-full h-14 rounded-2xl bg-green-900 text-white font-bold hover:opacity-90 transition">
+
+                    Update Password
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>    
 
     <!-- TOAST -->
-@if(session('success'))
+    @if(session('success'))
 
-    <div id="toastSuccess"
-         class="fixed top-6 right-6 z-[9999] flex items-center gap-4 px-6 py-4 rounded-2xl bg-green-900 text-white shadow-2xl translate-y-[-20px] opacity-0 transition duration-500">
+        <div id="toastSuccess"
+            class="fixed top-6 right-6 z-[9999] flex items-center gap-4 px-6 py-4 rounded-2xl bg-green-900 text-white shadow-2xl translate-y-[-20px] opacity-0 transition duration-500">
 
-        <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">
 
-            ✓
+                ✓
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold">
+                    Success
+                </h3>
+
+                <p class="text-sm text-white/80">
+                    {{ session('success') }}
+                </p>
+
+            </div>
 
         </div>
 
-        <div>
-
-            <h3 class="font-bold">
-                Success
-            </h3>
-
-            <p class="text-sm text-white/80">
-                {{ session('success') }}
-            </p>
-
-        </div>
-
-    </div>
-
-@endif
+    @endif
 
 
+    <script>
 
-<script>
+        const passwordModal =
+            document.getElementById('passwordModal');
 
-    const toast = document.getElementById('toastSuccess');
+        function openPasswordModal()
+        {
+            passwordModal.classList.remove('hidden');
+            passwordModal.classList.add('flex');
+        }
 
-    if (toast)
-    {
-        setTimeout(() => {
+        function closePasswordModal()
+        {
+            passwordModal.classList.add('hidden');
+            passwordModal.classList.remove('flex');
+        }
 
-            toast.classList.remove('opacity-0');
-            toast.classList.remove('-translate-y-5');
+    </script>
 
-        }, 100);
+    <script>
 
-        setTimeout(() => {
+        const toast = document.getElementById('toastSuccess');
 
-            toast.classList.add('opacity-0');
+        if (toast)
+        {
+            setTimeout(() => {
 
-        }, 3500);
+                toast.classList.remove('opacity-0');
+                toast.classList.remove('-translate-y-5');
 
-        setTimeout(() => {
+            }, 100);
 
-            toast.remove();
+            setTimeout(() => {
 
-        }, 4000);
-    }
+                toast.classList.add('opacity-0');
 
-</script>
+            }, 3500);
+
+            setTimeout(() => {
+
+                toast.remove();
+
+            }, 4000);
+        }
+
+    </script>
 
     <!-- MOBILE SCRIPT -->
     <script>

@@ -32,7 +32,14 @@ class BlogController extends Controller
     {
         abort_if(!$blog->is_published, 404);
 
-        $blog->increment('views');
+        $sessionKey = 'blog_viewed_' . $blog->id;
+
+        if (!session()->has($sessionKey))
+        {
+            $blog->increment('views');
+
+            session()->put($sessionKey, true);
+        }
 
         $relatedBlogs = Blog::where('id', '!=', $blog->id)
             ->where('blog_category_id', $blog->blog_category_id)
@@ -267,6 +274,36 @@ class BlogController extends Controller
             ->with(
                 'success',
                 'Blog updated successfully.'
+            );
+    }
+
+    public function destroy($id)
+    {
+        $blog = Blog::findOrFail($id);
+
+        if (
+            $blog->featured_image &&
+            file_exists(
+                public_path(
+                    'uploads/blogs/' . $blog->featured_image
+                )
+            )
+        )
+        {
+            unlink(
+                public_path(
+                    'uploads/blogs/' . $blog->featured_image
+                )
+            );
+        }
+
+        $blog->delete();
+
+        return redirect()
+            ->route('blogs.list')
+            ->with(
+                'success',
+                'Blog deleted successfully.'
             );
     }
 }
