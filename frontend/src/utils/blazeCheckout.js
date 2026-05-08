@@ -6,7 +6,12 @@ export const initBlaze = () => {
 
   if (initialized) return;
 
-  BlazeSDK.initiate(
+  if (!window.BlazeSDK) {
+    console.error("BlazeSDK not loaded");
+    return;
+  }
+
+  window.BlazeSDK.initiate(
     {
       requestId: "init_" + Date.now(),
 
@@ -14,13 +19,15 @@ export const initBlaze = () => {
 
       payload: {
         merchantId: "gemrishi",
-        shopUrl: window.location.origin,
-        environment: "production",
+
+        env: "release",
+
+        shopUrl: "https://gemrishi.com",
       },
     },
 
-    (res) => {
-      console.log("BLAZE INIT:", res);
+    (response) => {
+      console.log("BLAZE INIT:", response);
     }
   );
 
