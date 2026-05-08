@@ -156,13 +156,11 @@ export const initBlaze = () => {
       service: "in.breeze.onecco",
 
       payload: {
-        action: "initiate",
-
         merchantId: "gemrishi",
 
-        environment: "production",
+        env: "release",
 
-        integrationType: "redirection",
+        shopUrl: "https://gemrishi.com",
       },
     },
 
