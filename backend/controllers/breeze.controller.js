@@ -1,48 +1,31 @@
-import crypto from "crypto";
-import fs from "fs";
-import path from "path";
+import axios from "axios";
 
 export const signCart = async (req, res) => {
+
   try {
 
-    if (!req.body?.cart) {
-      return res.status(400).json({
-        success: false,
-        message: "Cart missing",
-      });
-    }
+    const response = await axios.post(
+      "https://apothiki.vercel.app/cart-sign-api",
+      {
+        merchantId: "gemrishi",
 
-    const cart = req.body.cart;
+        env: "release",
 
-    const privateKeyPath = path.resolve("private-key.pem");
+        shopUrl: "https://gemrishi.com",
 
-    const privateKey = fs.readFileSync(privateKeyPath, "utf8");
+        cart: req.body.cart,
+      }
+    );
 
-    // IMPORTANT
-    const payload = JSON.stringify(cart);
-
-    const signer = crypto.createSign("RSA-SHA256");
-
-    signer.update(payload);
-
-    signer.end();
-
-    const signature = signer.sign(privateKey, "base64");
-
-    return res.json({
-      success: true,
-      cart,
-      signature,
-    });
+    return res.json(response.data);
 
   } catch (err) {
 
-    console.error(err);
+    console.error(err.response?.data || err.message);
 
     return res.status(500).json({
       success: false,
-      message: err.message,
+      error: err.message,
     });
-
   }
 };
