@@ -170,7 +170,7 @@
     {{-- FEATURED --}}
     @if($featuredBlogs->count())
 
-        <section class="max-w-7xl mx-auto px-4 md:px-6 py-14 md:py-20">
+        <section class="max-w-7xl mx-auto px-4 md:px-6 pt-20 pb-12 md:py-20">
 
             <div class="mb-8 md:mb-12">
 
@@ -262,7 +262,7 @@
     {{-- BLOGS --}}
     <section class="max-w-7xl mx-auto
                     px-4 md:px-6
-                    py-12 md:py-20">
+                    pt-20 pb-12 md:py-20">
 
         <div class="mb-8 md:mb-10">
 
@@ -432,7 +432,6 @@
                         <div class="mt-10">
 
                             <a href="https://gemrishi.com"
-                               target="_blank"
                                class="inline-flex items-center gap-2
                                       text-emerald-700
                                       hover:text-emerald-900
@@ -476,6 +475,37 @@
         @endif
 
     </section>
+
+        
+    <footer class="bg-white border-t border-zinc-200 mt-2">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <div class="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+
+                <p class="text-sm text-zinc-500 text-center sm:text-left">
+
+                    © {{ date('Y') }}
+                    <span class="font-semibold text-zinc-800">
+                        Gemrishi
+                    </span>.
+                    All rights reserved.
+
+                </p>
+
+                <div class="flex items-center gap-2 text-sm text-zinc-400">
+
+                    <span class="w-2 h-2 rounded-full bg-green-600"></span>
+
+                    CMS v1.0
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </footer>
 
 </main>
 
