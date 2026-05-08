@@ -246,80 +246,74 @@ function ShoppingCart() {
   // };
 
   // --- BLAZE CHECKOUT INTEGRATION ---
-const handleProceedToCheckout = async () => {
+  const handleProceedToCheckout = async () => {
 
-  try {
+    try {
 
-    const cart = {
-      id: "cart_" + Date.now(),
+      const cart = {
+        id: "cart_" + Date.now(),
 
-      initialPrice: totalAmount,
+        initialPrice: totalAmount,
 
-      totalPrice: totalAmount,
+        totalPrice: totalAmount,
 
-      totalDiscount: 0,
+        totalDiscount: 0,
 
-      itemCount: cartData.length,
+        itemCount: cartData.length,
 
-      currency: "INR",
+        currency: "INR",
 
-      items: cartData.map((item) => ({
-        id: item.item._id,
+        items: cartData.map((item) => ({
+          id: item.item._id,
 
-        title:
-          item.item.name ||
-          item.item.jewelryName,
+          title:
+            item.item.name ||
+            item.item.jewelryName,
 
-        quantity: item.quantity,
+          quantity: item.quantity,
 
-        discount: 0,
+          discount: 0,
 
-        initialPrice: item.totalPrice,
+          initialPrice: item.totalPrice,
 
-        finalPrice: item.totalPrice,
-      })),
-    };
+          finalPrice: item.totalPrice,
+        })),
+      };
 
-    // Generate signature
+      // CALL YOUR BACKEND
 
-    const response = await axios.post(
-      "https://apothiki.vercel.app/cart-sign-api",
-      {
-        merchantId: "gemrishi",
+      const response = await axios.post(
+        "https://YOUR_NODE_DOMAIN/breeze/sign-cart",
+        {
+          cart,
+        }
+      );
 
-        env: "release",
+      console.log(response.data);
 
-        shopUrl: "https://gemrishi.com",
+      // OPEN CHECKOUT
 
-        cart,
-      }
-    );
+      window.BlazeSDK.process({
+        requestId: "process_" + Date.now(),
 
-    console.log(response.data);
+        service: "in.breeze.onecco",
 
-    // Open checkout
+        payload: {
+          action: "startPayment",
 
-    window.BlazeSDK.process({
-      requestId: "process_" + Date.now(),
+          cart: response.data.cart,
 
-      service: "in.breeze.onecco",
+          signature: response.data.signature,
+        },
+      });
 
-      payload: {
-        action: "startPayment",
+    } catch (err) {
 
-        cart: response.data.cart,
+      console.error(err);
 
-        signature: response.data.signature,
-      },
-    });
-
-  } catch (err) {
-
-    console.error(err);
-
-    alert("Checkout failed");
-  }
-};
+      alert("Checkout failed");
+    }
+  };
 
   // --- BLAZE CHECKOUT INTEGRATION ---
   // const handleProceedToCheckout = () => {
