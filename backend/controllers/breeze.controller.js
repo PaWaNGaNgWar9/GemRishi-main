@@ -8,17 +8,7 @@ export const signCart = async (req, res) => {
 
     const response = await axios.post(
       "https://apothiki.vercel.app/cart-sign-api",
-      {
-        merchantId: "gemrishi",
-
-        env: "release",
-
-        shopUrl: "https://gemrishi.com",
-
-        payload: {
-          cart: req.body.cart,
-        },
-      },
+      req.body,
       {
         headers: {
           "Content-Type": "application/json",

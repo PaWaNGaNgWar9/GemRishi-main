@@ -250,54 +250,50 @@ function ShoppingCart() {
 
     try {
 
-      const cart = {
-        id: "cart_" + Date.now(),
+      const payload = {
+        merchantId: "gemrishi",
 
-        initialPrice: totalAmount,
+        env: "release",
 
-        totalPrice: totalAmount,
+        shopUrl: "https://gemrishi.com",
 
-        totalDiscount: 0,
+        cart: {
+          id: "cart_" + Date.now(),
 
-        itemCount: cartData.length,
+          currency: "INR",
 
-        currency: "INR",
+          itemCount: cartData.length,
 
-        items: cartData.map((item) => ({
-          id: item.item._id,
+          initialPrice: totalAmount,
 
-          title:
-            item.item.name ||
-            item.item.jewelryName,
+          totalPrice: totalAmount,
 
-          quantity: item.quantity,
+          totalDiscount: 0,
 
-          discount: 0,
+          items: cartData.map((item) => ({
+            id: item.item._id,
 
-          initialPrice: item.totalPrice,
+            title:
+              item.item.name ||
+              item.item.jewelryName,
 
-          finalPrice: item.totalPrice,
-        })),
+            quantity: item.quantity,
+
+            initialPrice: item.totalPrice,
+
+            finalPrice: item.totalPrice,
+
+            discount: 0,
+          })),
+        },
       };
 
-      // CALL YOUR BACKEND
-
-      // const response = await axios.post(
-      //   "https://api.gemrishi.com/breeze/sign-cart",
-      //   {
-      //     cart,
-      //   }
-      // );
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-        {
-          cart,
-        }
+        payload
       );
 
-      console.log(response.data);
-
-      // OPEN CHECKOUT
+      console.log("SIGN RESPONSE:", response.data);
 
       window.BlazeSDK.process({
         requestId: "process_" + Date.now(),
