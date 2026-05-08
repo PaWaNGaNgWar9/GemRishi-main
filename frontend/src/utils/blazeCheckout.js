@@ -15,7 +15,7 @@ export const initBlaze = () => {
       payload: {
         merchantId: "gemrishi",
         shopUrl: window.location.origin,
-        environment: "sandbox",
+        environment: "production",
       },
     },
 
