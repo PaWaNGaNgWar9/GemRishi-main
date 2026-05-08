@@ -1,13 +1,45 @@
 let initialized = false;
 
-export const initBlaze = () => {
+export const initBlaze = async () => {
 
   if (initialized) return;
 
+  // LOAD SDK DYNAMICALLY
+
   if (!window.BlazeSDK) {
-    console.error("BlazeSDK not loaded");
+
+    await new Promise((resolve, reject) => {
+
+      const script =
+        document.createElement("script");
+
+      script.src =
+        "https://sdk.breeze.in/packages/blaze/0.1.0/cdn.js";
+
+      script.async = true;
+
+      script.onload = () => {
+        resolve();
+      };
+
+      script.onerror = () => {
+        reject(
+          new Error("SDK failed to load")
+        );
+      };
+
+      document.body.appendChild(script);
+    });
+  }
+
+  // CHECK AGAIN
+
+  if (!window.BlazeSDK) {
+    console.error("BlazeSDK missing");
     return;
   }
+
+  // INITIATE
 
   window.BlazeSDK.initiate(
     {
@@ -16,16 +48,21 @@ export const initBlaze = () => {
       service: "in.breeze.onecco",
 
       payload: {
+        action: "initiate",
+
         merchantId: "gemrishi",
 
-        env: "release",
+        environment: "production",
 
-        shopUrl: "https://gemrishi.com",
+        integrationType: "redirection",
       },
     },
 
     (response) => {
-      console.log("BLAZE INIT:", response);
+      console.log(
+        "BLAZE INIT:",
+        response
+      );
     }
   );
 
@@ -37,14 +74,21 @@ export const openBlazeCheckout = ({
   signature,
 }) => {
 
-  BlazeSDK.process({
+  if (!window.BlazeSDK) {
+    console.error("BlazeSDK missing");
+    return;
+  }
+
+  window.BlazeSDK.process({
     requestId: "process_" + Date.now(),
 
     service: "in.breeze.onecco",
 
     payload: {
       action: "startPayment",
+
       cart,
+
       signature,
     },
   });
