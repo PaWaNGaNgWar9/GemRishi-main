@@ -194,7 +194,15 @@
                                    placeholder="Enter your password"
                                    required
                                    class="w-full h-16 px-6 rounded-2xl border border-zinc-300 bg-zinc-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-900 transition">
+                            @error('password')
 
+                                <p class="mt-2 text-sm text-red-500">
+
+                                    {{ $message }}
+
+                                </p>
+
+                            @enderror
                         </div>
 
                         <!-- BUTTON -->
@@ -218,6 +226,7 @@
 </section>
 
 
+    <!-- SUCCESS TOAST -->
     @if(session('success'))
 
         <div id="toastSuccess"
@@ -245,28 +254,94 @@
 
     @endif
 
+    <!-- ERROR TOAST -->
+    @if(session('error'))
+
+        <div id="toastError"
+            class="fixed top-24 right-6 z-[9999] flex items-center gap-4 px-6 py-4 rounded-2xl bg-red-500 text-white shadow-2xl translate-y-[-20px] opacity-0 transition duration-500">
+
+            <div class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-lg">
+
+                ✕
+
+            </div>
+
+            <div>
+
+                <h3 class="font-bold">
+                    Error
+                </h3>
+
+                <p class="text-sm text-white/80">
+                    {{ session('error') }}
+                </p>
+
+            </div>
+
+        </div>
+
+    @endif
+
     <script>
 
-        const toast = document.getElementById('toastSuccess');
+        /*
+        |--------------------------------------------------------------------------
+        | SUCCESS TOAST
+        |--------------------------------------------------------------------------
+        */
 
-        if (toast)
+        const toastSuccess =
+            document.getElementById('toastSuccess');
+
+        if (toastSuccess)
         {
             setTimeout(() => {
 
-                toast.classList.remove('opacity-0');
-                toast.classList.remove('-translate-y-5');
+                toastSuccess.classList.remove('opacity-0');
+                toastSuccess.classList.remove('-translate-y-5');
 
             }, 100);
 
             setTimeout(() => {
 
-                toast.classList.add('opacity-0');
+                toastSuccess.classList.add('opacity-0');
 
             }, 3500);
 
             setTimeout(() => {
 
-                toast.remove();
+                toastSuccess.remove();
+
+            }, 4000);
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | ERROR TOAST
+        |--------------------------------------------------------------------------
+        */
+
+        const toastError =
+            document.getElementById('toastError');
+
+        if (toastError)
+        {
+            setTimeout(() => {
+
+                toastError.classList.remove('opacity-0');
+                toastError.classList.remove('-translate-y-5');
+
+            }, 100);
+
+            setTimeout(() => {
+
+                toastError.classList.add('opacity-0');
+
+            }, 3500);
+
+            setTimeout(() => {
+
+                toastError.remove();
 
             }, 4000);
         }
