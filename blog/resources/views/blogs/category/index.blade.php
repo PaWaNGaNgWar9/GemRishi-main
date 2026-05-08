@@ -134,7 +134,7 @@
 
                                     <p class="mt-1 text-sm font-semibold text-zinc-700">
 
-                                        {{ $category->created_at->format('d M Y') }}
+                                        {{ optional($category->created_at)->format('d M Y') }}
 
                                     </p>
 
