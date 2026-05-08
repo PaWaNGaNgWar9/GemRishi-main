@@ -202,7 +202,7 @@
                                     <span id="metaDescriptionCount"
                                         class="text-sm text-zinc-400">
 
-                                        0 / 200
+                                        0 / 150
 
                                     </span>
 
@@ -211,7 +211,7 @@
                                 <textarea name="meta_description"
                                         id="metaDescription"
                                         rows="5"
-                                        maxlength="200"
+                                        maxlength="150"
                                         placeholder="SEO description..."
                                         class="w-full px-6 py-5 rounded-2xl border border-zinc-300 bg-zinc-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-900 resize-none">{{ old('meta_description', $blog->meta_description) }}</textarea>
 
@@ -238,7 +238,7 @@
                                 function updateMetaDescriptionCount()
                                 {
                                     metaDescriptionCount.innerText =
-                                        `${metaDescription.value.length} / 200`;
+                                        `${metaDescription.value.length} / 150`;
                                 }
 
                                 updateMetaDescriptionCount();
