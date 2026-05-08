@@ -71,47 +71,110 @@
 
 
 
+// let initialized = false;
+
+// export const initBlaze = () => {
+
+//   if (initialized) return;
+
+//   const interval = setInterval(() => {
+
+//     if (window.BlazeSDK) {
+
+//       clearInterval(interval);
+
+//       window.BlazeSDK.initiate(
+//         {
+//           requestId: "init_" + Date.now(),
+
+//           service: "in.breeze.onecco",
+
+//           payload: {
+//             action: "initiate",
+
+//             merchantId: "gemrishi",
+
+//             environment: "production",
+
+//             integrationType: "redirection",
+//           },
+//         },
+
+//         (response) => {
+//           console.log(
+//             "BLAZE INIT:",
+//             response
+//           );
+//         }
+//       );
+
+//       initialized = true;
+//     }
+
+//   }, 300);
+// };
+
+// export const openBlazeCheckout = ({
+//   cart,
+//   signature,
+// }) => {
+
+//   if (!window.BlazeSDK) {
+//     console.error("BlazeSDK missing");
+//     return;
+//   }
+
+//   window.BlazeSDK.process({
+//     requestId: "process_" + Date.now(),
+
+//     service: "in.breeze.onecco",
+
+//     payload: {
+//       action: "startPayment",
+
+//       cart,
+
+//       signature,
+//     },
+//   });
+// };
+
+
+
+import BlazeSDK from "@juspay/blaze-sdk-web";
+
 let initialized = false;
 
 export const initBlaze = () => {
 
   if (initialized) return;
 
-  const interval = setInterval(() => {
+  BlazeSDK.initiate(
+    {
+      requestId: "init_" + Date.now(),
 
-    if (window.BlazeSDK) {
+      service: "in.breeze.onecco",
 
-      clearInterval(interval);
+      payload: {
+        action: "initiate",
 
-      window.BlazeSDK.initiate(
-        {
-          requestId: "init_" + Date.now(),
+        merchantId: "gemrishi",
 
-          service: "in.breeze.onecco",
+        environment: "production",
 
-          payload: {
-            action: "initiate",
+        integrationType: "redirection",
+      },
+    },
 
-            merchantId: "gemrishi",
-
-            environment: "production",
-
-            integrationType: "redirection",
-          },
-        },
-
-        (response) => {
-          console.log(
-            "BLAZE INIT:",
-            response
-          );
-        }
+    (response) => {
+      console.log(
+        "BLAZE INIT:",
+        response
       );
-
-      initialized = true;
     }
+  );
 
-  }, 300);
+  initialized = true;
 };
 
 export const openBlazeCheckout = ({
@@ -119,12 +182,7 @@ export const openBlazeCheckout = ({
   signature,
 }) => {
 
-  if (!window.BlazeSDK) {
-    console.error("BlazeSDK missing");
-    return;
-  }
-
-  window.BlazeSDK.process({
+  BlazeSDK.process({
     requestId: "process_" + Date.now(),
 
     service: "in.breeze.onecco",
