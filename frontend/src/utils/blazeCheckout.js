@@ -10,18 +10,40 @@ export const initBlaze = () => {
 
       clearInterval(checkSDK);
 
+      // window.BlazeSDK.initiate(
+      //   {
+      //     requestId: "init_" + Date.now(),
+
+      //     service: "in.breeze.onecco",
+
+      //     payload: {
+      //       merchantId: "gemrishi",
+
+      //       env: "release",
+
+      //       shopUrl: "https://gemrishi.com",
+      //     },
+      //   },
+
+      //   (response) => {
+      //     console.log("BLAZE INIT:", response);
+      //   }
+      // );
+
       window.BlazeSDK.initiate(
-        {
+      {
           requestId: "init_" + Date.now(),
 
           service: "in.breeze.onecco",
 
           payload: {
+            action: "initiate",
+
             merchantId: "gemrishi",
 
-            env: "release",
+            environment: "production",
 
-            shopUrl: "https://gemrishi.com",
+            integrationType: "redirection",
           },
         },
 

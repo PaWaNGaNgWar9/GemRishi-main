@@ -228,22 +228,22 @@ function ShoppingCart() {
   };
 
   // --- PROCEED TO CHECKOUT ---
-  const handleProceedToCheckout = () => {
-    const userInfoString = localStorage.getItem("userInfo");
-    let userToken = null;
+  // const handleProceedToCheckout = () => {
+  //   const userInfoString = localStorage.getItem("userInfo");
+  //   let userToken = null;
 
-    if (userInfoString) {
-      try {
-        userToken = JSON.parse(userInfoString).token;
-      } catch (e) { }
-    }
+  //   if (userInfoString) {
+  //     try {
+  //       userToken = JSON.parse(userInfoString).token;
+  //     } catch (e) { }
+  //   }
 
-    if (userToken) {
-      navigate("/shipping/address", { state: { productId: location?.state?.productId } });
-    } else {
-      toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
-    }
-  };
+  //   if (userToken) {
+  //     navigate("/shipping/address", { state: { productId: location?.state?.productId } });
+  //   } else {
+  //     toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
+  //   }
+  // };
 
   // --- BLAZE CHECKOUT INTEGRATION ---
   // const handleProceedToCheckout = async () => {
@@ -316,6 +316,77 @@ function ShoppingCart() {
   //     alert("Checkout failed");
   //   }
   // };
+
+
+  const handleProceedToCheckout = async () => {
+
+    try {
+
+      const breezeCart = {
+        id: "cart_" + Date.now(),
+
+        initialPrice: totalAmount,
+
+        totalPrice: totalAmount,
+
+        totalDiscount: 0,
+
+        itemCount: cartData.length,
+
+        currency: "INR",
+
+        items: cartData.map((item) => ({
+          id: item.item._id,
+
+          title:
+            item.item.name ||
+            item.item.jewelryName,
+
+          quantity: item.quantity,
+
+          discount: 0,
+
+          initialPrice: item.totalPrice,
+
+          finalPrice: item.totalPrice,
+        })),
+      };
+
+      // GET SIGNATURE
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+        {
+          cart: breezeCart,
+        }
+      );
+
+      console.log(response.data);
+
+      // OPEN CHECKOUT
+
+      window.BlazeSDK.process({
+        requestId: "process_" + Date.now(),
+
+        service: "in.breeze.onecco",
+
+        payload: {
+          action: "startPayment",
+
+          cart: response.data.cart,
+
+          signature:
+            response.data.signature,
+        },
+      });
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert("Checkout failed");
+    }
+  };
 
   // --- BLAZE CHECKOUT INTEGRATION ---
   // const handleProceedToCheckout = () => {
