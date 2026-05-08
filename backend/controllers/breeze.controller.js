@@ -4,6 +4,8 @@ export const signCart = async (req, res) => {
 
   try {
 
+    console.log("REQ BODY:", req.body);
+
     const response = await axios.post(
       "https://apothiki.vercel.app/cart-sign-api",
       {
@@ -13,19 +15,33 @@ export const signCart = async (req, res) => {
 
         shopUrl: "https://gemrishi.com",
 
-        cart: req.body.cart,
+        payload: {
+          cart: req.body.cart,
+        },
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
     );
+
+    console.log("SIGN RESPONSE:", response.data);
 
     return res.json(response.data);
 
   } catch (err) {
 
-    console.error(err.response?.data || err.message);
+    console.error(
+      "SIGN ERROR:",
+      err.response?.data || err.message
+    );
 
     return res.status(500).json({
       success: false,
-      error: err.message,
+      error:
+        err.response?.data ||
+        err.message,
     });
   }
 };
