@@ -11,7 +11,7 @@ import { startBlazeCheckout } from "../../utils/blazeCheckout";
 import BlazeSDK from "@juspay/blaze-sdk-web";
 import {
   openBlazeCheckout,
-} from "../utils/blazeCheckout";
+} from "../../utils/blazeCheckout";
 
 
 
