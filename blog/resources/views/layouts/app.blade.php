@@ -48,19 +48,37 @@
                 <!-- DESKTOP NAV -->
                 <nav class="hidden lg:flex items-center gap-2">
 
+                    <!-- DASHBOARD -->
                     <a href="{{ route('dashboard') }}"
-                       class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
+                    class="px-5 py-2.5 rounded-xl text-sm font-medium transition
+                    {{ request()->routeIs('dashboard')
+                            ? 'bg-green-900 text-white shadow-lg shadow-green-900/10'
+                            : 'text-zinc-700 hover:bg-zinc-100' }}">
+
                         Dashboard
+
                     </a>
 
+                    <!-- BLOGS -->
                     <a href="{{ route('blogs.list') }}"
-                       class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
+                    class="px-5 py-2.5 rounded-xl text-sm font-medium transition
+                    {{ request()->routeIs('blogs.*')
+                            ? 'bg-green-900 text-white shadow-lg shadow-green-900/10'
+                            : 'text-zinc-700 hover:bg-zinc-100' }}">
+
                         Blogs
+
                     </a>
 
+                    <!-- CATEGORIES -->
                     <a href="{{ route('categories.index') }}"
-                       class="px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-zinc-100 transition">
+                    class="px-5 py-2.5 rounded-xl text-sm font-medium transition
+                    {{ request()->routeIs('categories.*')
+                            ? 'bg-green-900 text-white shadow-lg shadow-green-900/10'
+                            : 'text-zinc-700 hover:bg-zinc-100' }}">
+
                         Categories
+
                     </a>
 
                 </nav>
