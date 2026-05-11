@@ -48,6 +48,21 @@
   </noscript>
   <!-- End Meta Pixel Code -->
   <script src="https://sdk.breeze.in/packages/blaze/0.1.0/cdn.js"></script>
+
+  <script>
+    console.log(
+      "INDEX SDK CHECK:",
+      window.BlazeSDK
+    );
+
+    console.log(
+      "WINDOW KEYS:",
+      Object.keys(window).filter(
+        key =>
+          key.toLowerCase().includes("blaze")
+      )
+    );
+  </script>
 </head>
 
 <body>
