@@ -228,100 +228,96 @@ function ShoppingCart() {
   };
 
   // --- PROCEED TO CHECKOUT ---
-  const handleProceedToCheckout = () => {
-    const userInfoString = localStorage.getItem("userInfo");
-    let userToken = null;
+  // const handleProceedToCheckout = () => {
+  //   const userInfoString = localStorage.getItem("userInfo");
+  //   let userToken = null;
 
-    if (userInfoString) {
-      try {
-        userToken = JSON.parse(userInfoString).token;
-      } catch (e) { }
-    }
+  //   if (userInfoString) {
+  //     try {
+  //       userToken = JSON.parse(userInfoString).token;
+  //     } catch (e) { }
+  //   }
 
-    if (userToken) {
-      navigate("/shipping/address", { state: { productId: location?.state?.productId } });
-    } else {
-      toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
-    }
-  };
-
-  // --- BLAZE CHECKOUT INTEGRATION ---
-  // const handleProceedToCheckout = async () => {
-
-  //   try {
-
-  //     const payload = {
-  //       merchantId: "gemrishi",
-
-  //       env: "release",
-
-  //       shopUrl: "https://gemrishi.com",
-
-  //       cart: {
-  //         id: "cart_" + Date.now(),
-
-  //         currency: "INR",
-
-  //         itemCount: cartData.length,
-
-  //         initialPrice: totalAmount,
-
-  //         totalPrice: totalAmount,
-
-  //         totalDiscount: 0,
-
-  //         items: cartData.map((item) => ({
-  //           id: item.item._id,
-
-  //           title:
-  //             item.item.name ||
-  //             item.item.jewelryName,
-
-  //           quantity: item.quantity,
-
-  //           initialPrice: item.totalPrice,
-
-  //           finalPrice: item.totalPrice,
-
-  //           discount: 0,
-  //         })),
-  //       },
-  //     };
-
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-  //       payload
-  //     );
-
-  //     console.log("SIGN RESPONSE:", response.data);
-
-  //     window.BlazeSDK.process({
-  //       requestId: "process_" + Date.now(),
-
-  //       service: "in.breeze.onecco",
-
-  //       payload: {
-  //         action: "startPayment",
-
-  //         cart: response.data.cart,
-
-  //         signature: response.data.signature,
-  //       },
-  //     });
-
-  //   } catch (err) {
-
-  //     console.error(err);
-
-  //     alert("Checkout failed");
+  //   if (userToken) {
+  //     navigate("/shipping/address", { state: { productId: location?.state?.productId } });
+  //   } else {
+  //     toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
   //   }
   // };
 
-
   // --- BLAZE CHECKOUT INTEGRATION ---
-  // const handleProceedToCheckout = () => {
-  //   startBlazeCheckout(totalAmount);
-  // };
+  const handleProceedToCheckout = async () => {
+
+    try {
+
+      const payload = {
+        merchantId: "gemrishi",
+
+        env: "release",
+
+        shopUrl: "https://gemrishi.com",
+
+        cart: {
+          id: "cart_" + Date.now(),
+
+          currency: "INR",
+
+          itemCount: cartData.length,
+
+          initialPrice: totalAmount,
+
+          totalPrice: totalAmount,
+
+          totalDiscount: 0,
+
+          items: cartData.map((item) => ({
+            id: item.item._id,
+
+            title:
+              item.item.name ||
+              item.item.jewelryName,
+
+            quantity: item.quantity,
+
+            initialPrice: item.totalPrice,
+
+            finalPrice: item.totalPrice,
+
+            discount: 0,
+          })),
+        },
+      };
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+        payload
+      );
+
+      console.log("SIGN RESPONSE:", response.data);
+
+      window.BlazeSDK.process({
+        requestId: "process_" + Date.now(),
+
+        service: "in.breeze.onecco",
+
+        payload: {
+          action: "startPayment",
+
+          cart: response.data.cart,
+
+          signature: response.data.signature,
+        },
+      });
+
+    } catch (err) {
+
+      console.error(err);
+
+      alert("Checkout failed");
+    }
+  };
+
+
 
   useEffect(() => {
     fetchCartItems();
