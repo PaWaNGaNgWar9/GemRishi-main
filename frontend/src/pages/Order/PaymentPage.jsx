@@ -547,9 +547,11 @@ function PaymentPage() {
               "+91",
 
             phoneNumber:
-              shippingDetails
-                .address
-                .mobileNo,
+              String(
+                shippingDetails
+                  .address
+                  .mobileNo
+              ).replace(/\D/g, ""),
 
             email:
               shippingDetails
