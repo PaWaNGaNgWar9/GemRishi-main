@@ -137,10 +137,10 @@ function PaymentPage() {
           });
           setCartData(formattedCart);
         }
-        console.log(
-          "RAW CART:",
-          cartResponse.data.cart
-        );
+        // console.log(
+        //   "RAW CART:",
+        //   cartResponse.data.cart
+        // );
 
         // Fetch user profile
         const profileResponse = await axios.get(`${URL}/user/profile`, {
