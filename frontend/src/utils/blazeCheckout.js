@@ -663,56 +663,56 @@
 //   };
 
 
-let initialized = false;
+// let initialized = false;
 
-export const initBlaze = () => {
+// export const initBlaze = () => {
 
-  const waitForSDK = setInterval(() => {
+//   const waitForSDK = setInterval(() => {
 
-    if (
-      window.BlazeSDK &&
-      typeof window.BlazeSDK.initiate ===
-        "function"
-    ) {
+//     if (
+//       window.BlazeSDK &&
+//       typeof window.BlazeSDK.initiate ===
+//         "function"
+//     ) {
 
-      clearInterval(waitForSDK);
+//       clearInterval(waitForSDK);
 
-      console.log(
-        "BLAZE SDK LOADED"
-      );
+//       console.log(
+//         "BLAZE SDK LOADED"
+//       );
 
-      window.BlazeSDK.initiate(
-        {
-          requestId:
-            crypto.randomUUID(),
+//       window.BlazeSDK.initiate(
+//         {
+//           requestId:
+//             crypto.randomUUID(),
 
-          service:
-            "in.breeze.onecco",
+//           service:
+//             "in.breeze.onecco",
 
-          payload: {
-            action:
-              "initiate",
+//           payload: {
+//             action:
+//               "initiate",
 
-            merchantId:
-              "gemrishi",
+//             merchantId:
+//               "gemrishi",
 
-            environment:
-              "production",
+//             environment:
+//               "production",
 
-            integrationType:
-              "redirection",
-          },
-        },
+//             integrationType:
+//               "redirection",
+//           },
+//         },
 
-        (response) => {
+//         (response) => {
 
-          console.log(
-            "BLAZE INIT:",
-            response
-          );
-        }
-      );
-    }
+//           console.log(
+//             "BLAZE INIT:",
+//             response
+//           );
+//         }
+//       );
+//     }
 
-  }, 500);
-};
+//   }, 500);
+// };

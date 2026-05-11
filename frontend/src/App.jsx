@@ -373,6 +373,11 @@ function App() {
                 "SDK OBJECT:",
                 window.BlazeSDK
               );
+
+              console.log(
+                "PROCESS EXISTS:",
+                typeof window.BlazeSDK.process
+              );
             }
           );
         }

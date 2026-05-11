@@ -414,34 +414,6 @@ const handleBreezeCheckout =
 
     try {
 
-      // WAIT FOR SDK
-
-      let retries = 0;
-
-      while (
-        (
-          !window.BlazeSDK ||
-          typeof window.BlazeSDK
-            .process !== "function"
-        ) &&
-        retries < 20
-      ) {
-
-        console.log(
-          "Waiting for BlazeSDK..."
-        );
-
-        await new Promise(
-          (resolve) =>
-            setTimeout(
-              resolve,
-              500
-            )
-        );
-
-        retries++;
-      }
-
       // FINAL CHECK
 
       if (
@@ -451,7 +423,7 @@ const handleBreezeCheckout =
       ) {
 
         console.error(
-          "BlazeSDK process missing"
+          "BlazeSDK process missing", window.BlazeSDK
         );
 
         toast.error(
