@@ -417,13 +417,13 @@ const handleBreezeCheckout =
       // FINAL CHECK
 
       if (
-        !window.BlazeSDK ||
-        typeof window.BlazeSDK
+        !window.BlazeSDKWeb ||
+        typeof window.BlazeSDKWeb
           .process !== "function"
       ) {
 
         console.error(
-          "BlazeSDK process missing", window.BlazeSDK
+          "BlazeSDK process missing", window.BlazeSDKWeb
         );
 
         toast.error(
@@ -494,7 +494,7 @@ const handleBreezeCheckout =
 
       // PROCESS CHECKOUT
 
-      BlazeSDK.process(
+      window.BlazeSDKWeb.process(
         {
           requestId:
             crypto.randomUUID(),

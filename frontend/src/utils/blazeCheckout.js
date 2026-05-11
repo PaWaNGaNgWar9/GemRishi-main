@@ -681,7 +681,7 @@ export const initBlaze = () => {
     return;
   }
 
-  window.BlazeSDK.initiate(
+  window.BlazeSDKWeb.initiate(
     {
       requestId:
         crypto.randomUUID(),
