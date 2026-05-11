@@ -463,7 +463,7 @@ function PaymentPage() {
       initialPrice:
         Number(paymentTotalAmount),
 
-      totalPrice:
+      finalPrice:
         Number(paymentTotalAmount),
 
       totalDiscount: 0,
@@ -484,7 +484,7 @@ function PaymentPage() {
           initialPrice:
             Number(item.price),
 
-          totalPrice:
+          finalPrice:
             Number(item.price) *
             Number(item.quantity),
 
@@ -544,7 +544,7 @@ function PaymentPage() {
           customer: {
 
             countryCode:
-              "91",
+              "+91",
 
             phoneNumber:
               shippingDetails
