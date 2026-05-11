@@ -295,34 +295,11 @@ function ShoppingCart() {
 
       console.log("SIGN RESPONSE:", response.data);
 
-      BlazeSDK.process(
-        {
-          requestId: "process_" + Date.now(),
+      await openBlazeCheckout({
+        cart: response.data.cart,
 
-          service: "in.breeze.onecco",
-
-          payload: {
-            action: "startPayment",
-
-            merchantId: "gemrishi",
-
-            env: "release",
-
-            shopUrl: "https://gemrishi.com",
-
-            cart: response.data.cart,
-
-            signature: response.data.signature,
-          },
-        },
-
-        (res) => {
-          console.log(
-            "PROCESS RESPONSE:",
-            JSON.stringify(res)
-          );
-        }
-      );
+        signature: response.data.signature,
+      });
 
     } catch (err) {
 
