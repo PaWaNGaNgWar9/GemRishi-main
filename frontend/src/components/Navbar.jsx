@@ -300,17 +300,11 @@ export default function Navbar({ handleLoginClick }) {
         ? `/details/product/${slug}`
         : `/gemstones/${slug}`;
 
-      // Navigate FIRST
-      navigate(appendRandomString(baseUrl));
-
       // Then close UI
       setIsResultsVisible(false);
       setIsSearchBarVisible(false);
 
-      // Optional
-      setTimeout(() => {
-        setSearchQuery("");
-      }, 100);
+      navigate(appendRandomString(baseUrl));
     };
 
     return (
@@ -327,7 +321,11 @@ export default function Navbar({ handleLoginClick }) {
               {searchResults.slice(0, 5).map((item) => (
                 <div
                   key={item._id}
-                  onClick={() => handleClick(item)}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleClick(item);
+                  }}
                   className="flex items-center gap-4 p-3 -mx-3 hover:bg-[#F9FAFB] rounded-lg cursor-pointer transition-all duration-300 group"
                 >
                   <div className="w-14 h-14 bg-white border border-gray-100 rounded-md flex justify-center items-center overflow-hidden">
