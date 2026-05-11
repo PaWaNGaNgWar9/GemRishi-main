@@ -319,12 +319,16 @@ export default function Navbar({ handleLoginClick }) {
             <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-100 pb-2">Top Results</h4>
             <div className="space-y-1">
               {searchResults.slice(0, 5).map((item) => (
-                <div
+                <Link
                   key={item._id}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleClick(item);
+                  to={
+                    isJewelry(item)
+                      ? `/details/product/${item.slug || item._id}`
+                      : `/gemstones/${item.slug || item._id}`
+                  }
+                  onClick={() => {
+                    setIsResultsVisible(false);
+                    setIsSearchBarVisible(false);
                   }}
                   className="flex items-center gap-4 p-3 -mx-3 hover:bg-[#F9FAFB] rounded-lg cursor-pointer transition-all duration-300 group"
                 >
@@ -340,7 +344,7 @@ export default function Navbar({ handleLoginClick }) {
                     <p className="text-xs text-[#264A3F] font-bold tracking-wider uppercase">{formatPrice(getPrice(item))}</p>
                   </div>
                   <KeyboardArrowRightIcon className="text-gray-300 group-hover:text-[#264A3F] transform group-hover:translate-x-1 transition-all duration-300" />
-                </div>
+                </Link>
               ))}
             </div>
 
