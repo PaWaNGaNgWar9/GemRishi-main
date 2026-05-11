@@ -449,7 +449,11 @@ const handleBreezeCheckout =
 
         currency: "INR",
 
-        itemCount: cartData.length,
+        itemCount: cartData.reduce(
+          (sum, item) =>
+            sum + Number(item.quantity),
+          0
+        ),
 
         initialPrice: Number(paymentTotalAmount),
 
@@ -458,18 +462,21 @@ const handleBreezeCheckout =
         totalDiscount: 0,
 
         items: cartData.map((item) => ({
-          id: item.item?._id,
+          id:
+            item.productId ||
+            item.jewelryId,
 
           title:
-            item.item?.name ||
-            item.item?.jewelryName,
+            item.name,
 
-          quantity: Number(item.quantity),
+          quantity:
+            Number(item.quantity),
 
-          initialPrice: Number(item.item?.price),
+          initialPrice:
+            Number(item.price),
 
           totalPrice:
-            Number(item.item?.price) *
+            Number(item.price) *
             Number(item.quantity),
 
           discount: 0,

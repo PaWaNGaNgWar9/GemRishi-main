@@ -671,7 +671,7 @@ let initialized = false;
 export const initBlaze = () => {
 
   if (
-    !window.BlazeSDK
+    !window.BlazeSDKWeb
   ) {
 
     console.error(
