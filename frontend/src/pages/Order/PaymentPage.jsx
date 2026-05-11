@@ -19,7 +19,7 @@ import {
 import WishlistButton from "../../components/wishlistButton";
 import VideoModal from "../../components/models/VideoModal";
 import { Play } from "lucide-react";
-import BlazeSDK from "@juspay/blaze-sdk-web";
+// import BlazeSDK from "@juspay/blaze-sdk-web";
 
 
 const products = [
