@@ -471,13 +471,13 @@ const handleBreezeCheckout =
               item.item?.jewelryName,
 
             quantity:
-              item.quantity,
+              Number(item.quantity),
 
             initialPrice:
-              Number(item.totalPrice),
+              Number(paymentTotalAmount),
 
-            finalPrice:
-              Number(item.totalPrice),
+            totalPrice:
+              Number(paymentTotalAmount),
 
             discount: 0,
           })
