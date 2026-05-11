@@ -330,42 +330,45 @@ function App() {
 
 useEffect(() => {
 
-  BlazeSDK.initiate(
-    {
-      requestId:
-        crypto.randomUUID(),
+BlazeSDK.initiate(
+  {
+    requestId:
+      crypto.randomUUID(),
 
-      service:
-        "in.breeze.onecco",
+    service:
+      "in.breeze.onecco",
 
-      payload: {
-        action:
-          "initiate",
+    payload: {
+      action:
+        "initiate",
 
-        merchantId:
-          "gemrishi",
+      clientId:
+        "gemrishi",
 
-        environment:
-          "production",
+      merchantId:
+        "gemrishi",
 
-        integrationType:
-          "redirection",
-      },
+      environment:
+        "production",
+
+      integrationType:
+        "redirection",
     },
+  },
 
-    (response) => {
+  (response) => {
 
-      console.log(
-        "BLAZE INIT:",
-        response
-      );
+    console.log(
+      "BLAZE INIT:",
+      response
+    );
 
-      console.log(
-        "PROCESS:",
-        typeof BlazeSDK.process
-      );
-    }
-  );
+    console.log(
+      "PROCESS:",
+      typeof BlazeSDK.process
+    );
+  }
+);
 
 }, []);
 
