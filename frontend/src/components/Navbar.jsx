@@ -24,7 +24,7 @@ import ProfileDropdown from "./profiledropdown";
 import CategoryModal from "../pages/HomeModal/CategoryModal";
 import JewelleryModal from "../pages/HomeModal/JewelleryModal";
 import { useGetWish } from "../hooks/usegetwish";
-const { appendRandomString } = require("../utils/randomString");
+import { appendRandomString } from "../../utils/randomString";
 
 // ==============================================================================
 // 1. Skeleton Loader
