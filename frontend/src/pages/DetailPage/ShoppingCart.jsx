@@ -228,86 +228,258 @@ function ShoppingCart() {
   };
 
   // --- PROCEED TO CHECKOUT ---
-  // const handleProceedToCheckout = () => {
-  //   const userInfoString = localStorage.getItem("userInfo");
-  //   let userToken = null;
+  const handleProceedToCheckout = () => {
+    const userInfoString = localStorage.getItem("userInfo");
+    let userToken = null;
 
-  //   if (userInfoString) {
-  //     try {
-  //       userToken = JSON.parse(userInfoString).token;
-  //     } catch (e) { }
-  //   }
+    if (userInfoString) {
+      try {
+        userToken = JSON.parse(userInfoString).token;
+      } catch (e) { }
+    }
 
-  //   if (userToken) {
-  //     navigate("/shipping/address", { state: { productId: location?.state?.productId } });
-  //   } else {
-  //     toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
+    if (userToken) {
+      navigate("/shipping/address", { state: { productId: location?.state?.productId } });
+    } else {
+      toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
+    }
+  };
+
+  // --- BLAZE CHECKOUT INTEGRATION ---
+  // const handleProceedToCheckout = async () => {
+
+  //   try {
+
+  //     const payload = {
+  //       merchantId: "gemrishi",
+
+  //       env: "release",
+
+  //       shopUrl: "https://gemrishi.com",
+
+  //       cart: {
+  //         id: "cart_" + Date.now(),
+
+  //         currency: "INR",
+
+  //         itemCount: cartData.length,
+
+  //         initialPrice: totalAmount,
+
+  //         totalPrice: totalAmount,
+
+  //         totalDiscount: 0,
+
+  //         items: cartData.map((item) => ({
+  //           id: item.item._id,
+
+  //           title:
+  //             item.item.name ||
+  //             item.item.jewelryName,
+
+  //           quantity: item.quantity,
+
+  //           initialPrice: item.totalPrice,
+
+  //           finalPrice: item.totalPrice,
+
+  //           discount: 0,
+  //         })),
+  //       },
+  //     };
+
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+  //       payload
+  //     );
+
+  //     console.log("SIGN RESPONSE:", response.data);
+
+  //     await openBlazeCheckout({
+  //       cart: response.data.cart,
+
+  //       signature: response.data.signature,
+  //     });
+
+  //   } catch (err) {
+
+  //     console.error(err);
+
+  //     alert("Checkout failed");
   //   }
   // };
 
-  // --- BLAZE CHECKOUT INTEGRATION ---
-  const handleProceedToCheckout = async () => {
 
-    try {
+  // const handleProceedToCheckout = async () => {
 
-      const payload = {
-        merchantId: "gemrishi",
+  // try {
 
-        env: "release",
+  //     // CREATE BREEZE CART
 
-        shopUrl: "https://gemrishi.com",
+  //     const breezeCart = {
+  //       id: "cart_" + Date.now(),
 
-        cart: {
-          id: "cart_" + Date.now(),
+  //       currency: "INR",
 
-          currency: "INR",
+  //       itemCount: cartData.length,
 
-          itemCount: cartData.length,
+  //       initialPrice: totalAmount,
 
-          initialPrice: totalAmount,
+  //       totalPrice: totalAmount,
 
-          totalPrice: totalAmount,
+  //       totalDiscount: 0,
 
-          totalDiscount: 0,
+  //       items: cartData.map((item) => ({
+  //         id: item.item._id,
 
-          items: cartData.map((item) => ({
-            id: item.item._id,
+  //         title:
+  //           item.item.name ||
+  //           item.item.jewelryName,
 
-            title:
-              item.item.name ||
-              item.item.jewelryName,
+  //         quantity: item.quantity,
 
-            quantity: item.quantity,
+  //         initialPrice: item.totalPrice,
 
-            initialPrice: item.totalPrice,
+  //         finalPrice: item.totalPrice,
 
-            finalPrice: item.totalPrice,
+  //         discount: 0,
+  //       })),
+  //     };
 
-            discount: 0,
-          })),
-        },
-      };
+  //     // SIGN CART FROM BACKEND
 
-      const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-        payload
-      );
+  //     const response = await axios.post(
+  //       `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+  //       {
+  //         cart: breezeCart,
+  //       }
+  //     );
 
-      console.log("SIGN RESPONSE:", response.data);
+  //     console.log(
+  //       "SIGN RESPONSE:",
+  //       response.data
+  //     );
 
-      await openBlazeCheckout({
-        cart: response.data.cart,
+  //     // START CHECKOUT
 
-        signature: response.data.signature,
-      });
+  //     BlazeSDK.process(
+  //       {
+  //         requestId:
+  //           crypto.randomUUID(),
 
-    } catch (err) {
+  //         service:
+  //           "in.breeze.onecco",
 
-      console.error(err);
+  //         payload: {
+  //           action:
+  //             "startCheckout",
 
-      alert("Checkout failed");
-    }
-  };
+  //           cart:
+  //             response.data.cart,
+
+  //           signature:
+  //             response.data.signature,
+
+  //           keyId:
+  //             "YOUR_KEY_ID",
+
+  //           skipOTP: false,
+
+  //           customer: {
+  //             countryCode:
+  //               "+91",
+
+  //             phoneNumber:
+  //               shippingInfo.phone,
+
+  //             email:
+  //               shippingInfo.email,
+
+  //             name:
+  //               shippingInfo.name,
+  //           },
+
+  //           shippingAddress: {
+  //             postalCode:
+  //               shippingInfo.pincode,
+
+  //             country:
+  //               "India",
+
+  //             state:
+  //               shippingInfo.state,
+
+  //             district:
+  //               shippingInfo.city,
+
+  //             city:
+  //               shippingInfo.city,
+
+  //             type:
+  //               "Home",
+
+  //             line1:
+  //               shippingInfo.address,
+
+  //             name:
+  //               shippingInfo.name,
+
+  //             nickname:
+  //               "Home",
+
+  //             phoneNumber:
+  //               shippingInfo.phone,
+
+  //             landmark:
+  //               shippingInfo.landmark ||
+  //               "Near Area",
+
+  //             countryPhoneCode:
+  //               "+91",
+
+  //             isDefault:
+  //               true,
+  //           },
+
+  //           disableAddressSelection:
+  //             false,
+
+  //           hideAddress:
+  //             false,
+
+  //           hideOffersSection:
+  //             false,
+
+  //           hideUserProfile:
+  //             false,
+
+  //           hideTaxes:
+  //             false,
+
+  //           hideOffers:
+  //             false,
+
+  //           trackOrderCtaText:
+  //             "Track Order",
+  //         },
+  //       },
+
+  //       (res) => {
+
+  //         console.log(
+  //           "PROCESS RESPONSE:",
+  //           res
+  //         );
+  //       }
+  //     );
+
+  //   } catch (err) {
+
+  //     console.error(err);
+
+  //     alert("Checkout failed");
+  //   }
+  // };
 
 
 
