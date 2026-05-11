@@ -669,10 +669,15 @@
 let initialized = false;
 
 export const initBlaze = () => {
+
   if (initialized) return;
 
   if (!window.BlazeSDK) {
-    console.error("BlazeSDK not loaded");
+
+    console.error(
+      "BlazeSDK missing"
+    );
+
     return;
   }
 
@@ -680,23 +685,33 @@ export const initBlaze = () => {
 
   window.BlazeSDK.initiate(
     {
-      requestId: crypto.randomUUID(),
+      requestId:
+        crypto.randomUUID(),
 
-      service: "in.breeze.onecco",
+      service:
+        "in.breeze.onecco",
 
       payload: {
-        action: "initiate",
+        action:
+          "initiate",
 
-        merchantId: "gemrishi",
+        merchantId:
+          "gemrishi",
 
-        environment: "production",
+        environment:
+          "production",
 
-        integrationType: "redirection",
+        integrationType:
+          "redirection",
       },
     },
 
     (response) => {
-      console.log("BLAZE INIT:", response);
+
+      console.log(
+        "BLAZE INIT RESPONSE:",
+        response
+      );
     }
   );
 };

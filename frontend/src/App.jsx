@@ -326,16 +326,63 @@ function AppWrapper() {
 
 function App() {
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (window.BlazeSDK) {
-        initBlaze();
-        clearInterval(interval);
-      }
-    }, 500);
+useEffect(() => {
 
-    return () => clearInterval(interval);
-  }, []);
+  const loadBlazeSDK = () => {
+
+    // ALREADY LOADED
+
+    if (window.BlazeSDK) {
+
+      console.log(
+        "BlazeSDK already loaded"
+      );
+
+      initBlaze();
+
+      return;
+    }
+
+    // CREATE SCRIPT
+
+    const script =
+      document.createElement(
+        "script"
+      );
+
+    script.src =
+      "https://sdk.breeze.in/packages/blaze/0.1.0/cdn.js";
+
+    script.async = true;
+
+    // SUCCESS
+
+    script.onload = () => {
+
+      console.log(
+        "BlazeSDK loaded"
+      );
+
+      initBlaze();
+    };
+
+    // ERROR
+
+    script.onerror = () => {
+
+      console.error(
+        "Failed to load Blaze SDK"
+      );
+    };
+
+    document.body.appendChild(
+      script
+    );
+  };
+
+  loadBlazeSDK();
+
+}, []);
 
   return (
     <Provider store={store}>
