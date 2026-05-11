@@ -408,11 +408,60 @@ function PaymentPage() {
   };
 
 
-  // Breeze Checkout
-  const handleBreezeCheckout =
+  // Breeze Checkout xUIoFE0JyzY8NpYx0alt1
+const handleBreezeCheckout =
   async () => {
 
     try {
+
+      // WAIT FOR SDK
+
+      let retries = 0;
+
+      while (
+        (
+          !window.BlazeSDK ||
+          typeof window.BlazeSDK
+            .process !== "function"
+        ) &&
+        retries < 20
+      ) {
+
+        console.log(
+          "Waiting for BlazeSDK..."
+        );
+
+        await new Promise(
+          (resolve) =>
+            setTimeout(
+              resolve,
+              500
+            )
+        );
+
+        retries++;
+      }
+
+      // FINAL CHECK
+
+      if (
+        !window.BlazeSDK ||
+        typeof window.BlazeSDK
+          .process !== "function"
+      ) {
+
+        console.error(
+          "BlazeSDK process missing"
+        );
+
+        toast.error(
+          "Payment SDK failed to load"
+        );
+
+        return;
+      }
+
+      // SHIPPING DETAILS
 
       const shippingDetails =
         JSON.parse(
@@ -420,6 +469,8 @@ function PaymentPage() {
             "shippingDetails"
           )
         );
+
+      // BREEZE CART
 
       const breezeCart = {
         id:
@@ -476,8 +527,8 @@ function PaymentPage() {
         response.data
       );
 
-      // OPEN BREEZE 
-      
+      // PROCESS CHECKOUT
+
       window.BlazeSDK.process(
         {
           requestId:
@@ -504,56 +555,79 @@ function PaymentPage() {
                 "+91",
 
               phoneNumber:
-                shippingDetails.address.mobileNo,
+                shippingDetails
+                  .address
+                  .mobileNo,
 
               email:
-                shippingDetails.address.email,
+                shippingDetails
+                  .address
+                  .email,
 
               name:
-                shippingDetails.address.fullName,
+                shippingDetails
+                  .address
+                  .fullName,
             },
 
-            shippingAddress: {
-              postalCode:
-                shippingDetails.address.pinCode,
+            shippingAddress:
+              {
+                postalCode:
+                  shippingDetails
+                    .address
+                    .pinCode,
 
-              country:
-                "India",
+                country:
+                  "India",
 
-              state:
-                shippingDetails.address.state,
+                state:
+                  shippingDetails
+                    .address
+                    .state,
 
-              district:
-                shippingDetails.address.district,
+                district:
+                  shippingDetails
+                    .address
+                    .district,
 
-              city:
-                shippingDetails.address.city,
+                city:
+                  shippingDetails
+                    .address
+                    .city,
 
-              type:
-                "Home",
+                type:
+                  "Home",
 
-              line1:
-                shippingDetails.address.addressLine1,
+                line1:
+                  shippingDetails
+                    .address
+                    .addressLine1,
 
-              name:
-                shippingDetails.address.fullName,
+                name:
+                  shippingDetails
+                    .address
+                    .fullName,
 
-              nickname:
-                "Home",
+                nickname:
+                  "Home",
 
-              phoneNumber:
-                shippingDetails.address.mobileNo,
+                phoneNumber:
+                  shippingDetails
+                    .address
+                    .mobileNo,
 
-              landmark:
-                shippingDetails.address.landmark ||
-                "Near Area",
+                landmark:
+                  shippingDetails
+                    .address
+                    .landmark ||
+                  "Near Area",
 
-              countryPhoneCode:
-                "+91",
+                countryPhoneCode:
+                  "+91",
 
-              isDefault:
-                true,
-            },
+                isDefault:
+                  true,
+              },
           },
         },
 
