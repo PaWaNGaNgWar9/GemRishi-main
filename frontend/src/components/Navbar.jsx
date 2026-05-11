@@ -324,7 +324,7 @@ export default function Navbar({ handleLoginClick }) {
                   to={
                     isJewelry(item)
                       ? `/details/product/${item.slug || item._id}`
-                      : `/gemstones/${item.slug || item._id}`
+                      : appendRandomString(`/gemstones/${item.slug || item._id}`)
                   }
                   onClick={() => {
                     setIsResultsVisible(false);
