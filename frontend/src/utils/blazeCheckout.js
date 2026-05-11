@@ -670,35 +670,36 @@ let initialized = false;
 
 export const initBlaze = () => {
 
-  BlazeSDK.initiate(
-    {
-      requestId:
-        crypto.randomUUID(),
+window.BlazeSDK.initiate(
+  {
+    requestId:
+      crypto.randomUUID(),
 
-      service:
-        "in.breeze.onecco",
+    service:
+      "in.breeze.onecco",
 
-      payload: {
-        action:
-          "initiate",
+    payload: {
+      action:
+        "initiate",
 
-        merchantId:
-          "gemrishi",
+      merchantId:
+        "gemrishi",
 
-        environment:
-          "production",
+      environment:
+        "production",
 
-        integrationType:
-          "redirection",
-      },
+      integrationType:
+        "redirection",
     },
+  },
 
-    (response) => {
+  (response) => {
 
-      console.log(
-        "BLAZE INIT:",
-        response
-      );
-    }
-  );
+    console.log(
+      "BLAZE INIT:",
+      response
+    );
+  }
+);
+  
 };

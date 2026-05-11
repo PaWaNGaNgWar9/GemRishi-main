@@ -476,9 +476,9 @@ function PaymentPage() {
         response.data
       );
 
-      // OPEN BREEZE
-
-      BlazeSDK.process(
+      // OPEN BREEZE 
+      
+      window.BlazeSDK.process(
         {
           requestId:
             crypto.randomUUID(),
@@ -504,81 +504,56 @@ function PaymentPage() {
                 "+91",
 
               phoneNumber:
-                shippingDetails
-                  .address
-                  .mobileNo,
+                shippingDetails.address.mobileNo,
 
               email:
-                shippingDetails
-                  .address
-                  .email,
+                shippingDetails.address.email,
 
               name:
-                shippingDetails
-                  .address
-                  .fullName,
+                shippingDetails.address.fullName,
             },
 
-            shippingAddress:
-              {
-                postalCode:
-                  shippingDetails
-                    .address
-                    .pinCode,
+            shippingAddress: {
+              postalCode:
+                shippingDetails.address.pinCode,
 
-                country:
-                  shippingDetails
-                    .address
-                    .country,
+              country:
+                "India",
 
-                state:
-                  shippingDetails
-                    .address
-                    .state,
+              state:
+                shippingDetails.address.state,
 
-                district:
-                  shippingDetails
-                    .address
-                    .district,
+              district:
+                shippingDetails.address.district,
 
-                city:
-                  shippingDetails
-                    .address
-                    .city,
+              city:
+                shippingDetails.address.city,
 
-                type:
-                  "Home",
+              type:
+                "Home",
 
-                line1:
-                  shippingDetails
-                    .address
-                    .addressLine1,
+              line1:
+                shippingDetails.address.addressLine1,
 
-                name:
-                  shippingDetails
-                    .address
-                    .fullName,
+              name:
+                shippingDetails.address.fullName,
 
-                nickname:
-                  "Home",
+              nickname:
+                "Home",
 
-                phoneNumber:
-                  shippingDetails
-                    .address
-                    .mobileNo,
+              phoneNumber:
+                shippingDetails.address.mobileNo,
 
-                landmark:
-                  shippingDetails
-                    .address
-                    .landmark ||
-                  "Near Area",
+              landmark:
+                shippingDetails.address.landmark ||
+                "Near Area",
 
-                countryPhoneCode:
-                  "+91",
+              countryPhoneCode:
+                "+91",
 
-                isDefault:
-                  true,
-              },
+              isDefault:
+                true,
+            },
           },
         },
 
