@@ -405,6 +405,275 @@ function PaymentPage() {
     }
   };
 
+  const handleBreezeProceed = async () => {
+  try {
+
+    // SDK CHECK
+
+    if (
+      !window.BlazeSDKWeb ||
+      typeof window.BlazeSDKWeb.process !== "function"
+    ) {
+
+      console.error(
+        "BlazeSDKWeb missing"
+      );
+
+      toast.error(
+        "Payment SDK not loaded"
+      );
+
+      return;
+    }
+
+    // SHIPPING DETAILS
+
+    const shippingDetails =
+      JSON.parse(
+        localStorage.getItem(
+          "shippingDetails"
+        )
+      );
+
+    if (!shippingDetails?.address) {
+
+      toast.error(
+        "Shipping details missing"
+      );
+
+      return;
+    }
+
+    // BREEZE CART
+
+    const breezeCart = {
+      id:
+        "cart_" + Date.now(),
+
+      currency: "INR",
+
+      itemCount:
+        cartData.reduce(
+          (sum, item) =>
+            sum +
+            Number(item.quantity || 1),
+          0
+        ),
+
+      initialPrice:
+        Number(paymentTotalAmount),
+
+      totalPrice:
+        Number(paymentTotalAmount),
+
+      totalDiscount: 0,
+
+      items: cartData.map(
+        (item) => ({
+
+          id:
+            item.productId ||
+            item.jewelryId,
+
+          title:
+            item.name,
+
+          quantity:
+            Number(item.quantity),
+
+          initialPrice:
+            Number(item.price),
+
+          totalPrice:
+            Number(item.price) *
+            Number(item.quantity),
+
+          discount: 0,
+        })
+      ),
+    };
+
+    console.log(
+      "BREEZE CART:",
+      breezeCart
+    );
+
+    // SIGN CART
+
+    const response =
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+        {
+          cart: breezeCart,
+        }
+      );
+
+    console.log(
+      "SIGN RESPONSE:",
+      response.data
+    );
+
+    // PROCESS CHECKOUT
+
+    window.BlazeSDKWeb.process(
+
+      {
+        requestId:
+          crypto.randomUUID(),
+
+        service:
+          "in.breeze.onecco",
+
+        payload: {
+
+          action:
+            "startCheckout",
+
+          // IMPORTANT TEST
+          cart:
+            JSON.parse(
+              response.data.cart
+            ),
+
+          signature:
+            response.data.signature,
+
+          keyId:
+            "xUIoFE0JyzY8NpYx0alt1",
+
+          skipOTP: false,
+
+          customer: {
+
+            countryCode:
+              "91",
+
+            phoneNumber:
+              shippingDetails
+                .address
+                .mobileNo,
+
+            email:
+              shippingDetails
+                .address
+                .email,
+
+            name:
+              shippingDetails
+                .address
+                .fullName,
+          },
+
+          shippingAddress: {
+
+            postalCode:
+              shippingDetails
+                .address
+                .pinCode,
+
+            country:
+              "India",
+
+            state:
+              shippingDetails
+                .address
+                .state,
+
+            district:
+              shippingDetails
+                .address
+                .district,
+
+            city:
+              shippingDetails
+                .address
+                .city,
+
+            type:
+              "Home",
+
+            line1:
+              shippingDetails
+                .address
+                .addressLine1,
+
+            name:
+              shippingDetails
+                .address
+                .fullName,
+
+            nickname:
+              "Home",
+
+            phoneNumber:
+              shippingDetails
+                .address
+                .mobileNo,
+
+            landmark:
+              shippingDetails
+                .address
+                .landmark ||
+              "Near Area",
+
+            countryPhoneCode:
+              "+91",
+
+            isDefault:
+              true,
+          },
+
+          disableAddressSelection:
+            false,
+
+          hideAddress:
+            false,
+
+          hideOffersSection:
+            false,
+
+          hideUserProfile:
+            false,
+
+          hideTaxes:
+            false,
+
+          hideOffers:
+            false,
+        },
+      },
+
+      (res) => {
+
+        console.log(
+          "PROCESS RESPONSE:",
+          res
+        );
+
+        if (res?.error) {
+
+          console.error(
+            res.error
+          );
+
+          toast.error(
+            res.error.message ||
+            "Checkout failed"
+          );
+        }
+      }
+    );
+
+  } catch (err) {
+
+    console.error(err);
+
+    toast.error(
+      "Checkout failed"
+    );
+  }
+};
+
   if (loading) {
     return (
       <div className="w-full min-h-screen flex justify-center items-center">
@@ -545,7 +814,8 @@ function PaymentPage() {
               {/* Button */}
               <div className="w-full h-auto flex items-end mt-6">
                 <button
-                  onClick={handleProceed}
+                  // onClick={handleProceed}
+                  onClick={handleBreezeProceed}
                   className="w-full max-w-[458px] h-[60px] text-[20px] font-serif text-white bg-[#264A3F] rounded-[10px] cursor-pointer"
                 >
                   {paymentMethod === "cod"
