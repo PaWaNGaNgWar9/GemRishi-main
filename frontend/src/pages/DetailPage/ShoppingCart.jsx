@@ -295,7 +295,7 @@ function ShoppingCart() {
 
       console.log("SIGN RESPONSE:", response.data);
 
-      window.BlazeSDK.process({
+      BlazeSDK.process({
         requestId: "process_" + Date.now(),
 
         service: "in.breeze.onecco",
