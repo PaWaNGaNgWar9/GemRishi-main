@@ -398,9 +398,17 @@ export default function Navbar({ handleLoginClick }) {
               Results ({searchResults.length})
             </div>
             {searchResults.map((item) => (
-              <div
+              <Link
                 key={item._id}
-                onClick={() => handleClick(item)}
+                to={
+                  isJewelry(item)
+                    ? `/details/product/${item.slug || item._id}`
+                    : `/gemstones/${item.slug || item._id}`
+                }
+                onClick={() => {
+                  setIsResultsVisible(false);
+                  setIsSearchBarVisible(false);
+                }}
                 className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
               >
                 <img
@@ -408,11 +416,17 @@ export default function Navbar({ handleLoginClick }) {
                   alt=""
                   className="w-10 h-10 rounded-md object-cover bg-gray-100"
                 />
+
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-800 truncate">{getName(item)}</p>
-                  <p className="text-xs text-[#264A3F] font-semibold">{formatPrice(getPrice(item))}</p>
+                  <p className="text-sm font-medium text-gray-800 truncate">
+                    {getName(item)}
+                  </p>
+
+                  <p className="text-xs text-[#264A3F] font-semibold">
+                    {formatPrice(getPrice(item))}
+                  </p>
                 </div>
-              </div>
+              </Link>
             ))}
           </>
         )}
