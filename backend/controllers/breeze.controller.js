@@ -113,6 +113,11 @@ export const signCart =
 
     try {
 
+      console.log(
+        "REQUEST BODY:",
+        req.body
+      );
+
       const response =
         await axios.post(
           "https://apothiki.vercel.app/cart-sign-api",
@@ -125,19 +130,28 @@ export const signCart =
           }
         );
 
+      console.log(
+        "APOTHIKI RESPONSE:",
+        response.data
+      );
+
       return res.json(
         response.data
       );
 
     } catch (err) {
 
-      console.error(err);
+      console.error(
+        "SIGN CART ERROR:",
+        err.response?.data ||
+        err.message
+      );
 
       return res.status(500).json({
         success: false,
-        error: err.message,
+        error:
+          err.response?.data ||
+          err.message,
       });
     }
   };
-
-  
