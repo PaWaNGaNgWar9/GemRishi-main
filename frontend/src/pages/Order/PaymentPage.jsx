@@ -19,7 +19,7 @@ import {
 import WishlistButton from "../../components/wishlistButton";
 import VideoModal from "../../components/models/VideoModal";
 import { Play } from "lucide-react";
-// import BlazeSDK from "@juspay/blaze-sdk-web";
+import BlazeSDK from "@juspay/blaze-sdk-web";
 
 
 const products = [
@@ -464,19 +464,20 @@ const handleBreezeCheckout =
         items: cartData.map(
           (item) => ({
             id:
-              item.productId,
+              item.item?._id,
 
             title:
-              item.name,
+              item.item?.name ||
+              item.item?.jewelryName,
 
             quantity:
               item.quantity,
 
             initialPrice:
-              item.price,
+              Number(item.totalPrice),
 
             finalPrice:
-              item.price,
+              Number(item.totalPrice),
 
             discount: 0,
           })
@@ -501,7 +502,7 @@ const handleBreezeCheckout =
 
       // PROCESS CHECKOUT
 
-      window.BlazeSDK.process(
+      BlazeSDK.process(
         {
           requestId:
             crypto.randomUUID(),

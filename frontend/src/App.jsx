@@ -63,6 +63,8 @@ import RandomWrapper from "./components/RandomWrapper";
 import { generateRandomString } from "./utils/randomString";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import { initBlaze } from "./utils/blazeCheckout";
+import BlazeSDK from "@juspay/blaze-sdk-web";
+
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -326,65 +328,46 @@ function AppWrapper() {
 
 function App() {
 
-  useEffect(() => {
+useEffect(() => {
 
-    const waitForSDK =
-      setInterval(() => {
+  BlazeSDK.initiate(
+    {
+      requestId:
+        crypto.randomUUID(),
 
-        if (
-          window.BlazeSDK &&
-          typeof window.BlazeSDK
-            .initiate === "function"
-        ) {
+      service:
+        "in.breeze.onecco",
 
-          clearInterval(waitForSDK);
+      payload: {
+        action:
+          "initiate",
 
-          window.BlazeSDK.initiate(
-            {
-              requestId:
-                crypto.randomUUID(),
+        merchantId:
+          "gemrishi",
 
-              service:
-                "in.breeze.onecco",
+        environment:
+          "production",
 
-              payload: {
-                action:
-                  "initiate",
+        integrationType:
+          "redirection",
+      },
+    },
 
-                merchantId:
-                  "gemrishi",
+    (response) => {
 
-                environment:
-                  "production",
+      console.log(
+        "BLAZE INIT:",
+        response
+      );
 
-                integrationType:
-                  "redirection",
-              },
-            },
+      console.log(
+        "PROCESS:",
+        typeof BlazeSDK.process
+      );
+    }
+  );
 
-            (response) => {
-
-              console.log(
-                "BLAZE INIT:",
-                response
-              );
-
-              console.log(
-                "SDK OBJECT:",
-                window.BlazeSDK
-              );
-
-              console.log(
-                "PROCESS EXISTS:",
-                typeof window.BlazeSDK.process
-              );
-            }
-          );
-        }
-
-      }, 500);
-
-  }, []);
+}, []);
 
   return (
     <Provider store={store}>
