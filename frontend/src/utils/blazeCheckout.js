@@ -697,10 +697,13 @@ export const initBlaze = () => {
           "gemrishi",
 
         environment:
-          "production",
+          "release",
 
         integrationType:
           "redirection",
+
+        shopUrl:
+        "https://gemrishi.com",
       },
     },
 
