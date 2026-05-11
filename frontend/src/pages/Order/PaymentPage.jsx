@@ -19,6 +19,8 @@ import {
 import WishlistButton from "../../components/wishlistButton";
 import VideoModal from "../../components/models/VideoModal";
 import { Play } from "lucide-react";
+import BlazeSDK from "@juspay/blaze-sdk-web";
+
 
 const products = [
   {
@@ -405,6 +407,200 @@ function PaymentPage() {
     }
   };
 
+
+  // Breeze Checkout
+  const handleBreezeCheckout =
+  async () => {
+
+    try {
+
+      const shippingDetails =
+        JSON.parse(
+          localStorage.getItem(
+            "shippingDetails"
+          )
+        );
+
+      const breezeCart = {
+        id:
+          "cart_" + Date.now(),
+
+        currency: "INR",
+
+        itemCount:
+          cartData.length,
+
+        initialPrice:
+          paymentTotalAmount,
+
+        totalPrice:
+          paymentTotalAmount,
+
+        totalDiscount: 0,
+
+        items: cartData.map(
+          (item) => ({
+            id:
+              item.productId,
+
+            title:
+              item.name,
+
+            quantity:
+              item.quantity,
+
+            initialPrice:
+              item.price,
+
+            finalPrice:
+              item.price,
+
+            discount: 0,
+          })
+        ),
+      };
+
+      // SIGN CART
+
+      const response =
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+          {
+            cart:
+              breezeCart,
+          }
+        );
+
+      console.log(
+        "SIGN RESPONSE:",
+        response.data
+      );
+
+      // OPEN BREEZE
+
+      BlazeSDK.process(
+        {
+          requestId:
+            crypto.randomUUID(),
+
+          service:
+            "in.breeze.onecco",
+
+          payload: {
+            action:
+              "startCheckout",
+
+            cart:
+              response.data.cart,
+
+            signature:
+              response.data.signature,
+
+            keyId:
+              "xUIoFE0JyzY8NpYx0alt1",
+
+            customer: {
+              countryCode:
+                "+91",
+
+              phoneNumber:
+                shippingDetails
+                  .address
+                  .mobileNo,
+
+              email:
+                shippingDetails
+                  .address
+                  .email,
+
+              name:
+                shippingDetails
+                  .address
+                  .fullName,
+            },
+
+            shippingAddress:
+              {
+                postalCode:
+                  shippingDetails
+                    .address
+                    .pinCode,
+
+                country:
+                  shippingDetails
+                    .address
+                    .country,
+
+                state:
+                  shippingDetails
+                    .address
+                    .state,
+
+                district:
+                  shippingDetails
+                    .address
+                    .district,
+
+                city:
+                  shippingDetails
+                    .address
+                    .city,
+
+                type:
+                  "Home",
+
+                line1:
+                  shippingDetails
+                    .address
+                    .addressLine1,
+
+                name:
+                  shippingDetails
+                    .address
+                    .fullName,
+
+                nickname:
+                  "Home",
+
+                phoneNumber:
+                  shippingDetails
+                    .address
+                    .mobileNo,
+
+                landmark:
+                  shippingDetails
+                    .address
+                    .landmark ||
+                  "Near Area",
+
+                countryPhoneCode:
+                  "+91",
+
+                isDefault:
+                  true,
+              },
+          },
+        },
+
+        (res) => {
+
+          console.log(
+            "PROCESS RESPONSE:",
+            res
+          );
+        }
+      );
+
+    } catch (err) {
+
+      console.error(err);
+
+      toast.error(
+        "Checkout failed"
+      );
+    }
+  };
+
   if (loading) {
     return (
       <div className="w-full min-h-screen flex justify-center items-center">
@@ -421,7 +617,8 @@ function PaymentPage() {
           <ShoppingMap activeStep={3} />
           <div className="w-full flex px-4 md:px-6 lg:px-30">
             <div className="w-full h-auto flex flex-col justify-end">
-              <div className="w-full h-auto lg:h-[90px] mb-4">
+
+              {/* <div className="w-full h-auto lg:h-[90px] mb-4">
                 <div>
                   <label
                     htmlFor="couponCode"
@@ -457,10 +654,10 @@ function PaymentPage() {
 
               <div className="text-2xl font-semibold text-[#264A3F] mb-4">
                 Payment Options
-              </div>
+              </div> */}
 
               {/* Online Payment */}
-              <div
+              {/* <div
                 className={`w-full rounded-[10px] flex flex-col justify-center p-4 cursor-pointer
                         ${paymentMethod === "online"
                     ? "border-2 border-[#0EC78E]"
@@ -509,10 +706,10 @@ function PaymentPage() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               {/*COD */}
-              <div
+              {/* <div
                 type="radio"
                 name="payment"
                 value="cod"
@@ -540,12 +737,13 @@ function PaymentPage() {
               <span className="text-sm text-red-500 mt-2">
                 Note: If Product is above 5000 and below 20000 Rs then 10%
                 online payment you have to complete(for COD)
-              </span>
+              </span> */}
 
               {/* Button */}
               <div className="w-full h-auto flex items-end mt-6">
                 <button
-                  onClick={handleProceed}
+                  // onClick={handleProceed}
+                  onClick={handleBreezeCheckout}
                   className="w-full max-w-[458px] h-[60px] text-[20px] font-serif text-white bg-[#264A3F] rounded-[10px] cursor-pointer"
                 >
                   {paymentMethod === "cod"
@@ -553,6 +751,7 @@ function PaymentPage() {
                     : "Confirm & Proceed"}
                 </button>
               </div>
+
               {/* */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
                 {upSellingProducts?.products.length === 0 ? (
