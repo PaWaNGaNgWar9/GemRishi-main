@@ -531,9 +531,7 @@ function PaymentPage() {
 
           // IMPORTANT TEST
           cart:
-            JSON.parse(
-              response.data.cart
-            ),
+            response.data.cart,
 
           signature:
             response.data.signature,
