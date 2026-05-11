@@ -464,8 +464,8 @@ export const apiSlice = createApi({
     }),
 
     getUpsellingProductList: builder.query({
-      query: () => ({
-        url: "/product/upselling-product-list",
+      query: (productId) => ({
+        url: `/product/upselling-product-list/${productId}`,
         method: "GET",
         credentials: "include",
       }),

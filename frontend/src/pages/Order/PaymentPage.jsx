@@ -90,7 +90,15 @@ function PaymentPage() {
 
   // console.log("cartdata", cartData);
 
-  const { data: upSellingProducts } = useGetUpsellingProductListQuery();
+  const productIdForUpsell =
+    location.state?.productId || cartData?.[0]?.productId;
+
+  const { data: upSellingProducts } = useGetUpsellingProductListQuery(
+    productIdForUpsell,
+    {
+      skip: !productIdForUpsell,
+    }
+  );
 
   useEffect(() => {
     const fetchData = async () => {
