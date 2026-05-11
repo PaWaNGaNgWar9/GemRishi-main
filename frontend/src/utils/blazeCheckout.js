@@ -577,7 +577,7 @@ export const initBlaze = () => {
       payload: {
         merchantId: "gemrishi",
 
-        env: "release",
+        environment: "production",
 
         shopUrl:
           "https://gemrishi.com",
@@ -653,7 +653,7 @@ export const openBlazeCheckout =
           merchantId:
             "gemrishi",
 
-          env: "release",
+          environment: "production",
 
           shopUrl:
             "https://gemrishi.com",
