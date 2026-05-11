@@ -461,11 +461,7 @@ const handleBreezeCheckout =
 
         currency: "INR",
 
-        itemCount: cartData.reduce(
-          (sum, item) =>
-            sum + Number(item.quantity),
-          0
-        ),
+        itemCount: cartData.length,
 
         initialPrice: Number(paymentTotalAmount),
 
@@ -476,10 +472,13 @@ const handleBreezeCheckout =
         items: cartData.map((item) => ({
           id:
             item.productId ||
-            item.jewelryId,
+            item.jewelryId ||
+            item._id,
 
           title:
-            item.name,
+            item.name ||
+            item.jewelryName ||
+            "Product",
 
           quantity:
             Number(item.quantity),
@@ -487,7 +486,7 @@ const handleBreezeCheckout =
           initialPrice:
             Number(item.price),
 
-          totalPrice:
+          finalPrice:
             Number(item.price) *
             Number(item.quantity),
 
