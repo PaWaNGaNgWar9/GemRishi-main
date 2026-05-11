@@ -328,7 +328,56 @@ function App() {
 
   useEffect(() => {
 
-    initBlaze();
+    const waitForSDK =
+      setInterval(() => {
+
+        if (
+          window.BlazeSDK &&
+          typeof window.BlazeSDK
+            .initiate === "function"
+        ) {
+
+          clearInterval(waitForSDK);
+
+          window.BlazeSDK.initiate(
+            {
+              requestId:
+                crypto.randomUUID(),
+
+              service:
+                "in.breeze.onecco",
+
+              payload: {
+                action:
+                  "initiate",
+
+                merchantId:
+                  "gemrishi",
+
+                environment:
+                  "production",
+
+                integrationType:
+                  "redirection",
+              },
+            },
+
+            (response) => {
+
+              console.log(
+                "BLAZE INIT:",
+                response
+              );
+
+              console.log(
+                "SDK OBJECT:",
+                window.BlazeSDK
+              );
+            }
+          );
+        }
+
+      }, 500);
 
   }, []);
 
