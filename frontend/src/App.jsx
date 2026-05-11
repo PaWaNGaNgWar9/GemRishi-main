@@ -358,15 +358,8 @@ BlazeSDK.initiate(
 
   (response) => {
 
-    console.log(
-      "BLAZE INIT:",
-      response
-    );
+  console.log(response);
 
-    console.log(
-      "PROCESS:",
-      typeof BlazeSDK.process
-    );
   }
 );
 
