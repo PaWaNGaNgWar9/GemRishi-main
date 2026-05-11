@@ -670,18 +670,16 @@ let initialized = false;
 
 export const initBlaze = () => {
 
-  if (initialized) return;
-
-  if (!window.BlazeSDK) {
+  if (
+    !window.BlazeSDK
+  ) {
 
     console.error(
-      "BlazeSDK missing"
+      "SDK unavailable"
     );
 
     return;
   }
-
-  initialized = true;
 
   window.BlazeSDK.initiate(
     {
@@ -709,7 +707,7 @@ export const initBlaze = () => {
     (response) => {
 
       console.log(
-        "BLAZE INIT RESPONSE:",
+        "INIT RESPONSE:",
         response
       );
     }

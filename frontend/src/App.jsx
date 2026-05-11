@@ -328,59 +328,32 @@ function App() {
 
 useEffect(() => {
 
-  const loadBlazeSDK = () => {
-
-    // ALREADY LOADED
-
-    if (window.BlazeSDK) {
+  const timer =
+    setTimeout(() => {
 
       console.log(
-        "BlazeSDK already loaded"
+        "WINDOW SDK:",
+        window.BlazeSDK
       );
 
-      initBlaze();
+      if (
+        window.BlazeSDK
+      ) {
 
-      return;
-    }
+        initBlaze();
 
-    // CREATE SCRIPT
+      } else {
 
-    const script =
-      document.createElement(
-        "script"
-      );
+        console.error(
+          "BlazeSDK still missing"
+        );
 
-    script.src =
-      "https://sdk.breeze.in/packages/blaze/0.1.0/cdn.js";
+      }
 
-    script.async = true;
+    }, 3000);
 
-    // SUCCESS
-
-    script.onload = () => {
-
-      console.log(
-        "BlazeSDK loaded"
-      );
-
-      initBlaze();
-    };
-
-    // ERROR
-
-    script.onerror = () => {
-
-      console.error(
-        "Failed to load Blaze SDK"
-      );
-    };
-
-    document.body.appendChild(
-      script
-    );
-  };
-
-  loadBlazeSDK();
+  return () =>
+    clearTimeout(timer);
 
 }, []);
 
