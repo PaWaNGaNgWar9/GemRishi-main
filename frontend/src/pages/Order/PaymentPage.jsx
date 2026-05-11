@@ -463,7 +463,7 @@ function PaymentPage() {
       initialPrice:
         Number(paymentTotalAmount),
 
-      finalPrice:
+      totalPrice:
         Number(paymentTotalAmount),
 
       totalDiscount: 0,
