@@ -514,10 +514,12 @@ const handleBreezeCheckout =
 
             keyId:
               "xUIoFE0JyzY8NpYx0alt1",
+            
+            skipOTP: false,
 
             customer: {
               countryCode:
-                "+91",
+                "91",
 
               phoneNumber:
                 shippingDetails

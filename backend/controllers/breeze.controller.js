@@ -43,9 +43,7 @@ import fs from "fs";
 import path from "path";
 
 export const signCart = async (req, res) => {
-
   try {
-
     const breezeCart = req.body.cart;
 
     console.log("CART:", breezeCart);
@@ -55,18 +53,23 @@ export const signCart = async (req, res) => {
     const cartString =
       JSON.stringify(breezeCart);
 
-    // READ PRIVATE KEY
+    // PRIVATE KEY
 
     const privateKey =
       fs.readFileSync(
-        path.resolve("private-key.pem"),
+        path.join(
+          process.cwd(),
+          "private-key.pem"
+        ),
         "utf8"
       );
 
-    // CREATE SIGNATURE
+    // SIGN
 
     const signer =
-      crypto.createSign("RSA-SHA256");
+      crypto.createSign(
+        "RSA-SHA256"
+      );
 
     signer.update(cartString);
 
@@ -77,8 +80,6 @@ export const signCart = async (req, res) => {
         privateKey,
         "base64"
       );
-
-    // RETURN
 
     return res.json({
       success: true,
