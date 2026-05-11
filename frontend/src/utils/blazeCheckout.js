@@ -670,22 +670,26 @@ let initialized = false;
 
 export const initBlaze = () => {
 
-  if (initialized) return;
-
   BlazeSDK.initiate(
     {
-      requestId: "init_" + Date.now(),
+      requestId:
+        crypto.randomUUID(),
 
-      service: "in.breeze.onecco",
+      service:
+        "in.breeze.onecco",
 
       payload: {
-        action: "initiate",
+        action:
+          "initiate",
 
-        merchantId: "gemrishi",
+        merchantId:
+          "gemrishi",
 
-        environment: "production",
+        environment:
+          "production",
 
-        integrationType: "redirection",
+        integrationType:
+          "redirection",
       },
     },
 
@@ -697,6 +701,4 @@ export const initBlaze = () => {
       );
     }
   );
-
-  initialized = true;
 };
