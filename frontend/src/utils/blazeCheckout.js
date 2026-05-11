@@ -663,43 +663,56 @@
 //   };
 
 
-
-import BlazeSDK from "@juspay/blaze-sdk-web";
-
 let initialized = false;
 
 export const initBlaze = () => {
 
-window.BlazeSDK.initiate(
-  {
-    requestId:
-      crypto.randomUUID(),
+  const waitForSDK = setInterval(() => {
 
-    service:
-      "in.breeze.onecco",
+    if (
+      window.BlazeSDK &&
+      typeof window.BlazeSDK.initiate ===
+        "function"
+    ) {
 
-    payload: {
-      action:
-        "initiate",
+      clearInterval(waitForSDK);
 
-      merchantId:
-        "gemrishi",
+      console.log(
+        "BLAZE SDK LOADED"
+      );
 
-      environment:
-        "production",
+      window.BlazeSDK.initiate(
+        {
+          requestId:
+            crypto.randomUUID(),
 
-      integrationType:
-        "redirection",
-    },
-  },
+          service:
+            "in.breeze.onecco",
 
-  (response) => {
+          payload: {
+            action:
+              "initiate",
 
-    console.log(
-      "BLAZE INIT:",
-      response
-    );
-  }
-);
-  
+            merchantId:
+              "gemrishi",
+
+            environment:
+              "production",
+
+            integrationType:
+              "redirection",
+          },
+        },
+
+        (response) => {
+
+          console.log(
+            "BLAZE INIT:",
+            response
+          );
+        }
+      );
+    }
+
+  }, 500);
 };
