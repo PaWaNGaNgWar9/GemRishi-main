@@ -63,8 +63,6 @@ import RandomWrapper from "./components/RandomWrapper";
 import { generateRandomString } from "./utils/randomString";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import { initBlaze } from "./utils/blazeCheckout";
-import BlazeSDK from "@juspay/blaze-sdk-web";
-
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -328,42 +326,16 @@ function AppWrapper() {
 
 function App() {
 
-useEffect(() => {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (window.BlazeSDK) {
+        initBlaze();
+        clearInterval(interval);
+      }
+    }, 500);
 
-BlazeSDK.initiate(
-  {
-    requestId:
-      crypto.randomUUID(),
-
-    service:
-      "in.breeze.onecco",
-
-    payload: {
-      action:
-        "initiate",
-
-      clientId:
-        "gemrishi",
-
-      merchantId:
-        "gemrishi",
-
-      environment:
-        "production",
-
-      integrationType:
-        "redirection",
-    },
-  },
-
-  (response) => {
-
-  console.log(response);
-
-  }
-);
-
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Provider store={store}>

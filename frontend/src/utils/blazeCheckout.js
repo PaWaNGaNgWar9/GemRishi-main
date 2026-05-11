@@ -663,56 +663,40 @@
 //   };
 
 
-// let initialized = false;
 
-// export const initBlaze = () => {
+// import BlazeSDK from "@juspay/blaze-sdk-web";
 
-//   const waitForSDK = setInterval(() => {
+let initialized = false;
 
-//     if (
-//       window.BlazeSDK &&
-//       typeof window.BlazeSDK.initiate ===
-//         "function"
-//     ) {
+export const initBlaze = () => {
+  if (initialized) return;
 
-//       clearInterval(waitForSDK);
+  if (!window.BlazeSDK) {
+    console.error("BlazeSDK not loaded");
+    return;
+  }
 
-//       console.log(
-//         "BLAZE SDK LOADED"
-//       );
+  initialized = true;
 
-//       window.BlazeSDK.initiate(
-//         {
-//           requestId:
-//             crypto.randomUUID(),
+  window.BlazeSDK.initiate(
+    {
+      requestId: crypto.randomUUID(),
 
-//           service:
-//             "in.breeze.onecco",
+      service: "in.breeze.onecco",
 
-//           payload: {
-//             action:
-//               "initiate",
+      payload: {
+        action: "initiate",
 
-//             merchantId:
-//               "gemrishi",
+        merchantId: "gemrishi",
 
-//             environment:
-//               "production",
+        environment: "production",
 
-//             integrationType:
-//               "redirection",
-//           },
-//         },
+        integrationType: "redirection",
+      },
+    },
 
-//         (response) => {
-
-//           console.log(
-//             "BLAZE INIT:",
-//             response
-//           );
-//         }
-//       );
-//     }
-
-//   }, 500);
-// };
+    (response) => {
+      console.log("BLAZE INIT:", response);
+    }
+  );
+};
