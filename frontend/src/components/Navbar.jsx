@@ -296,17 +296,21 @@ export default function Navbar({ handleLoginClick }) {
       const slug = item.slug || item._id;
       const { appendRandomString } = require("../utils/randomString");
 
-      const baseUrl = isJewelry(item) ? `/details/product/${slug}` : `/gemstones/${slug}`;
+      const baseUrl = isJewelry(item)
+        ? `/details/product/${slug}`
+        : `/gemstones/${slug}`;
 
-      // navigate(appendRandomString(baseUrl));
+      // Navigate FIRST
+      navigate(appendRandomString(baseUrl));
 
+      // Then close UI
       setIsResultsVisible(false);
-      setSearchQuery("");
       setIsSearchBarVisible(false);
 
-        setTimeout(() => {
-          navigate(appendRandomString(baseUrl));
-        }, 100);
+      // Optional
+      setTimeout(() => {
+        setSearchQuery("");
+      }, 100);
     };
 
     return (
