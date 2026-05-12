@@ -690,8 +690,8 @@ export const initBlaze = () => {
         "in.breeze.onecco",
 
       payload: {
-        action:
-          "initiate",
+        // action:
+        //   "initiate",
 
         merchantId:
           "gemrishi",
@@ -699,8 +699,8 @@ export const initBlaze = () => {
         environment:
           "release",
 
-        integrationType:
-          "redirection",
+        // integrationType:
+        //   "redirection",
 
         shopUrl:
         "https://gemrishi.com",
