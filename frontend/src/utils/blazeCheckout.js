@@ -671,7 +671,7 @@ let initialized = false;
 export const initBlaze = () => {
 
   if (
-    !window.BlazeSDK
+    !window.BlazeSDKWeb
   ) {
 
     console.error(
@@ -681,7 +681,7 @@ export const initBlaze = () => {
     return;
   }
 
-  window.BlazeSDK.initiate(
+  window.BlazeSDKWeb.initiate(
     {
       requestId:
         crypto.randomUUID(),

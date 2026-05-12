@@ -451,7 +451,13 @@ function PaymentPage() {
 
       currency: "INR",
 
-      itemCount: cartData.length,
+      itemCount:
+        cartData.reduce(
+          (sum, item) =>
+            sum +
+            Number(item.quantity || 1),
+          0
+        ),
 
       initialPrice: Number(paymentTotalAmount),
 
