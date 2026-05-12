@@ -444,56 +444,6 @@ function PaymentPage() {
       return;
     }
 
-    // BREEZE CART
-
-    // const breezeCart = {
-    //   id: "cart_" + Date.now(),
-
-    //   breezeCartId:
-    //     "cart_" + Date.now(),
-
-    //   currency: "INR",
-
-    //   itemCount:
-    //     cartData.reduce(
-    //       (sum, item) =>
-    //         sum +
-    //         Number(item.quantity || 1),
-    //       0
-    //     ),
-
-    //   initialPrice: Number(paymentTotalAmount),
-
-    //   finalPrice: Number(paymentTotalAmount),
-
-    //   totalDiscount: 0,
-
-    //   items: cartData.map((item) => ({
-
-    //     id:
-    //       String(
-    //         item.productId ||
-    //         item.jewelryId
-    //       ),
-
-    //     initialPrice:
-    //       Number(item.price),
-
-    //     finalPrice:
-    //       Number(item.price) *
-    //       Number(item.quantity || 1),
-
-    //     discount: 0,
-
-    //     quantity:
-    //       Number(item.quantity || 1),
-
-    //     title:
-    //       item.name,
-
-    //   })),
-    // };
-
     const cartId =
       "cart_" + Date.now();
 
@@ -572,7 +522,6 @@ function PaymentPage() {
     );
 
     // PROCESS CHECKOUT
-
     window.BlazeSDKWeb.process(
 
       {
@@ -587,7 +536,6 @@ function PaymentPage() {
           action:
             "startCheckout",
 
-          // IMPORTANT TEST
           cart: response.data.cart,
 
           signature:
