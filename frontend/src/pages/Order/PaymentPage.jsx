@@ -486,7 +486,7 @@ function PaymentPage() {
           Number(item.price) *
           Number(item.quantity || 1),
 
-        discount: 0,
+        totalDiscount: 0,
 
       })),
     };
