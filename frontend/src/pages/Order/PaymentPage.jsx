@@ -495,7 +495,7 @@ function PaymentPage() {
     // };
 
     const cartId =
-    "cart_" + Date.now();
+      "cart_" + Date.now();
 
     const breezeCart = {
 
@@ -533,6 +533,12 @@ function PaymentPage() {
               item.jewelryId
             ),
 
+          title:
+            item.name,
+
+          quantity:
+            Number(item.quantity || 1),
+
           initialPrice:
             Number(item.price),
 
@@ -542,11 +548,14 @@ function PaymentPage() {
 
           discount: 0,
 
-          quantity:
-            Number(item.quantity || 1),
+          weight: 100,
 
-          title:
-            item.name,
+          tax: 0,
+
+          image:
+            item.image ||
+            item.thumbnail ||
+            "https://gemrishi.com/logo.png",
         })),
     };
 
