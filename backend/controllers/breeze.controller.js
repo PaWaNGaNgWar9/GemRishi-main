@@ -210,7 +210,8 @@ export const signCart =
       return res.json({
         success: true,
 
-        cart: breezeCart,
+        cart:
+          cartString,
 
         signature,
       });
