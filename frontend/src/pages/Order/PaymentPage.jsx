@@ -449,6 +449,9 @@ function PaymentPage() {
     const breezeCart = {
       id: "cart_" + Date.now(),
 
+      breezeCartId:
+        "cart_" + Date.now(),
+
       currency: "INR",
 
       itemCount:
@@ -487,7 +490,7 @@ function PaymentPage() {
 
         title:
           item.name,
-          
+
       })),
     };
 
@@ -535,8 +538,6 @@ function PaymentPage() {
 
           keyId:
             "xUIoFE0JyzY8NpYx0alt1",
-
-          skipOTP: false,
 
           customer: {
 
