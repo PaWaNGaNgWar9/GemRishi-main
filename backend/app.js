@@ -341,7 +341,9 @@ app.use("/api/v1/reviewRating", reviewRatingRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/metalRates", metalRates);
+
 app.use("/api/v1/breeze", breezeRoutes);
+
 app.use("/api/v1/originCountryMap", originCountryMap);
 app.use("/api/v1/retailerCart", retailerCartRoutes);
 app.use("/api/v1/emailSub", emailSubRoutes);

@@ -463,7 +463,7 @@ function PaymentPage() {
 
       finalPrice: Number(paymentTotalAmount),
 
-      discount: 0,
+      totalDiscount: 0,
 
       items: cartData.map((item) => ({
 
@@ -473,14 +473,20 @@ function PaymentPage() {
             item.jewelryId
           ),
 
-        name:
+        title:
           item.name,
 
         quantity:
           Number(item.quantity || 1),
 
-        price:
+        initialPrice:
           Number(item.price),
+
+        finalPrice:
+          Number(item.price) *
+          Number(item.quantity || 1),
+
+        discount: 0,
 
       })),
     };
