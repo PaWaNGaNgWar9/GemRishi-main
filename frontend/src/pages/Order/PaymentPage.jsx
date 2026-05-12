@@ -473,12 +473,6 @@ function PaymentPage() {
             item.jewelryId
           ),
 
-        title:
-          item.name,
-
-        quantity:
-          Number(item.quantity || 1),
-
         initialPrice:
           Number(item.price),
 
@@ -486,8 +480,14 @@ function PaymentPage() {
           Number(item.price) *
           Number(item.quantity || 1),
 
-        totalDiscount: 0,
+        discount: 0,
 
+        quantity:
+          Number(item.quantity || 1),
+
+        title:
+          item.name,
+          
       })),
     };
 
