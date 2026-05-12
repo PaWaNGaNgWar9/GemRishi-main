@@ -541,7 +541,7 @@ function PaymentPage() {
           customer: {
 
             countryCode:
-              "+91",
+              "91",
 
             phoneNumber:
               String(
@@ -550,7 +550,7 @@ function PaymentPage() {
                   .mobileNo
               ).replace(/\D/g, ""),
 
-            emailAddress:
+            email:
               shippingDetails
                 .address
                 .email,
@@ -563,7 +563,7 @@ function PaymentPage() {
 
           shippingAddress: {
 
-            pincode:
+            postalCode:
               shippingDetails
                 .address
                 .pinCode,
@@ -613,7 +613,7 @@ function PaymentPage() {
                 .landmark ||
               "Near Area",
 
-            countryCode:
+            countryPhoneCode:
               "+91",
 
             isDefault:
