@@ -528,10 +528,11 @@ function PaymentPage() {
         (item) => ({
 
           id:
-            String(
-              item.productId ||
-              item.jewelryId
-            ),
+            item.productId
+              ? String(item.productId)
+              : item.jewelryId
+              ? String(item.jewelryId)
+              : crypto.randomUUID(),
 
           title:
             item.name,
