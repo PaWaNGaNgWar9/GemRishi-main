@@ -168,61 +168,50 @@ import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
-export const signCart =
-  async (req, res) => {
+export const signCart = async (req, res) => {
+  try {
 
-    try {
+    const breezeCart = req.body.cart;
 
-      const breezeCart =
-        req.body.cart;
+    const cartString = JSON.stringify(
+      breezeCart
+    );
 
-      const cartString =
-        JSON.stringify(
-          breezeCart
-        );
+    const privateKey = fs.readFileSync(
+      path.join(
+        process.cwd(),
+        "private-key.pem"
+      ),
+      "utf8"
+    );
 
-      const privateKey =
-        fs.readFileSync(
-          path.join(
-            process.cwd(),
-            "private-key.pem"
-          ),
-          "utf8"
-        );
-
-      const signer =
-        crypto.createSign(
-          "RSA-SHA256"
-        );
-
-      signer.update(
-        cartString
+    const signer =
+      crypto.createSign(
+        "RSA-SHA256"
       );
 
-      signer.end();
+    signer.update(cartString);
 
-      const signature =
-        signer.sign(
-          privateKey,
-          "base64"
-        );
+    signer.end();
 
-      return res.json({
-        success: true,
+    const signature = signer.sign(
+      privateKey,
+      "base64"
+    );
 
-        cart:
-          cartString,
+    return res.json({
+      success: true,
+      cart: breezeCart,
+      signature,
+    });
 
-        signature,
-      });
+  } catch (err) {
 
-    } catch (err) {
+    console.error(err);
 
-      console.error(err);
-
-      return res.status(500).json({
-        success: false,
-        error: err.message,
-      });
-    }
-  };
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};

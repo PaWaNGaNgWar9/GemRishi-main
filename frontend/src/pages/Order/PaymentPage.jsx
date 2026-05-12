@@ -447,50 +447,36 @@ function PaymentPage() {
     // BREEZE CART
 
     const breezeCart = {
-      id:
-        "cart_" + Date.now(),
+      id: "cart_" + Date.now(),
 
       currency: "INR",
 
-      itemCount:
-        cartData.reduce(
-          (sum, item) =>
-            sum +
-            Number(item.quantity || 1),
-          0
-        ),
+      itemCount: cartData.length,
 
-      initialPrice:
-        Number(paymentTotalAmount),
+      initialPrice: Number(paymentTotalAmount),
 
-      totalPrice:
-        Number(paymentTotalAmount),
+      finalPrice: Number(paymentTotalAmount),
 
-      totalDiscount: 0,
+      discount: 0,
 
-      items: cartData.map(
-        (item) => ({
+      items: cartData.map((item) => ({
 
-          id:
+        id:
+          String(
             item.productId ||
-            item.jewelryId,
+            item.jewelryId
+          ),
 
-          title:
-            item.name,
+        name:
+          item.name,
 
-          quantity:
-            Number(item.quantity),
+        quantity:
+          Number(item.quantity || 1),
 
-          initialPrice:
-            Number(item.price),
+        price:
+          Number(item.price),
 
-          finalPrice:
-            Number(item.price) *
-            Number(item.quantity),
-
-          discount: 0,
-        })
-      ),
+      })),
     };
 
     console.log(
@@ -530,7 +516,7 @@ function PaymentPage() {
             "startCheckout",
 
           // IMPORTANT TEST
-          cart: JSON.parse(response.data.cart),
+          cart: response.data.cart,
 
           signature:
             response.data.signature,
