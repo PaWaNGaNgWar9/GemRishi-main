@@ -446,13 +446,67 @@ function PaymentPage() {
 
     // BREEZE CART
 
+    // const breezeCart = {
+    //   id: "cart_" + Date.now(),
+
+    //   breezeCartId:
+    //     "cart_" + Date.now(),
+
+    //   currency: "INR",
+
+    //   itemCount:
+    //     cartData.reduce(
+    //       (sum, item) =>
+    //         sum +
+    //         Number(item.quantity || 1),
+    //       0
+    //     ),
+
+    //   initialPrice: Number(paymentTotalAmount),
+
+    //   finalPrice: Number(paymentTotalAmount),
+
+    //   totalDiscount: 0,
+
+    //   items: cartData.map((item) => ({
+
+    //     id:
+    //       String(
+    //         item.productId ||
+    //         item.jewelryId
+    //       ),
+
+    //     initialPrice:
+    //       Number(item.price),
+
+    //     finalPrice:
+    //       Number(item.price) *
+    //       Number(item.quantity || 1),
+
+    //     discount: 0,
+
+    //     quantity:
+    //       Number(item.quantity || 1),
+
+    //     title:
+    //       item.name,
+
+    //   })),
+    // };
+
+    const cartId =
+    "cart_" + Date.now();
+
     const breezeCart = {
-      id: "cart_" + Date.now(),
+
+      id:
+        cartId,
 
       breezeCartId:
-        "cart_" + Date.now(),
+        cartId,
 
-      currency: "INR",
+      currency:
+        "INR",
 
       itemCount:
         cartData.reduce(
@@ -462,36 +516,38 @@ function PaymentPage() {
           0
         ),
 
-      initialPrice: Number(paymentTotalAmount),
+      initialPrice:
+        Number(paymentTotalAmount),
 
-      finalPrice: Number(paymentTotalAmount),
+      finalPrice:
+        Number(paymentTotalAmount),
 
       totalDiscount: 0,
 
-      items: cartData.map((item) => ({
+      items: cartData.map(
+        (item) => ({
 
-        id:
-          String(
-            item.productId ||
-            item.jewelryId
-          ),
+          id:
+            String(
+              item.productId ||
+              item.jewelryId
+            ),
 
-        initialPrice:
-          Number(item.price),
+          initialPrice:
+            Number(item.price),
 
-        finalPrice:
-          Number(item.price) *
-          Number(item.quantity || 1),
+          finalPrice:
+            Number(item.price) *
+            Number(item.quantity || 1),
 
-        discount: 0,
+          discount: 0,
 
-        quantity:
-          Number(item.quantity || 1),
+          quantity:
+            Number(item.quantity || 1),
 
-        title:
-          item.name,
-
-      })),
+          title:
+            item.name,
+        })),
     };
 
     console.log(
