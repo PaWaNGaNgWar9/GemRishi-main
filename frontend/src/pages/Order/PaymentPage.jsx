@@ -548,15 +548,6 @@ function PaymentPage() {
             Number(item.quantity || 1),
 
           discount: 0,
-
-          weight: 100,
-
-          tax: 0,
-
-          image:
-            item.image ||
-            item.thumbnail ||
-            "https://gemrishi.com/logo.png",
         })),
     };
 
