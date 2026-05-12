@@ -411,12 +411,12 @@ function PaymentPage() {
     // SDK CHECK
 
     if (
-      !window.BlazeSDKWeb ||
-      typeof window.BlazeSDKWeb.process !== "function"
+      !window.BlazeSDK ||
+      typeof window.BlazeSDK.process !== "function"
     ) {
 
       console.error(
-        "BlazeSDKWeb missing"
+        "BlazeSDK missing"
       );
 
       toast.error(
@@ -515,7 +515,7 @@ function PaymentPage() {
 
     // PROCESS CHECKOUT
 
-    window.BlazeSDKWeb.process(
+    window.BlazeSDK.process(
 
       {
         requestId:

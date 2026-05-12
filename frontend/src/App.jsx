@@ -326,36 +326,36 @@ function AppWrapper() {
 
 function App() {
 
-useEffect(() => {
+  useEffect(() => {
 
-  const timer =
-    setTimeout(() => {
+    const timer =
+      setTimeout(() => {
 
-      console.log(
-        "WINDOW SDK:",
-        window.BlazeSDKWeb
-      );
-
-      if (
-        window.BlazeSDKWeb
-      ) {
-
-        initBlaze();
-
-      } else {
-
-        console.error(
-          "BlazeSDK still missing"
+        console.log(
+          "WINDOW SDK:",
+          window.BlazeSDK
         );
 
-      }
+        if (
+          window.BlazeSDK
+        ) {
 
-    }, 3000);
+          initBlaze();
 
-  return () =>
-    clearTimeout(timer);
+        } else {
 
-}, []);
+          console.error(
+            "BlazeSDK still missing"
+          );
+
+        }
+
+      }, 3000);
+
+    return () =>
+      clearTimeout(timer);
+
+  }, []);
 
   return (
     <Provider store={store}>
