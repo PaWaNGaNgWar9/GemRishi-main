@@ -333,11 +333,11 @@ function App() {
 
         console.log(
           "WINDOW SDK:",
-          window.BlazeSDK
+          window.BlazeSDKWeb
         );
 
         if (
-          window.BlazeSDK
+          window.BlazeSDKWeb
         ) {
 
           initBlaze();

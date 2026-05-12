@@ -411,8 +411,8 @@ function PaymentPage() {
     // SDK CHECK
 
     if (
-      !window.BlazeSDK ||
-      typeof window.BlazeSDK.process !== "function"
+      !window.BlazeSDKWeb ||
+      typeof window.BlazeSDKWeb.process !== "function"
     ) {
 
       console.error(
@@ -501,7 +501,7 @@ function PaymentPage() {
 
     // PROCESS CHECKOUT
 
-    window.BlazeSDK.process(
+    window.BlazeSDKWeb.process(
 
       {
         requestId:
