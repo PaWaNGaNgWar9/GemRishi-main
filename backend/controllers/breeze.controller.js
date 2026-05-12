@@ -211,7 +211,7 @@ export const signCart =
         success: true,
 
         cart:
-          breezeCart,
+          cartString,
 
         signature,
       });
