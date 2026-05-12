@@ -530,8 +530,7 @@ function PaymentPage() {
             "startCheckout",
 
           // IMPORTANT TEST
-          cart:
-            response.data.cart,
+          cart: JSON.parse(response.data.cart),
 
           signature:
             response.data.signature,
