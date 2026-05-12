@@ -697,7 +697,7 @@ export const initBlaze = () => {
           "gemrishi",
 
         environment:
-          "release",
+          "production",
 
         // integrationType:
         //   "redirection",
