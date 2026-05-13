@@ -817,14 +817,14 @@ function PaymentPage() {
               {/* Button */}
               <div className="w-full h-auto flex items-end mt-6">
                 <button
-                  // onClick={handleProceed}
-                  onClick={handleBreezeProceed}
+                  onClick={handleProceed}
+                  // onClick={handleBreezeProceed}
                   className="w-full max-w-[458px] h-[60px] text-[20px] font-serif text-white bg-[#264A3F] rounded-[10px] cursor-pointer"
                 >
-                  {/* {paymentMethod === "cod"
+                  {paymentMethod === "cod"
                     ? "Place Order with Cash on Delivery"
-                    : "Confirm & Proceed"} */}
-                    Confirm
+                    : "Confirm & Proceed"}
+                    {/* Confirm */}
                 </button>
               </div>
               {/* */}
