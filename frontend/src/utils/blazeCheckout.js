@@ -697,7 +697,7 @@ export const initBlaze = () => {
           "gemrishi",
 
         environment:
-          "smbrelease",
+          "smbRelease",
 
         // integrationType:
         //   "redirection",
