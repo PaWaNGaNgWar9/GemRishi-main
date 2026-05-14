@@ -531,11 +531,10 @@ export default function Navbar({ handleLoginClick }) {
   onMouseEnter={() => setHoveredMenu("jewellery")}
   onMouseLeave={() => setHoveredMenu(null)}
 >
-  <div className="flex items-center gap-1 text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors">
-    <span>JEWELLERY</span>
-
+  <div className="flex items-center gap-1 text-sm font-semibold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
+    JEWELLERY{" "}
     <KeyboardArrowDownIcon
-      className={`w-4 h-4 transition-all duration-300 ${
+      className={`w-4 h-4 transition-transform ${
         hoveredMenu === "jewellery" ? "rotate-180" : ""
       }`}
     />
@@ -543,22 +542,13 @@ export default function Navbar({ handleLoginClick }) {
 
   <AnimatePresence>
     {hoveredMenu === "jewellery" && (
-      <div
-        className="absolute left-0 top-full z-50"
-        onMouseEnter={() => setHoveredMenu("jewellery")}
-        onMouseLeave={() => setHoveredMenu(null)}
-      >
-        <PremiumDropdown
-          align="left"
-          className="min-w-[750px] max-w-[850px]"
-        >
-          <JewelleryModal
-            onHover={() => setHoveredMenu("jewellery")}
-            onMouseLeave={() => setHoveredMenu(null)}
-            closeNavbar={() => {}}
-          />
-        </PremiumDropdown>
-      </div>
+      <PremiumDropdown wide align="left">
+        <JewelleryModal
+          onHover={() => setHoveredMenu("jewellery")}
+          onMouseLeave={() => setHoveredMenu(null)}
+          closeNavbar={() => {}}
+        />
+      </PremiumDropdown>
     )}
   </AnimatePresence>
 </li>
