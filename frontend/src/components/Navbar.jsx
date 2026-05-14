@@ -520,8 +520,12 @@ export default function Navbar({ handleLoginClick }) {
                 </div>
                 <AnimatePresence>
                   {hoveredMenu === "jewellery" && (
-                    <PremiumDropdown align="left">
-                      <JewelleryModal onHover={() => setHoveredMenu("jewellery")} onMouseLeave={() => setHoveredMenu(null)} closeNavbar={() => { }} />
+                    <PremiumDropdown>
+                      <JewelleryModal 
+                        onHover={() => setHoveredMenu("jewellery")} 
+                        onMouseLeave={() => setHoveredMenu(null)} 
+                        closeNavbar={() => { }} 
+                      />
                     </PremiumDropdown>
                   )}
                 </AnimatePresence>
