@@ -496,7 +496,7 @@ export default function Navbar({ handleLoginClick }) {
                 </div>
                 <AnimatePresence>
                   {hoveredMenu === "gemstones" && (
-                    <PremiumDropdown wide align="left">
+                    <PremiumDropdown>
                       <CategoryModal
                         onHover={() => setHoveredMenu("gemstones")}
                         onMouseLeave={() => setHoveredMenu(null)}
