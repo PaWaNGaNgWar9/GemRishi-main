@@ -509,7 +509,7 @@ export default function Navbar({ handleLoginClick }) {
               </li>
 
               {/* Jewellery */}
-              {/* <li
+              <li
                 className="relative h-[75px] flex items-center group cursor-pointer"
                 onMouseEnter={() => setHoveredMenu("jewellery")}
                 onMouseLeave={() => setHoveredMenu(null)}
@@ -520,38 +520,13 @@ export default function Navbar({ handleLoginClick }) {
                 </div>
                 <AnimatePresence>
                   {hoveredMenu === "jewellery" && (
-                    <PremiumDropdown>
+                    <PremiumDropdown wide align="left">
                       <JewelleryModal onHover={() => setHoveredMenu("jewellery")} onMouseLeave={() => setHoveredMenu(null)} closeNavbar={() => { }} />
                     </PremiumDropdown>
                   )}
                 </AnimatePresence>
-              </li> */}
-<li
-  className="relative h-[75px] flex items-center group cursor-pointer"
-  onMouseEnter={() => setHoveredMenu("jewellery")}
-  onMouseLeave={() => setHoveredMenu(null)}
->
-  <div className="flex items-center gap-1 text-sm font-semibold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
-    JEWELLERY
-    <KeyboardArrowDownIcon
-      className={`w-4 h-4 transition-transform duration-300 ${
-        hoveredMenu === "jewellery" ? "rotate-180" : ""
-      }`}
-    />
-  </div>
+              </li>
 
-  <AnimatePresence>
-    {hoveredMenu === "jewellery" && (
-      <PremiumDropdown wide align="left">
-        <JewelleryModal
-          onHover={() => setHoveredMenu("jewellery")}
-          onMouseLeave={() => setHoveredMenu(null)}
-          closeNavbar={() => {}}
-        />
-      </PremiumDropdown>
-    )}
-  </AnimatePresence>
-</li>
               <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
                 BLOGS
               </li>
