@@ -527,7 +527,7 @@ export default function Navbar({ handleLoginClick }) {
                 </AnimatePresence>
               </li>
 
-              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://blogs.gemrishi.com/")}>
+              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
                 BLOGS
               </li>
               <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/suggest")}>
@@ -776,7 +776,7 @@ export default function Navbar({ handleLoginClick }) {
                         )}
                       </AnimatePresence>
                     </div>
-                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { window.open("https://blogs.gemrishi.com/"); setIsNavOpen(false); }}>Our Blogs</div>
+                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { window.open("https://gemrishi.com/blogs"); setIsNavOpen(false); }}>Our Blogs</div>
                     <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/suggest"); setIsNavOpen(false); }}>Gem Suggestion</div>
                     <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/aboutUs"); setIsNavOpen(false); }}>About Us</div>
                     <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/contactUs"); setIsNavOpen(false); }}>Contact Us</div>
