@@ -542,23 +542,16 @@ export default function Navbar({ handleLoginClick }) {
 
   <AnimatePresence>
     {hoveredMenu === "jewellery" && (
-      <div
-        className="absolute top-full left-0 z-50"
-        onMouseEnter={() => setHoveredMenu("jewellery")}
-        onMouseLeave={() => setHoveredMenu(null)}
-      >
-        <PremiumDropdown wide align="left">
-          <JewelleryModal
-            onHover={() => setHoveredMenu("jewellery")}
-            onMouseLeave={() => setHoveredMenu(null)}
-            closeNavbar={() => {}}
-          />
-        </PremiumDropdown>
-      </div>
+      <PremiumDropdown wide align="left">
+        <JewelleryModal
+          onHover={() => setHoveredMenu("jewellery")}
+          onMouseLeave={() => setHoveredMenu(null)}
+          closeNavbar={() => {}}
+        />
+      </PremiumDropdown>
     )}
   </AnimatePresence>
 </li>
-
               <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
                 BLOGS
               </li>
