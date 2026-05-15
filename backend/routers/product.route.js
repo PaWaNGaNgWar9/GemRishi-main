@@ -94,82 +94,83 @@ const gemstoneUpdateValidators = [
   },
 ];
 
-router.get("/excel-data", async (req, res) => {
-  try {
-    console.log("🔥 Excel JSON API HIT");
+// router.get("/excel-data", async (req, res) => {
+//   try {
+//     console.log("🔥 Excel JSON API HIT");
 
-    const products = await Product.find();
+//     const products = await Product.find();
 
-    const formatted = products.map(p => ({
-      sku: p.sku || "",
-      name: p.name || "",
-      origin: p.origin || "",
-      carat: p.carat || 0,
-      ratti: p.ratti || 0,
-      price: p.price || 0,
-      sellPrice: p.sellPrice || 0,
-      stock: p.stock || 0,
-      shape: p.shape || "",
-      color: p.color || "",
-      cut: p.cut || "",
-      isAvailable: p.isAvailable || false,
-      isFeatured: p.isFeatured || false,
-      image: p.images?.[0]?.url || "",
-      createdAt: p.createdAt || ""
-    }));
+//     const formatted = products.map(p => ({
+//       sku: p.sku || "",
+//       name: p.name || "",
+//       origin: p.origin || "",
+//       carat: p.carat || 0,
+//       ratti: p.ratti || 0,
+//       price: p.price || 0,
+//       sellPrice: p.sellPrice || 0,
+//       stock: p.stock || 0,
+//       shape: p.shape || "",
+//       color: p.color || "",
+//       cut: p.cut || "",
+//       isAvailable: p.isAvailable || false,
+//       isFeatured: p.isFeatured || false,
+//       image: p.images?.[0]?.url || "",
+//       createdAt: p.createdAt || ""
+//     }));
 
-    res.json(formatted);
+//     res.json(formatted);
 
-  } catch (err) {
-    console.error("❌ Excel JSON Error:", err);
-    res.status(500).json({
-      success: false,
-      message: err.message
-    });
-  }
-});
+//   } catch (err) {
+//     console.error("❌ Excel JSON Error:", err);
+//     res.status(500).json({
+//       success: false,
+//       message: err.message
+//     });
+//   }
+// });
 
-router.get("/excel", async (req, res) => {
-  try {
-    console.log("🔥 Excel API HIT");
+// router.get("/excel", async (req, res) => {
+//   try {
+//     console.log("🔥 Excel API HIT");
 
-    const products = await Product.find();
+//     const products = await Product.find();
 
-    const safe = (val) => {
-      return `"${(val || "")
-        .toString()
-        .replace(/"/g, '""')}"`;
-    };
+//     const safe = (val) => {
+//       return `"${(val || "")
+//         .toString()
+//         .replace(/"/g, '""')}"`;
+//     };
 
-    let csv =
-      "id,title,description,link,image_link,availability,price,brand\n";
+//     let csv =
+//       "id,title,description,link,image_link,availability,price,brand\n";
 
-    products.forEach(p => {
-      const image = p.images?.[0]?.url || "";
+//     products.forEach(p => {
+//       const image = p.images?.[0]?.url || "";
 
-      const availability = p.stock > 0 ? "in stock" : "out of stock";
+//       const availability = p.stock > 0 ? "in stock" : "out of stock";
 
-      csv += [
-        safe(p.sku),
-        safe(p.name),
-        safe(p.description),
-        safe(`https://gemrishi.com/product/${p.slug}`),
-        safe(`https://gemrishi.com${image}`),
-        safe(availability),
-        safe(`${p.price} INR`),
-        safe("GemRishi")
-      ].join(",") + "\n";   // ✅ VERY IMPORTANT
-    });
+//       csv += [
+//         safe(p.sku),
+//         safe(p.name),
+//         safe(p.description),
+//         safe(`https://gemrishi.com/product/${p.slug}`),
+//         safe(`https://gemrishi.com${image}`),
+//         safe(availability),
+//         safe(`${p.price} INR`),
+//         safe("GemRishi")
+//       ].join(",") + "\n";   // ✅ VERY IMPORTANT
+//     });
 
-    res.setHeader("Content-Type", "text/csv");
-    res.setHeader("Content-Disposition", "inline");
-    res.send(csv);
+//     res.setHeader("Content-Type", "text/csv");
+//     res.setHeader("Content-Disposition", "inline");
+//     res.send(csv);
 
-  } catch (err) {
-    console.error("❌ Excel API Error:", err);
-    res.status(500).send(`Error: ${err.message}`);
-  }
-});
+//   } catch (err) {
+//     console.error("❌ Excel API Error:", err);
+//     res.status(500).send(`Error: ${err.message}`);
+//   }
+// });
+
 
 router.get("/search", searchApi);
 router.get("/filter", filterProducts);

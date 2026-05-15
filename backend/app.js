@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import "./cron/orderCleanup.js";
 import fs from "fs";
 import breezeRoutes from "./routers/breeze.route.js";
+import googleMerchantRoutes from "./routers/googleMerchant.route.js";
 
 
 
@@ -325,7 +326,9 @@ app.use(`${apiVersion}/admin`, adminRouter);
 app.use("/api/v1/superAdmin", superAdminRouter);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/retailer", retailerRoutes);
+
 app.use("/api/v1/product", productRoutes);
+
 app.use("/api/v1/jewelry", jewelryRoutes);
 app.use("/api/v1/order", orderRoutes);
 app.use("/api/v1/dashboard", dashboardRoutes);
@@ -350,6 +353,8 @@ app.use("/api/v1/emailSub", emailSubRoutes);
 app.use("/api/v1/buyBackReq", buyBackReqRoutes);
 app.use("/api/v1/offer", offerRoutes);
 app.use("/api/v1/contactUs", contactUsRoutes);
+
+app.use("/api/v1/google-merchant", googleMerchantRoutes);
 
 app.use("/breeze", breezeRoutes);
 
