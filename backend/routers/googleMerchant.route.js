@@ -68,12 +68,20 @@ router.get("/excel-data", async (req, res) => {
 
     // CSV Header (Google Merchant required fields)
     let csv =
-      "id,title,description,link,image_link,availability,price,condition,brand\n";
-
+      "id,title,description,link,image_link,additional_image_link,availability,price,condition,brand\n";
+      
     products.forEach((p) => {
-      const image = p.images?.[0]?.url
+
+      // Main image
+      const mainImage = p.images?.[0]?.url
         ? `https://api.gemrishi.com${p.images[0].url}`
         : "";
+
+      // Additional images
+      const additionalImages = p.images
+        ?.slice(1)
+        .map((img) => `https://api.gemrishi.com${img.url}`)
+        .join(",");
 
       const link =
         `https://gemrishi.com/gemstones/${p.slug}/dsbhhrujifiuhed4ot340ot04ewgto`;
@@ -86,14 +94,19 @@ router.get("/excel-data", async (req, res) => {
         safe(p.name),
         safe(p.description || ""),
         safe(link),
-        safe(image),
+
+        // Main image
+        safe(mainImage),
+
+        // Additional images
+        safe(additionalImages || ""),
+
         safe(availability),
         safe(`${p.price} INR`),
         safe("new"),
         safe("GemRishi"),
       ].join(",") + "\n";
     });
-
     // Important headers
     res.setHeader("Content-Type", "text/csv");
 
