@@ -49,7 +49,6 @@
 
 // export default router;
 
-
 import { Router } from "express";
 import { Product } from "../models/product.model.js";
 
@@ -61,15 +60,15 @@ router.get("/excel-data", async (req, res) => {
 
     const products = await Product.find();
 
-    // Escape CSV values safely
+    // Escape CSV safely
     const safe = (value) => {
       return `"${String(value || "").replace(/"/g, '""')}"`;
     };
 
-    // CSV Header (Google Merchant required fields)
+    // CSV Header
     let csv =
-      "id,title,description,link,image_link,additional_image_link,availability,price,condition,brand\n";
-      
+      "id,title,description,link,image_link,additional_image_link,additional_image_link,additional_image_link,availability,price,condition,brand\n";
+
     products.forEach((p) => {
 
       // Main image
@@ -77,15 +76,16 @@ router.get("/excel-data", async (req, res) => {
         ? `https://api.gemrishi.com${p.images[0].url}`
         : "";
 
-      // Additional images
+      // Additional images separately
       const additionalImages = p.images
-        ?.slice(1)
-        .map((img) => `https://api.gemrishi.com${img.url}`)
-        .join(",");
+        ?.slice(1, 4)
+        .map((img) => `https://api.gemrishi.com${img.url}`) || [];
 
+      // Product URL
       const link =
         `https://gemrishi.com/gemstones/${p.slug}/dsbhhrujifiuhed4ot340ot04ewgto`;
 
+      // Availability
       const availability =
         p.stock > 0 ? "in stock" : "out of stock";
 
@@ -99,7 +99,9 @@ router.get("/excel-data", async (req, res) => {
         safe(mainImage),
 
         // Additional images
-        safe(additionalImages || ""),
+        safe(additionalImages[0] || ""),
+        safe(additionalImages[1] || ""),
+        safe(additionalImages[2] || ""),
 
         safe(availability),
         safe(`${p.price} INR`),
@@ -107,7 +109,8 @@ router.get("/excel-data", async (req, res) => {
         safe("GemRishi"),
       ].join(",") + "\n";
     });
-    // Important headers
+
+    // Headers
     res.setHeader("Content-Type", "text/csv");
 
     res.setHeader(
