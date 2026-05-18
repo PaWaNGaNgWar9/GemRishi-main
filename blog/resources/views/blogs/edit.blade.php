@@ -4,6 +4,58 @@
 
 @section('content')
 
+<style>
+
+    /* QUILL TOOLBAR STICKY */
+    .ql-toolbar.ql-snow {
+
+        position: sticky;
+
+        top: 72px; /* header height */
+
+        z-index: 10;
+
+        background: white;
+
+        border-top-left-radius: 1rem;
+
+        border-top-right-radius: 1rem;
+
+        border-bottom: 1px solid #e4e4e7;
+
+    }
+    
+    /* EDITOR AREA */
+    .ql-container {
+
+        min-height: 450px;
+
+        font-size: 16px;
+
+    }
+
+    /* OPTIONAL BETTER SCROLL */
+    #editor {
+
+        max-height: 800px;
+
+        overflow-y: auto;
+
+    }
+
+        .ql-editor iframe {
+
+        width: 100%;
+
+        min-height: 450px;
+
+        border-radius: 16px;
+
+    }
+
+</style>
+
+
 <section class="py-10 bg-zinc-100 min-h-screen">
 
     <form method="POST"
@@ -569,7 +621,7 @@
 
                 [{ color: [] }, { background: [] }],
 
-                ['link', 'image', 'video'],
+                ['link', 'video'],
 
                 ['clean']
 
