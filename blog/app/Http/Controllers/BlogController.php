@@ -12,12 +12,12 @@ class BlogController extends Controller
     public function index()
     {
         $blogs = Blog::with('category')
-            ->where('is_published', true)
+            ->where('status', 'published')
             ->latest('published_at')
             ->paginate(3);
 
         $featuredBlogs = Blog::where('is_featured', true)
-            ->where('is_published', true)
+            ->where('status', 'published')
             ->latest('published_at')
             ->take(3)
             ->get();
@@ -30,7 +30,7 @@ class BlogController extends Controller
 
     public function show(Blog $blog)
     {
-        abort_if(!$blog->is_published, 404);
+        abort_if($blog->status !== 'published', 404);
 
         $sessionKey = 'blog_viewed_' . $blog->id;
 
@@ -43,7 +43,7 @@ class BlogController extends Controller
 
         $relatedBlogs = Blog::where('id', '!=', $blog->id)
             ->where('blog_category_id', $blog->blog_category_id)
-            ->where('is_published', true)
+            ->where('status', 'published')
             ->latest('published_at')
             ->take(3)
             ->get();
@@ -56,8 +56,7 @@ class BlogController extends Controller
 
     public function list()
     {
-        $blogs = Blog::latest()
-            ->paginate(2);
+        $blogs = Blog::latest()->paginate(2);
 
         return view(
             'blogs.list',
@@ -96,6 +95,7 @@ class BlogController extends Controller
 
             // AUTHOR
             'author_name' => 'required|max:255',
+            'status' => 'required|in:draft,published',
 
         ]);
 
@@ -115,7 +115,7 @@ class BlogController extends Controller
             );
         }
 
-        Blog::create([
+        $blog = Blog::create([
 
             // BASIC
             'title' => $request->title,
@@ -145,9 +145,12 @@ class BlogController extends Controller
             'author_name' => $request->author_name,
 
             // STATUS
-            'is_published' => true,
+            'status' => $request->status,
 
-            'published_at' => now(),
+            'published_at' =>
+                        $request->status === 'published'
+                            ? now()
+                            : null,
 
             // STATS
             'views' => 0,
@@ -167,7 +170,9 @@ class BlogController extends Controller
             ->route('blogs.list')
             ->with(
                 'success',
-                'Blog created successfully.'
+                $request->status === 'published'
+                    ? 'Blog published successfully.'
+                    : 'Draft saved successfully.'
             );
     }   
     
@@ -203,6 +208,8 @@ class BlogController extends Controller
             'featured_image' => 'nullable|image|mimes:jpg,jpeg,png,webp',
 
             'author_name' => 'required|max:255',
+
+            'status' => 'required|in:draft,published',
 
         ]);
 
@@ -260,6 +267,13 @@ class BlogController extends Controller
 
             'author_name' => $request->author_name,
 
+            'status' => $request->status,
+
+            'published_at' =>
+                $request->status === 'published'
+                    ? now()
+                    : null,
+
             'reading_time' =>
                 ceil(
                     str_word_count(
@@ -270,11 +284,18 @@ class BlogController extends Controller
         ]);
 
         return redirect()
-            ->route('blogs.list')
-            ->with(
-                'success',
-                'Blog updated successfully.'
-            );
+            ->route('blogs.edit', $blog->id)
+            ->with([
+
+                'success' => $request->status === 'published'
+                    ? 'Blog updated & published successfully.'
+                    : 'Draft updated successfully.',
+
+                'blog_link' => $request->status === 'published'
+                    ? route('blogs.show', $blog->slug)
+                    : null,
+
+            ]);
     }
 
     public function destroy($id)

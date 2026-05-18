@@ -11,115 +11,76 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('blogs', function (Blueprint $table) {
+        Schema::create('blogs', function (Blueprint $table) {
 
-        $table->id();
+            $table->id();
 
-        // BASIC
-        $table->string('title');
-        $table->string('slug')->unique();
+            // BASIC
+            $table->string('title');
+            $table->string('slug')->unique();
 
-        $table->text('excerpt')->nullable();
+            $table->text('excerpt')->nullable();
 
-        $table->longText('content');
+            $table->longText('content');
 
-        $table->foreignId('blog_category_id')
-            ->constrained()
-            ->cascadeOnDelete();
+            $table->foreignId('blog_category_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-        /*
-        |--------------------------------------------------------------------------
-        | SEO
-        |--------------------------------------------------------------------------
-        */
+            $table->string('meta_title')->nullable();
 
-        $table->string('meta_title')->nullable();
+            $table->string('meta_description', 160)->nullable();
 
-        $table->string('meta_description', 160)->nullable();
+            $table->text('meta_keywords')->nullable();
 
-        $table->text('meta_keywords')->nullable();
+            $table->string('canonical_url')->nullable();
 
-        $table->string('canonical_url')->nullable();
+            $table->string('og_title')->nullable();
 
-        $table->string('og_title')->nullable();
+            $table->text('og_description')->nullable();
 
-        $table->text('og_description')->nullable();
+            $table->string('og_image')->nullable();
 
-        $table->string('og_image')->nullable();
+            $table->string('schema_type')
+                ->default('Article');
 
-        $table->string('schema_type')
-            ->default('Article');
+            $table->boolean('indexable')
+                ->default(true);
 
-        $table->boolean('indexable')
-            ->default(true);
+            $table->string('featured_image')->nullable();
 
-        /*
-        |--------------------------------------------------------------------------
-        | MEDIA
-        |--------------------------------------------------------------------------
-        */
+            $table->string('featured_image_alt')->nullable();
 
-        $table->string('featured_image')->nullable();
+            $table->string('banner_image')->nullable();
 
-        $table->string('featured_image_alt')->nullable();
+            $table->json('tags')->nullable();
 
-        $table->string('banner_image')->nullable();
+            $table->string('author_name')
+                ->default('GemRishi');
 
-        /*
-        |--------------------------------------------------------------------------
-        | TAGS
-        |--------------------------------------------------------------------------
-        */
+            $table->enum('status', ['draft', 'published'])
+                ->default('draft');
 
-        $table->json('tags')->nullable();
+            $table->boolean('is_published')
+                ->default(false);
 
-        /*
-        |--------------------------------------------------------------------------
-        | AUTHOR
-        |--------------------------------------------------------------------------
-        */
+            $table->timestamp('published_at')
+                ->nullable();
 
-        $table->string('author_name')
-            ->default('GemRishi');
+            $table->unsignedBigInteger('views')
+                ->default(0);
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATUS
-        |--------------------------------------------------------------------------
-        */
+            $table->unsignedInteger('reading_time')
+                ->nullable();
 
-        $table->boolean('is_published')
-            ->default(false);
+            $table->boolean('is_featured')
+                ->default(false);
 
-        $table->timestamp('published_at')
-            ->nullable();
+            $table->integer('sort_order')
+                ->default(0);
 
-        /*
-        |--------------------------------------------------------------------------
-        | STATS
-        |--------------------------------------------------------------------------
-        */
-
-        $table->unsignedBigInteger('views')
-            ->default(0);
-
-        $table->unsignedInteger('reading_time')
-            ->nullable();
-
-        /*
-        |--------------------------------------------------------------------------
-        | FEATURED
-        |--------------------------------------------------------------------------
-        */
-
-        $table->boolean('is_featured')
-            ->default(false);
-
-        $table->integer('sort_order')
-            ->default(0);
-
-        $table->timestamps();
-    });
+            $table->timestamps();
+        });
     }
 
     /**

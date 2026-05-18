@@ -47,11 +47,24 @@
                 <!-- ACTION -->
                 <div class="flex items-center gap-4">
 
-                    <button type="submit"
-                            class="h-14 px-8 rounded-2xl bg-green-900 text-white font-bold shadow-lg shadow-green-900/20 hover:opacity-90 transition">
+                    <!-- DRAFT -->
+                    <button
+                        type="submit"
+                        name="status"
+                        value="draft"
+                        class="h-14 px-8 rounded-2xl bg-gray-700 text-white font-bold shadow-lg hover:opacity-90 transition"
+                    >
+                        Save as Draft
+                    </button>
 
+                    <!-- PUBLISH -->
+                    <button
+                        type="submit"
+                        name="status"
+                        value="published"
+                        class="h-14 px-8 rounded-2xl bg-green-900 text-white font-bold shadow-lg shadow-green-900/20 hover:opacity-90 transition"
+                    >
                         Publish Blog
-
                     </button>
 
                 </div>

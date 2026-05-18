@@ -48,14 +48,59 @@
                 <!-- ACTION -->
                 <div class="flex items-center gap-4">
 
-                    <button type="submit"
-                            class="h-14 px-8 rounded-2xl bg-green-900 text-white font-bold shadow-lg shadow-green-900/20 hover:opacity-90 transition">
+                    <!-- DRAFT -->
+                    <button
+                        type="submit"
+                        name="status"
+                        value="draft"
+                        class="h-14 px-8 rounded-2xl bg-gray-700 text-white font-bold shadow-lg hover:opacity-90 transition"
+                    >
+                        Save as Draft
+                    </button>
 
+                    <!-- PUBLISH -->
+                    <button
+                        type="submit"
+                        name="status"
+                        value="published"
+                        class="h-14 px-8 rounded-2xl bg-green-900 text-white font-bold shadow-lg shadow-green-900/20 hover:opacity-90 transition"
+                    >
                         Publish Blog
-
                     </button>
 
                 </div>
+
+@if($blog->status === 'published')
+
+    <div class="mb-6 rounded-2xl border border-green-200 bg-green-50 p-5">
+
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+
+            <div>
+
+                <h3 class="text-lg font-bold text-green-800">
+                    Blog Published
+                </h3>
+
+                <p class="text-sm text-gray-600 mt-1">
+                    Your blog is live now.
+                </p>
+
+            </div>
+
+            <a
+                href="{{ route('blogs.show', $blog->slug) }}"
+                target="_blank"
+                class="inline-flex items-center gap-2 rounded-xl bg-green-900 px-5 py-3 text-sm font-semibold text-white hover:opacity-90 transition"
+            >
+                View Blog
+            </a>
+
+        </div>
+
+    </div>
+
+@endif
 
             </div>
 

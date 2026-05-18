@@ -42,7 +42,7 @@ class Blog extends Model
         'author_name',
 
         // Status
-        'is_published',
+        'status',
         'published_at',
 
         // Stats

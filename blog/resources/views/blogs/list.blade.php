@@ -124,15 +124,35 @@
 
                                     <p class="text-xs uppercase tracking-widest text-zinc-400 font-bold">
 
-                                        Published
+                                        Status
 
                                     </p>
 
-                                    <p class="mt-1 text-sm font-semibold text-zinc-700">
+                                    <div class="mt-1 flex items-center gap-3">
 
-                                        {{ optional($blog->published_at)->format('d M Y') }}
+                                        <span class="
+                                            px-3 py-1 rounded-full text-xs font-bold
+                                            {{ $blog->status === 'published'
+                                                ? 'bg-green-100 text-green-700'
+                                                : 'bg-yellow-100 text-yellow-700'
+                                            }}
+                                        ">
 
-                                    </p>
+                                            {{ ucfirst($blog->status) }}
+
+                                        </span>
+
+                                        @if($blog->published_at)
+
+                                            <p class="text-sm font-semibold text-zinc-700">
+
+                                                {{ $blog->published_at->format('d M Y') }}
+
+                                            </p>
+
+                                        @endif
+
+                                    </div>
 
                                 </div>
 
