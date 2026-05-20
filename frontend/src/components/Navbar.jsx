@@ -153,7 +153,7 @@ const JewelleryDropdown = ({ children }) => {
           <div className="absolute top-0 left-0 w-full h-[3px] bg-[#264A3F]/10"></div>
 
           <div className="max-h-[75vh] overflow-y-auto overflow-x-auto">
-            <div className="flex items-start">
+            <div className="flex items-start w-max">
               {children}
             </div>
           </div>
