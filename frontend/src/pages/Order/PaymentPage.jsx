@@ -1515,13 +1515,12 @@ function PaymentPage() {
           }
 
           // DEFINE BASE PRICE
-          const basePrice =
-            Number(item.price) *
-            Number(item.quantity || 1);
+          const unitPrice =
+            Number(item.price);
 
           // DEFINE FINAL PRICE
-          const finalItemPrice =
-            basePrice + customizationTotal;
+          const finalUnitPrice =
+            unitPrice + customizationTotal;
 
           return {
 
@@ -1537,9 +1536,11 @@ function PaymentPage() {
             quantity:
               Number(item.quantity || 1),
 
-            initialPrice: Math.round(basePrice * 100),
+            initialPrice:
+              Math.round(unitPrice * 100),
 
-            finalPrice: Math.round(finalItemPrice * 100),
+            finalPrice:
+              Math.round(finalUnitPrice * 100),
 
             discount: 0,
 
@@ -1548,7 +1549,7 @@ function PaymentPage() {
               item.jewelryId,
 
             category:
-              item.itemType || "Product",
+              (item.itemType || "product").toLowerCase(),
 
             brand:
               "Gemrishi",
