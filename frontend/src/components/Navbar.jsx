@@ -148,16 +148,22 @@ const JewelleryDropdown = ({ children }) => {
         {/* Arrow */}
         <div className="absolute -top-[6px] left-1/2 -translate-x-1/2 w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100 z-20"></div>
 
-        <div className="relative bg-white border border-gray-100 rounded-sm shadow-[0_20px_40px_-10px_rgba(38,74,63,0.1)] overflow-hidden w-[950px] max-w-[92vw]">
+          <div className="relative bg-white border border-gray-100 rounded-sm shadow-[0_20px_40px_-10px_rgba(38,74,63,0.1)] overflow-hidden w-[1000px] max-w-[95vw]">
 
-          {/* Top Border */}
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-[#264A3F]/10"></div>
+            <div className="absolute top-0 left-0 w-full h-[3px] bg-[#264A3F]/10"></div>
 
-          <div className="grid grid-cols-3">
-            {children}
+            {/* SCROLLABLE AREA */}
+            <div className="max-h-[75vh] overflow-y-auto overflow-x-hidden">
+
+              {/* FLEX INSTEAD OF GRID */}
+              <div className="flex items-start">
+
+                {children}
+
+              </div>
+
+            </div>
           </div>
-
-        </div>
       </div>
     </motion.div>
   );
