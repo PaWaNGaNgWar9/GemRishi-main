@@ -227,67 +227,151 @@
 //     }
 //   };
 
+// import crypto from "crypto";
+// import fs from "fs";
+// import path from "path";
+
+// export const signCart = async (req, res) => {
+
+//   try {
+
+//     const breezeCart = req.body.cart;
+
+//     // EXACT STRING USED FOR SIGNING
+//     const cartString =
+//       JSON.stringify(breezeCart);
+
+//     // PRIVATE KEY
+//     const privateKey = fs.readFileSync(
+//       path.join(process.cwd(), "private-key.pem"),
+//       "utf8"
+//     );
+
+//     // GENERATE SIGNATURE
+//     const signature = crypto.sign(
+//       "sha256",
+//       Buffer.from(cartString, "utf8"),
+//       {
+//         key: privateKey,
+//         padding:
+//           crypto.constants.RSA_PKCS1_PADDING,
+//       }
+//     ).toString("base64");
+
+//     console.log(
+//       "CART STRING:",
+//       cartString
+//     );
+
+//     console.log(
+//       "SIGNATURE:",
+//       signature
+//     );
+
+//     return res.json({
+//       success: true,
+
+//       // SEND SAME STRING
+//       cart: cartString,
+
+//       signature,
+//     });
+
+//   } catch (err) {
+
+//     console.error(
+//       "SIGN CART ERROR:",
+//       err
+//     );
+
+//     return res.status(500).json({
+//       success: false,
+//       error: err.message,
+//     });
+//   }
+// };
+
 import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
-export const signCart = async (req, res) => {
+export const signCart =
+  async (req, res) => {
 
-  try {
+    try {
 
-    const breezeCart = req.body.cart;
+      const breezeCart =
+        req.body.cart;
 
-    // EXACT STRING USED FOR SIGNING
-    const cartString =
-      JSON.stringify(breezeCart);
+      // EXACT STRING
+      const cartString =
+        JSON.stringify(
+          breezeCart
+        );
 
-    // PRIVATE KEY
-    const privateKey = fs.readFileSync(
-      path.join(process.cwd(), "private-key.pem"),
-      "utf8"
-    );
+      // PRIVATE KEY
+      const privateKey =
+        fs.readFileSync(
+          path.join(
+            process.cwd(),
+            "private-key.pem"
+          ),
+          "utf8"
+        );
 
-    // GENERATE SIGNATURE
-    const signature = crypto.sign(
-      "sha256",
-      Buffer.from(cartString, "utf8"),
-      {
-        key: privateKey,
-        padding:
-          crypto.constants.RSA_PKCS1_PADDING,
-      }
-    ).toString("base64");
+      // RSA SHA256 SIGNATURE
+      const signer =
+        crypto.createSign(
+          "RSA-SHA256"
+        );
 
-    console.log(
-      "CART STRING:",
-      cartString
-    );
+      signer.update(
+        cartString,
+        "utf8"
+      );
 
-    console.log(
-      "SIGNATURE:",
-      signature
-    );
+      signer.end();
 
-    return res.json({
-      success: true,
+      const signature =
+        signer.sign(
+          {
+            key: privateKey,
+            padding:
+              crypto.constants.RSA_PKCS1_PADDING,
+          },
+          "base64"
+        );
 
-      // SEND SAME STRING
-      cart: cartString,
+      console.log(
+        "CART STRING:",
+        cartString
+      );
 
-      signature,
-    });
+      console.log(
+        "SIGNATURE:",
+        signature
+      );
 
-  } catch (err) {
+      return res.json({
+        success: true,
 
-    console.error(
-      "SIGN CART ERROR:",
-      err
-    );
+        // SEND EXACT SAME STRING
+        cart: cartString,
 
-    return res.status(500).json({
-      success: false,
-      error: err.message,
-    });
-  }
-};
+        signature,
+      });
+
+    } catch (err) {
+
+      console.error(
+        "SIGN ERROR:",
+        err
+      );
+
+      return res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
+  };
 
