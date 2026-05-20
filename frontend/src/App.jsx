@@ -326,36 +326,42 @@ function AppWrapper() {
 
 function App() {
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    const timer =
-      setTimeout(() => {
+  //   const timer =
+  //     setTimeout(() => {
 
-        console.log(
-          "WINDOW SDK:",
-          window.BlazeSDKWeb
-        );
+  //       console.log(
+  //         "WINDOW SDK:",
+  //         window.BlazeSDKWeb
+  //       );
 
-        if (
-          window.BlazeSDKWeb
-        ) {
+  //       if (
+  //         window.BlazeSDKWeb
+  //       ) {
 
-          initBlaze();
+  //         initBlaze();
 
-        } else {
+  //       } else {
 
-          console.error(
-            "BlazeSDK still missing"
-          );
+  //         console.error(
+  //           "BlazeSDK still missing"
+  //         );
 
-        }
+  //       }
 
-      }, 3000);
+  //     }, 3000);
 
-    return () =>
-      clearTimeout(timer);
+  //   return () =>
+  //     clearTimeout(timer);
 
-  }, []);
+  // }, []);
+
+      useEffect(() => {
+  
+        initBlaze();
+  
+      }, []);
 
   return (
     <Provider store={store}>
