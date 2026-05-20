@@ -1462,9 +1462,6 @@ function PaymentPage() {
         id:
           cartId,
 
-        breezeCartId:
-          cartId,
-
         currency:
           "INR",
 
@@ -1478,7 +1475,7 @@ function PaymentPage() {
 
         initialPrice: Math.round(finalAmount * 100),
 
-        finalPrice: Math.round(finalAmount * 100),
+        totalPrice: Math.round(finalAmount * 100),
 
         totalDiscount: 0,
 
@@ -1544,25 +1541,6 @@ function PaymentPage() {
 
             discount: 0,
 
-            sku:
-              item.productId ||
-              item.jewelryId,
-
-            category:
-              (item.itemType || "product").toLowerCase(),
-
-            brand:
-              "Gemrishi",
-
-            imageUrl:
-              item.image ||
-              "https://gemrishi.com/logo.png",
-
-            productUrl:
-              `https://gemrishi.com/product/${
-                item.productId ||
-                item.jewelryId
-              }`,
           };
         }),
 
