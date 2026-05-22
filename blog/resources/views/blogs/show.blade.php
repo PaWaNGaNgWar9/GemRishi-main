@@ -235,7 +235,7 @@
                         shadow-2xl">
 
                 <img
-                    src="{{ asset('uploads/blogs/' . $blog->featured_image) }}"
+                    src="{{ asset('storage/' . $blog->featured_image) }}"
                     alt="{{ $blog->featured_image_alt }}"
                     class="w-full max-h-[420px] object-cover"
                 >
