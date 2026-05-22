@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class CategoryController extends Controller
@@ -27,13 +28,20 @@ class CategoryController extends Controller
 
         if ($request->hasFile('image')) {
 
-            $imageName = time() . '.' .
-                $request->image->extension();
+            $file = $request->file('image');
 
-            $request->image->move(
-                public_path('uploads/categories'),
-                $imageName
+            $fileName = time() . '_' . uniqid() . '.' .
+                $file->getClientOriginalExtension();
+
+            $imagePath = 'categories/' . $fileName;
+
+            Storage::disk('public')->putFileAs(
+                'categories',
+                $file,
+                $fileName
             );
+
+            $validated['image'] = $imagePath;
         }
 
         BlogCategory::create([
