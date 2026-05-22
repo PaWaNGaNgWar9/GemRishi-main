@@ -24,8 +24,6 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $imageName = null;
-
         if ($request->hasFile('image')) {
 
             $file = $request->file('image');
@@ -47,7 +45,7 @@ class CategoryController extends Controller
         BlogCategory::create([
             'name' => $request->name,
             'slug' => Str::slug($request->name),
-            'image' => $imageName,
+            'image' => $imagePath ?? null,
             'description' => $request->description,
         ]);
 
