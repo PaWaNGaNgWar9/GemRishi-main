@@ -101,18 +101,21 @@ class BlogController extends Controller
 
         // dd($request->all());
 
-
         $featuredImage = null;
 
-        if ($request->hasFile('featured_image'))
-        {
-            $featuredImage = time() . '.' .
-                $request->featured_image->extension();
+        if ($request->hasFile('featured_image')) {
 
-            $request->featured_image->move(
-                public_path('uploads/blogs'),
-                $featuredImage
-            );
+            $file = $request->file('featured_image');
+
+            $featuredImage = time() . '.' . $file->getClientOriginalExtension();
+
+            $destination = public_path('uploads/blogs');
+
+            if (!file_exists($destination)) {
+                mkdir($destination, 0775, true);
+            }
+
+            $file->move($destination, $featuredImage);
         }
 
         $blog = Blog::create([
