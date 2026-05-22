@@ -58,7 +58,7 @@
 
                             @if($blog->featured_image)
 
-                                <img src="{{ asset('uploads/blogs/' . $blog->featured_image) }}"
+                                <img src="{{ asset('storage/' . $blog->featured_image) }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
 
                             @else

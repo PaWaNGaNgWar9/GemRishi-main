@@ -70,7 +70,7 @@
 
                             @if($category->image)
 
-                                <img src="{{ asset('uploads/categories/' . $category->image) }}"
+                                <img src="{{ asset('storage/' . $category->image) }}"
                                      class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
 
                             @else
