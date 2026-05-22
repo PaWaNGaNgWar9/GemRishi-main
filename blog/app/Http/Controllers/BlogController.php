@@ -6,6 +6,7 @@ use App\Models\Blog;
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -107,15 +108,15 @@ class BlogController extends Controller
 
             $file = $request->file('featured_image');
 
-            $featuredImage = time() . '.' . $file->getClientOriginalExtension();
+            $fileName = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-            $destination = public_path('uploads/blogs');
+            Storage::disk('public')->putFileAs(
+                'blogs',
+                $file,
+                $fileName
+            );
 
-            if (!file_exists($destination)) {
-                mkdir($destination, 0775, true);
-            }
-
-            $file->move($destination, $featuredImage);
+            $featuredImage = 'blogs/' . $fileName;
         }
 
         $blog = Blog::create([
@@ -218,32 +219,27 @@ class BlogController extends Controller
 
         $featuredImage = $blog->featured_image;
 
-        if ($request->hasFile('featured_image'))
-        {
-            // DELETE OLD
-            if (
-                $blog->featured_image &&
-                file_exists(
-                    public_path(
-                        'uploads/blogs/' . $blog->featured_image
-                    )
-                )
-            )
-            {
-                unlink(
-                    public_path(
-                        'uploads/blogs/' . $blog->featured_image
-                    )
-                );
+        if ($request->hasFile('featured_image')) {
+
+            // DELETE OLD IMAGE
+            if ($blog->featured_image) {
+                Storage::disk('public')->delete($blog->featured_image);
             }
 
-            $featuredImage = time() . '.' .
-                $request->featured_image->extension();
+            $file = $request->file('featured_image');
 
-            $request->featured_image->move(
-                public_path('uploads/blogs'),
-                $featuredImage
+            $fileName = time() . '_' . uniqid() . '.' .
+                $file->getClientOriginalExtension();
+
+            $featuredImagePath = 'blogs/' . $fileName;
+
+            Storage::disk('public')->putFileAs(
+                'blogs',
+                $file,
+                $fileName
             );
+
+            $validated['featured_image'] = $featuredImagePath;
         }
 
         $blog->update([
