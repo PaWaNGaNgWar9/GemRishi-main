@@ -589,9 +589,9 @@
 </section>
 
 
-<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+{{-- <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script> --}}
 
-<script>
+{{-- <script>
 
     /*
     |--------------------------------------------------------------------------
@@ -621,7 +621,7 @@
 
                 [{ color: [] }, { background: [] }],
 
-                ['link', 'video'],
+                ['link', 'image', 'video'],
 
                 ['clean']
 
@@ -657,6 +657,240 @@
             document.getElementById('content').value =
                 quill.root.innerHTML;
         });
+
+</script> --}}
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+
+    /*
+    |--------------------------------------------------------------------------
+    | INITIALIZE QUILL
+    |--------------------------------------------------------------------------
+    */
+
+    const quill = new Quill('#editor', {
+
+        theme: 'snow',
+
+        placeholder:
+            'Start writing your blog...',
+
+        modules: {
+
+            toolbar: {
+
+                /*
+                |--------------------------------------------------------------------------
+                | TOOLBAR BUTTONS
+                |--------------------------------------------------------------------------
+                */
+
+                container: [
+
+                    [{ header: [1, 2, 3, false] }],
+
+                    ['bold', 'italic', 'underline', 'strike'],
+
+                    ['blockquote', 'code-block'],
+
+                    [{ list: 'ordered' }, { list: 'bullet' }],
+
+                    [{ indent: '-1' }, { indent: '+1' }],
+
+                    [{ color: [] }, { background: [] }],
+
+                    ['link', 'image', 'video'],
+
+                    ['clean']
+
+                ],
+
+                /*
+                |--------------------------------------------------------------------------
+                | CUSTOM IMAGE HANDLER
+                |--------------------------------------------------------------------------
+                */
+
+                handlers: {
+
+                    image: imageHandler
+
+                }
+
+            }
+
+        }
+
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | IMAGE UPLOAD FUNCTION
+    |--------------------------------------------------------------------------
+    */
+
+    function imageHandler()
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | CREATE FILE INPUT
+        |--------------------------------------------------------------------------
+        */
+
+        const input =
+            document.createElement('input');
+
+        input.setAttribute(
+            'type',
+            'file'
+        );
+
+        input.setAttribute(
+            'accept',
+            'image/*'
+        );
+
+        /*
+        |--------------------------------------------------------------------------
+        | OPEN FILE SELECTOR
+        |--------------------------------------------------------------------------
+        */
+
+        input.click();
+
+        /*
+        |--------------------------------------------------------------------------
+        | AFTER IMAGE SELECTED
+        |--------------------------------------------------------------------------
+        */
+
+        input.onchange = async function ()
+        {
+            /*
+            |--------------------------------------------------------------------------
+            | GET FILE
+            |--------------------------------------------------------------------------
+            */
+
+            const file =
+                input.files[0];
+
+            if (!file) return;
+
+            /*
+            |--------------------------------------------------------------------------
+            | FORM DATA
+            |--------------------------------------------------------------------------
+            */
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                'image',
+                file
+            );
+
+            try {
+
+                /*
+                |--------------------------------------------------------------------------
+                | SEND AJAX REQUEST
+                |--------------------------------------------------------------------------
+                */
+
+                const response =
+                    await fetch(
+                        "{{ route('blogs.upload.image') }}",
+                        {
+                            method: 'POST',
+
+                            headers: {
+
+                                'X-CSRF-TOKEN':
+                                    '{{ csrf_token() }}'
+
+                            },
+
+                            body: formData
+
+                        }
+                    );
+
+                /*
+                |--------------------------------------------------------------------------
+                | RESPONSE DATA
+                |--------------------------------------------------------------------------
+                */
+
+                const data =
+                    await response.json();
+
+                /*
+                |--------------------------------------------------------------------------
+                | INSERT IMAGE INTO EDITOR
+                |--------------------------------------------------------------------------
+                */
+
+                if (data.success)
+                {
+                    const range =
+                        quill.getSelection();
+
+                    quill.insertEmbed(
+                        range.index,
+                        'image',
+                        data.url
+                    );
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                alert(
+                    'Image upload failed.'
+                );
+
+            }
+        };
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD OLD CONTENT
+    |--------------------------------------------------------------------------
+    */
+
+    let oldContent =
+        `{!! old('content', $blog->content ?? '') !!}`;
+
+    if (oldContent)
+    {
+        quill.root.innerHTML =
+            oldContent;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SUBMIT FORM
+    |--------------------------------------------------------------------------
+    */
+
+    document
+        .getElementById('blogForm')
+        .addEventListener(
+            'submit',
+            function ()
+            {
+                document
+                    .getElementById('content')
+                    .value =
+                        quill.root.innerHTML;
+            }
+        );
 
 </script>
 

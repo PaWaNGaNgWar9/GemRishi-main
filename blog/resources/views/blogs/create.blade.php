@@ -576,7 +576,7 @@
 
                 [{ color: [] }, { background: [] }],
 
-                ['link', 'video'],
+                ['link', 'image', 'video'],
 
                 ['clean']
 

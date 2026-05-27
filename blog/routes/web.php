@@ -38,6 +38,9 @@ use Illuminate\Support\Facades\Route;
         Route::post('/myblogs', [BlogController::class, 'store'])
             ->name('blogs.store');
 
+        Route::post('/blogs/upload-image', [BlogController::class, 'uploadEditorImage'])
+            ->name('blogs.upload.image');
+            
         Route::get('/myblogs/{id}/edit', [BlogController::class, 'edit'])
             ->name('blogs.edit');
 

@@ -239,7 +239,9 @@ class BlogController extends Controller
                 $fileName
             );
 
-            $validated['featured_image'] = $featuredImagePath;
+            // $validated['featured_image'] = $featuredImagePath;
+
+            $featuredImage = $featuredImagePath;
         }
 
         $blog->update([
@@ -297,24 +299,46 @@ class BlogController extends Controller
             ]);
     }
 
+    public function uploadEditorImage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp,gif|max:5120',
+        ]);
+
+        $file = $request->file('image');
+
+        $fileName =
+            time() . '_' . uniqid() . '.' .
+            $file->getClientOriginalExtension();
+
+        $imagePath =
+            'blogs/editor/' . $fileName;
+
+        Storage::disk('public')->putFileAs(
+            'blogs/editor',
+            $file,
+            $fileName
+        );
+
+        return response()->json([
+
+            'success' => true,
+
+            'url' => asset(
+                'storage/' . $imagePath
+            ),
+
+        ]);
+    }
+
     public function destroy($id)
     {
         $blog = Blog::findOrFail($id);
 
-        if (
-            $blog->featured_image &&
-            file_exists(
-                public_path(
-                    'uploads/blogs/' . $blog->featured_image
-                )
-            )
-        )
+        if ($blog->featured_image)
         {
-            unlink(
-                public_path(
-                    'uploads/blogs/' . $blog->featured_image
-                )
-            );
+            Storage::disk('public')
+                ->delete($blog->featured_image);
         }
 
         $blog->delete();
