@@ -91,6 +91,24 @@
     <!-- TAILWIND -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
+    <style>
+        .blog-content img {
+
+            max-width: 100%;
+
+            width: auto;
+
+            height: auto;
+
+            border-radius: 16px;
+
+            margin: 20px auto;
+
+            display: block;
+
+        }
+    </style>
+
 </head>
 
 <body class="bg-base-100 text-base-content">
