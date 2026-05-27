@@ -42,13 +42,32 @@
         overflow-y: auto;
 
     }
-        .ql-editor iframe {
+        
+    .ql-editor iframe {
 
         width: 100%;
 
         min-height: 450px;
 
         border-radius: 16px;
+
+    }
+
+    .ql-editor img {
+
+        max-width: 100%;
+
+        width: auto;
+
+        height: auto;
+
+        display: block;
+
+        margin: 20px auto;
+
+        border-radius: 16px;
+
+        object-fit: cover;
 
     }
 
