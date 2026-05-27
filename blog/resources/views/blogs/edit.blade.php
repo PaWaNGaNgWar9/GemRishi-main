@@ -504,7 +504,7 @@
 
                                     <div class="mt-5">
 
-                                        <img src="{{ asset('uploads/blogs/' . $blog->featured_image) }}"
+                                        <img src="{{ asset('storage/' . $blog->featured_image) }}"
                                             class="w-full h-56 object-cover rounded-3xl border border-zinc-200">
 
                                     </div>
