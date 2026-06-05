@@ -5,7 +5,7 @@ import {Product} from "../models/product.model.js";
 console.log("✅ Order Cleanup Cron Job Setup Initiated"); // <--- ADD THIS
 
 cron.schedule("* * * * *", async () => {
-  const cutoff = new Date(Date.now() - 1 * 60 * 1000);
+  const cutoff = new Date(Date.now() - 15 * 60 * 1000);
   console.log("cutoff", cutoff);
 
   const pendingOrders = await Order.find({
@@ -15,6 +15,11 @@ cron.schedule("* * * * *", async () => {
   });
 
   for (const order of pendingOrders) {
+
+    if (order.paymentStatus === "Completed") {
+      continue;
+    }
+
     for (const item of order.items) {
       await Product.findByIdAndUpdate(item.productId, {
         $inc: { stock: item.quantity },
