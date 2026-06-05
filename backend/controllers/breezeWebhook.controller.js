@@ -1,84 +1,104 @@
-import { Order } from "../models/order.model.js";
-import { User } from "../models/user.model.js";
+ import { Order } from "../models/order.model.js";
 
-export const breezeWebhook = async (req, res) => {
-  try {
+  export const platformWebhook = async (req, res) => {
+    const payload = req.body;
+    const { content } = payload;
+    const breezeOrderId = content?.orderId || payload.id || "unknown";
 
-    console.log("========== BREEZE WEBHOOK ==========");
-    console.log(JSON.stringify(req.body, null, 2));
+    try {
+      const apiKey = req.headers["x-api-key"];
 
-    const apiKey = req.headers["x-api-key"];
-
-    if (!apiKey || apiKey !== process.env.BREEZE_API_KEY) {
-      return res.status(401).json({
-        status: "error",
-        message: "Unauthorized",
-      });
-    }
-
-    const { id, eventName, content } = req.body;
-
-    if (!content?.orderId) {
-      return res.status(400).json({
-        status: "error",
-        message: "Order ID missing",
-      });
-    }
-
-    const order = await Order.findOne({
-      orderId: content.orderId,
-    });
-
-    if (!order) {
-      return res.status(404).json({
-        status: "error",
-        message: "Order not found",
-      });
-    }
-
-    if (
-      eventName === "ORDER_SUCCEEDED" &&
-      content.status === "SUCCESS"
-    ) {
-
-      order.paymentStatus = "Completed";
-      order.orderStatus = "InProgress";
-      order.breezeTransactionId = content.txnId;
-
-      // Optional webhook data
-      order.breezePaymentMethod =
-        content.payment?.paymentMethod || null;
-
-      order.breezePaymentType =
-        content.payment?.paymentMethodType || null;
-
-      order.breezeWebhookData = content;
-
-      await order.save();
-
-      const user = await User.findById(order.userId);
-
-      if (user) {
-        user.cart = [];
-        await user.save();
+      if (!apiKey || apiKey !== process.env.BREEZE_WEBHOOK_API_KEY) {
+        console.warn("BREEZE WEBHOOK: Invalid or missing x-api-key");
+        return res.status(401).json({ success: false, message: "Unauthorized" });
       }
+
+      console.log("BREEZE WEBHOOK PAYLOAD:", JSON.stringify(payload, null, 2));
+
+      const { eventName } = payload;
+
+      if (eventName === "ORDER_SUCCEEDED" && content) {
+        const { orderId, txnId, status, payment, shippingAddress, customer, cart } = content;
+
+        const paymentStatusMap = {
+          SUCCESS: "Completed",
+          PENDING: "Pending",
+          FAILED: "Failed",
+        };
+
+        const paymentMethodRaw = payment?.paymentMethod || "";
+        const paymentMethod = paymentMethodRaw === "CASH" ? "cod" : "breeze";
+        const paymentStatus = paymentStatusMap[status] || "Pending";
+
+        // Only include productId if it's a valid MongoDB ObjectId (24 hex chars)
+        const items = (cart?.items || []).map((item) => {
+          const entry = {
+            quantity: item.quantity || 1,
+            itemTotal: item.finalPrice || item.initialPrice || 0,
+          };
+          if (item.id && /^[a-f\d]{24}$/i.test(item.id)) {
+            entry.productId = item.id;
+          }
+          return entry;
+        });
+
+        const address = shippingAddress
+          ? {
+              fullName: shippingAddress.name || customer?.name,
+              email: shippingAddress.emailAddress || customer?.emailAddress,
+              mobileNo: shippingAddress.phoneNumber || customer?.phoneNumber,
+              addressLine1: shippingAddress.line1,
+              addressLine2: shippingAddress.line2,
+              city: shippingAddress.city,
+              state: shippingAddress.state,
+              pinCode: shippingAddress.postalCode,
+              country: shippingAddress.country,
+              addressType: shippingAddress.type || "Home",
+            }
+          : {};
+
+        try {
+          const existing = await Order.findOne({ orderId });
+
+          if (!existing) {
+            await Order.create({
+              orderId,
+              razorpayOrderId: txnId,
+              totalAmount: String(payment?.amount || cart?.totalPrice || 0),
+              subTotal: cart?.totalPrice || 0,
+              discountAmount: cart?.totalDiscount || 0,
+              paymentStatus,
+              orderStatus: "Pending",
+              paymentMethod,
+              items,
+              address,
+            });
+            console.log("BREEZE ORDER CREATED:", orderId);
+          } else {
+            existing.paymentStatus = paymentStatus;
+            await existing.save();
+            console.log("BREEZE ORDER UPDATED:", orderId);
+          }
+        } catch (dbErr) {
+          console.error("BREEZE WEBHOOK DB ERROR (non-fatal):", dbErr.message);
+        }
+      }
+
+      return res.status(200).json({
+        id: payload.id,
+        status: "SUCCESS",
+        message: "Order created successfully",
+        content: {
+          orderId: breezeOrderId,
+        },
+      });
+    } catch (err) {
+      console.error("BREEZE WEBHOOK ERROR:", err);
+      return res.status(200).json({
+        id: payload?.id || "unknown",
+        status: "SUCCESS",
+        message: "Order received",
+        content: { orderId: breezeOrderId },
+      });
     }
-
-    return res.status(200).json({
-      id,
-      status: "SUCCESS",
-      content: {
-        orderId: content.orderId,
-      },
-    });
-
-  } catch (error) {
-
-    console.error(error);
-
-    return res.status(500).json({
-      status: "error",
-      message: error.message,
-    });
   }
-};
