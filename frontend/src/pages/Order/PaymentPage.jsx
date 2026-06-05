@@ -1406,7 +1406,7 @@ function PaymentPage() {
     try {
 
       // CREATE ORDER FIRST
-      const orderResult = await handleCreateOrder();
+      const orderResult = await handleCreateOrder("breeze");
 
       if (!orderResult) return;
 
@@ -1455,12 +1455,13 @@ function PaymentPage() {
       }
 
       const cartId =
-        "cart_" + Date.now();
+        // "cart_" + Date.now();
+        order.orderId;
 
       const breezeCart = {
 
         id:
-          cartId,
+          order.orderId,
 
         currency:
           "INR",
@@ -1717,6 +1718,7 @@ function PaymentPage() {
         );
     }
   };
+
 
   if (loading) {
     return (

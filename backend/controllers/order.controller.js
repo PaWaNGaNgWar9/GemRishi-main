@@ -330,6 +330,8 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     });
   }
   order.paymentStatus = "Completed";
+  order.orderStatus = "InProgress";
+  
 
   // ✅ Clear cart only after successful payment
   const retailer = await Retailer.findById(order.retailerId);
@@ -2139,7 +2141,7 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
     if (applicableLineTotal <= 0) {
       return res.status(400).json({
         success: false,
-        message: "This promo code is not applicable to any items in your cart.",
+        message: "This promo code is not applicale to any items in your cart.",
       });
     }
 
@@ -2330,7 +2332,10 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
   //     }
   //     razorpayOrderId = data.id;
   //   }
-  const shouldCreateRazorpay = onlinePayAmount > 0;
+  const shouldCreateRazorpay =
+  paymentMethod === "razorpay" &&
+  onlinePayAmount > 0;
+
   if (shouldCreateRazorpay) {
     const orderPayload = {
       amount: Math.round(onlinePayAmount * 100), // 🔑 IMPORTANT
