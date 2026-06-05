@@ -291,94 +291,95 @@
 //   }
 // };
 
-// import crypto from "crypto";
-// import fs from "fs";
-// import path from "path";
+import crypto from "crypto";
+import fs from "fs";
+import path from "path";
+import { Order } from "../models/order.model.js";
 
-// export const signCart =
-//   async (req, res) => {
+  export const signCart =
+  async (req, res) => {
 
-//     try {
+    try {
 
-//       const breezeCart =
-//         req.body.cart;
+      const breezeCart =
+        req.body.cart;
 
-//       // EXACT STRING
-//       const cartString =
-//         JSON.stringify(
-//           breezeCart
-//         );
+      // EXACT STRING
+      const cartString =
+        JSON.stringify(
+          breezeCart
+        );
 
-//       // PRIVATE KEY
-//       const privateKey =
-//         fs.readFileSync(
-//           path.join(
-//             process.cwd(),
-//             "private-key.pem"
-//           ),
-//           "utf8"
-//         );
+      // PRIVATE KEY
+      const privateKey =
+        fs.readFileSync(
+          path.join(
+            process.cwd(),
+            "private-key.pem"
+          ),
+          "utf8"
+        );
 
-//       // RSA SHA256 SIGNATURE
-//       const signer =
-//         crypto.createSign(
-//           "RSA-SHA256"
-//         );
+      // RSA SHA256 SIGNATURE
+      const signer =
+        crypto.createSign(
+          "RSA-SHA256"
+        );
 
-//       signer.update(
-//         cartString,
-//         "utf8"
-//       );
+      signer.update(
+        cartString,
+        "utf8"
+      );
 
-//       signer.end();
+      signer.end();
 
-//       const signature =
-//         signer.sign(
-//           {
-//             key: privateKey,
-//             padding:
-//               crypto.constants.RSA_PKCS1_PADDING,
-//           },
-//           "base64"
-//         );
+      const signature =
+        signer.sign(
+          {
+            key: privateKey,
+            padding:
+              crypto.constants.RSA_PKCS1_PADDING,
+          },
+          "base64"
+        );
 
-//       console.log(
-//         "CART STRING:",
-//         cartString
-//       );
+      console.log(
+        "CART STRING:",
+        cartString
+      );
 
-//       console.log(
-//         "SIGNATURE:",
-//         signature
-//       );
+      console.log(
+        "SIGNATURE:",
+        signature
+      );
 
-//       return res.json({
-//         success: true,
+      return res.json({
+        success: true,
 
-//         // SEND EXACT SAME STRING
-//         cart: cartString,
+        // SEND EXACT SAME STRING
+        cart: cartString,
 
-//         signature,
-//       });
+        signature,
+      });
 
-//     } catch (err) {
+    } catch (err) {
 
-//       console.error(
-//         "SIGN ERROR:",
-//         err
-//       );
+      console.error(
+        "SIGN ERROR:",
+        err
+      );
 
-//       return res.status(500).json({
-//         success: false,
-//         error: err.message,
-//       });
-//     }
-//   };
+      return res.status(500).json({
+        success: false,
+        error: err.message,
+      });
+    }
+  };
 
 
- import { Order } from "../models/order.model.js";
 
-  export const platformWebhook = async (req, res) => {
+  export const platformWebhook = 
+  async (req, res) => {
     const payload = req.body;
     const { content } = payload;
     const breezeOrderId = content?.orderId || payload.id || "unknown";
