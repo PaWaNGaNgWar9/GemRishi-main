@@ -1,169 +1,4 @@
-// import axios from "axios";
 
-// export const signCart = async (req, res) => {
-
-//   try {
-
-//     console.log("REQ BODY:", req.body);
-
-//     const response = await axios.post(
-//       "https://apothiki.vercel.app/cart-sign-api",
-//       req.body,
-//       {
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
-
-//     console.log("SIGN RESPONSE:", response.data);
-
-//     return res.json(response.data);
-
-//   } catch (err) {
-
-//     console.error(
-//       "SIGN ERROR:",
-//       err.response?.data || err.message
-//     );
-
-//     return res.status(500).json({
-//       success: false,
-//       error:
-//         err.response?.data ||
-//         err.message,
-//     });
-//   }
-// };
-
-
-
-// import crypto from "crypto";
-// import fs from "fs";
-// import path from "path";
-
-// export const signCart = async (req, res) => {
-//   try {
-//     const breezeCart = req.body.cart;
-
-//     console.log("CART:", breezeCart);
-
-//     // STRINGIFY CART
-
-//     const cartString =
-//       JSON.stringify(breezeCart);
-
-//     // PRIVATE KEY
-
-//     const privateKey =
-//       fs.readFileSync(
-//         path.join(
-//           process.cwd(),
-//           "private-key.pem"
-//         ),
-//         "utf8"
-//       );
-
-//     // SIGN
-
-//     const signer =
-//       crypto.createSign(
-//         "RSA-SHA256"
-//       );
-
-//     signer.update(cartString);
-
-//     signer.end();
-
-//     const signature =
-//       signer.sign(
-//         privateKey,
-//         "base64"
-//       );
-
-//     return res.json({
-//       success: true,
-
-//       cart: cartString,
-
-//       signature,
-//     });
-
-//   } catch (err) {
-
-//     console.error(
-//       "SIGN ERROR:",
-//       err
-//     );
-
-//     return res.status(500).json({
-//       success: false,
-
-//       error: err.message,
-//     });
-//   }
-// };
-
-
-
-// import axios from "axios";
-
-// export const signCart =
-//   async (req, res) => {
-
-//     try {
-
-//       console.log(
-//         "BODY:",
-//         req.body
-//       );
-
-//       const response =
-//         await axios.post(
-//           "https://apothiki.vercel.app/cart-sign-api",
-//           req.body,
-//           {
-//             headers: {
-//               "Content-Type":
-//                 "application/json",
-//             },
-//           }
-//         );
-
-//       console.log(
-//         "APOTHIKI:",
-//         response.data
-//       );
-
-//       return res.json(
-//         response.data
-//       );
-
-//     } catch (err) {
-
-//       console.error(
-//         "SIGN ERROR:"
-//       );
-
-//       console.error(
-//         err.response?.data
-//       );
-
-//       console.error(
-//         err.message
-//       );
-
-//       return res.status(500).json({
-//         success: false,
-
-//         error:
-//           err.response?.data ||
-//           err.message,
-//       });
-//     }
-//   };
-
-//Working
 // import crypto from "crypto";
 // import fs from "fs";
 // import path from "path";
@@ -176,11 +11,13 @@
 //       const breezeCart =
 //         req.body.cart;
 
+//       // EXACT STRING
 //       const cartString =
 //         JSON.stringify(
 //           breezeCart
 //         );
 
+//       // PRIVATE KEY
 //       const privateKey =
 //         fs.readFileSync(
 //           path.join(
@@ -190,35 +27,54 @@
 //           "utf8"
 //         );
 
+//       // RSA SHA256 SIGNATURE
 //       const signer =
 //         crypto.createSign(
 //           "RSA-SHA256"
 //         );
 
 //       signer.update(
-//         cartString
+//         cartString,
+//         "utf8"
 //       );
 
 //       signer.end();
 
 //       const signature =
 //         signer.sign(
-//           privateKey,
+//           {
+//             key: privateKey,
+//             padding:
+//               crypto.constants.RSA_PKCS1_PADDING,
+//           },
 //           "base64"
 //         );
+
+//       console.log(
+//         "CART STRING:",
+//         cartString
+//       );
+
+//       console.log(
+//         "SIGNATURE:",
+//         signature
+//       );
 
 //       return res.json({
 //         success: true,
 
-//         cart:
-//           cartString,
+//         // SEND EXACT SAME STRING
+//         cart: cartString,
 
 //         signature,
 //       });
 
 //     } catch (err) {
 
-//       console.error(err);
+//       console.error(
+//         "SIGN ERROR:",
+//         err
+//       );
 
 //       return res.status(500).json({
 //         success: false,
@@ -227,159 +83,11 @@
 //     }
 //   };
 
-// import crypto from "crypto";
-// import fs from "fs";
-// import path from "path";
-
-// export const signCart = async (req, res) => {
-
-//   try {
-
-//     const breezeCart = req.body.cart;
-
-//     // EXACT STRING USED FOR SIGNING
-//     const cartString =
-//       JSON.stringify(breezeCart);
-
-//     // PRIVATE KEY
-//     const privateKey = fs.readFileSync(
-//       path.join(process.cwd(), "private-key.pem"),
-//       "utf8"
-//     );
-
-//     // GENERATE SIGNATURE
-//     const signature = crypto.sign(
-//       "sha256",
-//       Buffer.from(cartString, "utf8"),
-//       {
-//         key: privateKey,
-//         padding:
-//           crypto.constants.RSA_PKCS1_PADDING,
-//       }
-//     ).toString("base64");
-
-//     console.log(
-//       "CART STRING:",
-//       cartString
-//     );
-
-//     console.log(
-//       "SIGNATURE:",
-//       signature
-//     );
-
-//     return res.json({
-//       success: true,
-
-//       // SEND SAME STRING
-//       cart: cartString,
-
-//       signature,
-//     });
-
-//   } catch (err) {
-
-//     console.error(
-//       "SIGN CART ERROR:",
-//       err
-//     );
-
-//     return res.status(500).json({
-//       success: false,
-//       error: err.message,
-//     });
-//   }
-// };
-
-import crypto from "crypto";
-import fs from "fs";
-import path from "path";
-import { Order } from "../models/order.model.js";
-
-  export const signCart =
-  async (req, res) => {
-
-    try {
-
-      const breezeCart =
-        req.body.cart;
-
-      // EXACT STRING
-      const cartString =
-        JSON.stringify(
-          breezeCart
-        );
-
-      // PRIVATE KEY
-      const privateKey =
-        fs.readFileSync(
-          path.join(
-            process.cwd(),
-            "private-key.pem"
-          ),
-          "utf8"
-        );
-
-      // RSA SHA256 SIGNATURE
-      const signer =
-        crypto.createSign(
-          "RSA-SHA256"
-        );
-
-      signer.update(
-        cartString,
-        "utf8"
-      );
-
-      signer.end();
-
-      const signature =
-        signer.sign(
-          {
-            key: privateKey,
-            padding:
-              crypto.constants.RSA_PKCS1_PADDING,
-          },
-          "base64"
-        );
-
-      console.log(
-        "CART STRING:",
-        cartString
-      );
-
-      console.log(
-        "SIGNATURE:",
-        signature
-      );
-
-      return res.json({
-        success: true,
-
-        // SEND EXACT SAME STRING
-        cart: cartString,
-
-        signature,
-      });
-
-    } catch (err) {
-
-      console.error(
-        "SIGN ERROR:",
-        err
-      );
-
-      return res.status(500).json({
-        success: false,
-        error: err.message,
-      });
-    }
-  };
 
 
+ import { Order } from "../models/order.model.js";
 
-  export const platformWebhook = 
-  async (req, res) => {
+  export const platformWebhook = async (req, res) => {
     const payload = req.body;
     const { content } = payload;
     const breezeOrderId = content?.orderId || payload.id || "unknown";
@@ -481,5 +189,4 @@ import { Order } from "../models/order.model.js";
       });
     }
   }
-
 
