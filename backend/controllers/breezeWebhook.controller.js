@@ -1,6 +1,6 @@
  import { Order } from "../models/order.model.js";
 
-  export const platformWebhook = async (req, res) => {
+  export const breezeWebhook = async (req, res) => {
     const payload = req.body;
     const { content } = payload;
     const breezeOrderId = content?.orderId || payload.id || "unknown";

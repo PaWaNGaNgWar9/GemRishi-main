@@ -1,8 +1,8 @@
 import express from "express";
-import { breezeWebhook } from "../controllers/breezeWebhook.controller.js";
+import { platformWebhook } from "../controllers/breezeWebhook.controller.js";
 
 const router = express.Router();
 
-router.post("/platform", breezeWebhook);
+router.post("/platform", platformWebhook);
 
 export default router;
