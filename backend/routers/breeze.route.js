@@ -1,10 +1,9 @@
 import express from "express";
-// import { signCart } from "../controllers/breeze.controller.js";
-import { platformWebhook } from "../controllers/breeze.controller.js";
+import { signCart, platformWebhook } from "../controllers/breeze.controller.js";
 
 const router = express.Router();
 
-// router.post("/sign-cart", signCart);
+router.post("/sign-cart", signCart);
 
 router.post("/platform", platformWebhook);
 
