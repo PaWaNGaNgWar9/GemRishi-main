@@ -1,5 +1,6 @@
 import express from "express";
-import { signCart, platformWebhook } from "../controllers/breeze.controller.js";
+import { signCart } from "../controllers/breeze.controller.js";
+import { platformWebhook } from "../controllers/breeze.controller.js";
 
 const router = express.Router();
 
