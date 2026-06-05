@@ -1,5 +1,5 @@
 import express from "express";
-import { platformWebhook } from "../controllers/breezeWebhook.controller.js";
+import { platformWebhook } from "../controllers/breeze.controller.js";
 
 const router = express.Router();
 
