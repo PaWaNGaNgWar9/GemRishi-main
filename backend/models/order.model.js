@@ -189,7 +189,7 @@ const orderSchema = new mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["cod", "razorpay"],
+      enum: ["cod", "razorpay", "breeze"],
     },
     onlinePayAmount: {
       type: Number,
