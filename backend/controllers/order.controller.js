@@ -394,6 +394,7 @@ export const getAllOrders2 = asyncHandler(async (req, res) => {
 });
 
 export const getAllOrders = asyncHandler(async (req, res) => {
+  console.log("GET All ORDERS API HIT");
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
@@ -516,6 +517,7 @@ export const updateOrder = asyncHandler(async (req, res) => {
 });
 
 export const getOrdersByUser = asyncHandler(async (req, res) => {
+  console.log("GET ORDERS API HIT");
   const userId = req.user._id || req.user.id;
   const orderStatus = req.query.orderStatus;
 
