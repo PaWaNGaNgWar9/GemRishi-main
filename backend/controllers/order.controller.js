@@ -692,6 +692,7 @@ export const orderUsersForCSV = asyncHandler(async (req, res) => {
 });
 
 export const getAllOrderUsers = asyncHandler(async (req, res) => {
+  console.log("GET ORDERS BY USER API HIT");
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
