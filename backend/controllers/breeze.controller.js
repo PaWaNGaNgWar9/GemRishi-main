@@ -305,7 +305,13 @@ export const platformWebhook = async (req, res) => {
         : {};
 
       try {
+
+        console.log("WEBHOOK ORDER ID:", orderId);
         const existing = await Order.findOne({ orderId });
+        console.log(
+          "FOUND ORDER:",
+          existing ? existing.orderId : "NOT FOUND"
+        );
 
         if (!existing) {
           await Order.create({
