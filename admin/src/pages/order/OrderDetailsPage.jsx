@@ -575,7 +575,9 @@ export const OrderDetailsPage = () => {
                       {order?.paymentMethod}
                     </p>
                     <p className="text-sm text-[#304c57] opacity-60">
-                      {order?.razorpayOrderId || "Razorpay id missing"}
+                      {order?.breezeTransactionId ||
+                        order?.razorpayOrderId ||
+                        "Transaction ID missing"}
                     </p>
                     <p
                       className={`inline-block text-sm font-medium ${
