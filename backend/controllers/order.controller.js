@@ -330,6 +330,8 @@ export const verifyPayment = asyncHandler(async (req, res) => {
     });
   }
   order.paymentStatus = "Completed";
+  order.orderStatus = "InProgress";
+  
 
   // ✅ Clear cart only after successful payment
   const retailer = await Retailer.findById(order.retailerId);
@@ -2330,7 +2332,10 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
   //     }
   //     razorpayOrderId = data.id;
   //   }
-  const shouldCreateRazorpay = onlinePayAmount > 0;
+  const shouldCreateRazorpay =
+  paymentMethod === "razorpay" &&
+  onlinePayAmount > 0;
+
   if (shouldCreateRazorpay) {
     const orderPayload = {
       amount: Math.round(onlinePayAmount * 100), // 🔑 IMPORTANT
@@ -2405,9 +2410,18 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
 
   await order.save();
 
-  if (paymentMethod == "cod") {
+  console.log("PAYMENT METHOD:", paymentMethod);
+
+  if (
+    paymentMethod === "cod" ||
+    paymentMethod === "breeze"
+  ) {
+
+
     user.cart = [];
+
     await user.save();
+
   }
 
   return res.status(200).json({

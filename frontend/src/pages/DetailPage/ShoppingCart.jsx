@@ -7,13 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setCartItems, removeItemFromCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
 import { appendRandomString } from "../../utils/randomString";
-import { startBlazeCheckout } from "../../utils/blazeCheckout";
 import BlazeSDK from "@juspay/blaze-sdk-web";
-import {
-  openBlazeCheckout,
-} from "../../utils/blazeCheckout";
-
-
 
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
@@ -76,6 +70,10 @@ function UpSellingProducts({ products = [], loading = false }) {
 // --- Main Cart Component ---
 function ShoppingCart() {
   const [cartData, setCartData] = useState([]);
+
+  const [userProfile, setUserProfile] = useState(null);
+  const [promoCode, setPromoCode] = useState("");
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -245,242 +243,489 @@ function ShoppingCart() {
     }
   };
 
-  // --- BLAZE CHECKOUT INTEGRATION ---
-  // const handleProceedToCheckout = async () => {
 
-  //   try {
+  const handleCreateOrder = async (selectedPaymentMethod) => {
+    const userInfoString = localStorage.getItem("userInfo");
+    const storedShippingDetails = localStorage.getItem("shippingDetails");
+
+    if (!userInfoString) {
+      alert("Please log in first.");
+      navigate("/login");
+      return null;
+    }
+
+    if (cartData.length === 0) {
+      alert("Your cart is empty.");
+      return null;
+    }
+
+    const userInfo = JSON.parse(userInfoString);
+    const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
+
+    // Get address from shippingDetails or userProfile
+    const addressData = shippingDetails?.address || userProfile?.address;
+
+    if (!addressData) {
+      alert("Please complete shipping details first.");
+      navigate("/shipping/address");
+      return null;
+    }
+
+    let address = {};
+    if (Array.isArray(addressData)) {
+      // Assume first address if array
+      const addr = addressData[0] || {};
+      address = {
+        fullName: normalizeAddressField(addr.fullName || userInfo.name || ""),
+        email: normalizeAddressField(addr.email || userInfo.email || ""),
+        mobileNo: normalizeAddressField(addr.mobileNo || userInfo.mobileNo || ""),
+        addressLine1: normalizeAddressField(addr.addressLine1 || ""),
+        addressLine2: normalizeAddressField(addr.addressLine2 || ""),
+        landmark: normalizeAddressField(addr.landmark || ""),
+        city: normalizeAddressField(addr.city || ""),
+        district: normalizeAddressField(addr.district || ""),
+        state: normalizeAddressField(addr.state || ""),
+        pinCode: normalizeAddressField(addr.pinCode || ""),
+        country: normalizeAddressField(addr.country || "India"),
+        addressType: normalizeAddressField(addr.addressType || "Home"),
+        note: normalizeAddressField(addr.note || ""),
+      };
+    } else {
+      address = {
+        fullName: normalizeAddressField(addressData.fullName || userInfo.name || ""),
+        email: normalizeAddressField(addressData.email || userInfo.email || ""),
+        mobileNo: normalizeAddressField(addressData.mobileNo || userInfo.mobileNo || ""),
+        addressLine1: normalizeAddressField(addressData.addressLine1 || ""),
+        addressLine2: normalizeAddressField(addressData.addressLine2 || ""),
+        landmark: normalizeAddressField(addressData.landmark || ""),
+        city: normalizeAddressField(addressData.city || ""),
+        district: normalizeAddressField(addressData.district || ""),
+        state: normalizeAddressField(addressData.state || ""),
+        pinCode: normalizeAddressField(addressData.pinCode || ""),
+        country: normalizeAddressField(addressData.country || "India"),
+        addressType: normalizeAddressField(addressData.addressType || "Home"),
+        note: normalizeAddressField(addressData.note || ""),
+      };
+    }
+
+    // console.log("✅ Final Address Payload:", address);
+    // console.log("✅ Cart Data for Order:", cartData);
+
+    // ✅ Build order items
+    const orderItems = cartData.map((item) => {
+      let itemTotal = item.price * item.quantity;
+
+      if (item.customization) {
+        if (item.customization.goldKarat?.price)
+          itemTotal += item.customization.goldKarat.price;
+        if (item.customization.certificate?.price)
+          itemTotal += item.customization.certificate.price;
+        if (item.customization.gemstoneWeight?.price)
+          itemTotal += item.customization.gemstoneWeight.price;
+        if (item.customization.quality?.price)
+          itemTotal += item.customization.quality.price;
+        if (item.customization.diamondSubstitute?.price)
+          itemTotal += item.customization.diamondSubstitute.price;
+      }
+
+      return {
+        productId: item.productId ?? location.state?.productId,
+        jewelryId: item.jewelryId || undefined,
+        quantity: item.quantity,
+        itemTotal,
+        customization: item.customization || {},
+      };
+    });
+
+    // const orderPayload = {
+    //   address,
+    //   paymentMethod: paymentMethod === "online" ? "razorpay" : "cod",
+    //   promoCode: promoCode || null,
+    //   items: orderItems,
+    // };
+
+    const orderPayload = {
+      address,
+      paymentMethod: selectedPaymentMethod,
+      promoCode: promoCode || null,
+      items: orderItems,
+    };
+
+    // console.log("📦 Sending Order Payload:", orderPayload);
+
+    try {
+      const response = await axios.post(
+        `${URL}/order/create-order`,
+        orderPayload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${userInfo.token}`,
+          },
+        }
+      );
+
+      if (response.data?.order) {
+        sessionStorage.removeItem("shippingDetails");
+        toast.success("Order created successfully!");
+        return response.data;
+      } else {
+        toast.error(
+          response.data.message ||
+          response.data.msg ||
+          "Failed to create order. Please try again."
+        );
+      }
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.message ||
+        error?.response?.data?.msg ||
+        error?.message ||
+        "An error occurred while creating the order. Please try again."
+      );
+      return null;
+    }
+  };
+
+  const normalizeAddressField = (value) => {
+    if (Array.isArray(value)) {
+      return value.join(" ").trim();
+    }
+    if (value == null) {
+      return "";
+    }
+    return String(value).trim();
+  };
+
+
+  const handleBreezeProceed = async () => {
+    try {
+      console.log("BREEZE STARTED");
+
+      // CREATE ORDER FIRST
+      const orderResult = await handleCreateOrder("breeze");
+
+      if (!orderResult) return;
+
+      const { order } = orderResult;
+
+      console.log("FRONTEND ORDER ID:", order.orderId);
+
+      // USE BACKEND TOTAL
+      const finalAmount = Number(order.totalAmount);
+
+      console.log("BACKEND FINAL:", finalAmount);
+
+      if (!BlazeSDK?.process)
+      {
+
+        console.error(
+          "BlazeSDK missing"
+        );
+
+        toast.error(
+          "Payment SDK not loaded"
+        );
+
+        return;
+      }
 
-  //     const payload = {
-  //       merchantId: "gemrishi",
+      // SHIPPING DETAILS
 
-  //       env: "release",
+      const shippingDetails =
+        JSON.parse(
+          localStorage.getItem(
+            "shippingDetails"
+          )
+        );
 
-  //       shopUrl: "https://gemrishi.com",
+      if (!shippingDetails?.address) {
 
-  //       cart: {
-  //         id: "cart_" + Date.now(),
+        toast.error(
+          "Shipping details missing"
+        );
 
-  //         currency: "INR",
+        return;
+      }
 
-  //         itemCount: cartData.length,
+      const cartId =
+        // "cart_" + Date.now();
+        order.orderId;
 
-  //         initialPrice: totalAmount,
+      const breezeCart = {
 
-  //         totalPrice: totalAmount,
+        id:
+          order.orderId,
 
-  //         totalDiscount: 0,
+        currency:
+          "INR",
 
-  //         items: cartData.map((item) => ({
-  //           id: item.item._id,
+        itemCount:
+          cartData.reduce(
+            (sum, item) =>
+              sum +
+              Number(item.quantity || 1),
+            0
+          ),
 
-  //           title:
-  //             item.item.name ||
-  //             item.item.jewelryName,
+        initialPrice: Math.round(finalAmount * 100),
 
-  //           quantity: item.quantity,
+        totalPrice: Math.round(finalAmount * 100),
 
-  //           initialPrice: item.totalPrice,
+        totalDiscount: 0,
 
-  //           finalPrice: item.totalPrice,
+        items: cartData.map((item) => {
 
-  //           discount: 0,
-  //         })),
-  //       },
-  //     };
+          let customizationTotal = 0;
 
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-  //       payload
-  //     );
+          if (item.customization) {
 
-  //     console.log("SIGN RESPONSE:", response.data);
+            if (item.customization.goldKarat?.price)
+              customizationTotal += Number(
+                item.customization.goldKarat.price
+              );
 
-  //     await openBlazeCheckout({
-  //       cart: response.data.cart,
+            if (item.customization.certificate?.price)
+              customizationTotal += Number(
+                item.customization.certificate.price
+              );
 
-  //       signature: response.data.signature,
-  //     });
+            if (item.customization.gemstoneWeight?.price)
+              customizationTotal += Number(
+                item.customization.gemstoneWeight.price
+              );
 
-  //   } catch (err) {
+            if (item.customization.quality?.price)
+              customizationTotal += Number(
+                item.customization.quality.price
+              );
 
-  //     console.error(err);
+            if (item.customization.diamondSubstitute?.price)
+              customizationTotal += Number(
+                item.customization.diamondSubstitute.price
+              );
+          }
 
-  //     alert("Checkout failed");
-  //   }
-  // };
+          console.log("BREEZE ITEM", item);
 
+          // DEFINE BASE PRICE
+          const unitPrice = Number(item.totalPrice || 0);
 
-  // const handleProceedToCheckout = async () => {
+          // DEFINE FINAL PRICE
+          // const finalUnitPrice =
+          //   unitPrice + customizationTotal;
 
-  // try {
+          return {
 
-  //     // CREATE BREEZE CART
+            id: String(item.item?._id),
 
-  //     const breezeCart = {
-  //       id: "cart_" + Date.now(),
+            title:
+              item.item?.jewelryName ||
+              item.item?.name ||
+              "Product",
 
-  //       currency: "INR",
+            quantity:
+              Number(item.quantity || 1),
 
-  //       itemCount: cartData.length,
+            image: item.item?.images?.[0]?.url,
 
-  //       initialPrice: totalAmount,
+            initialPrice:
+              Math.round(unitPrice * 100),
 
-  //       totalPrice: totalAmount,
+            finalPrice:
+              Math.round(unitPrice * 100),
 
-  //       totalDiscount: 0,
+            discount: 0,
 
-  //       items: cartData.map((item) => ({
-  //         id: item.item._id,
+          };
+        }),
 
-  //         title:
-  //           item.item.name ||
-  //           item.item.jewelryName,
+      };
 
-  //         quantity: item.quantity,
+      console.log(
+        "BREEZE CART:",
+        breezeCart
+      );
 
-  //         initialPrice: item.totalPrice,
+      console.log(
+        "FINAL BREEZE PAYLOAD:",
+        JSON.stringify(breezeCart, null, 2)
+      );
 
-  //         finalPrice: item.totalPrice,
+      // SIGN CART
 
-  //         discount: 0,
-  //       })),
-  //     };
+      const response =
+        await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+          {
+            cart: breezeCart,
+          }
+        );
 
-  //     // SIGN CART FROM BACKEND
+      console.log(
+        "SIGN RESPONSE:",
+        response.data
+      );
 
-  //     const response = await axios.post(
-  //       `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-  //       {
-  //         cart: breezeCart,
-  //       }
-  //     );
+      console.log(
+        "SENDING SHOP ORDER ID:",
+        order.orderId
+      );
 
-  //     console.log(
-  //       "SIGN RESPONSE:",
-  //       response.data
-  //     );
+      // PROCESS CHECKOUT
+      BlazeSDK.process(
 
-  //     // START CHECKOUT
+        {
+          requestId: crypto.randomUUID(),
 
-  //     BlazeSDK.process(
-  //       {
-  //         requestId:
-  //           crypto.randomUUID(),
+          service: "in.breeze.onecco",
 
-  //         service:
-  //           "in.breeze.onecco",
+          payload: {
+            action: "startCheckout",
 
-  //         payload: {
-  //           action:
-  //             "startCheckout",
+            shopOrderId: order.orderId,
 
-  //           cart:
-  //             response.data.cart,
+            cart: response.data.cart,
 
-  //           signature:
-  //             response.data.signature,
+            signature: response.data.signature,
 
-  //           keyId:
-  //             "YOUR_KEY_ID",
+            keyId: "BHqOsoFaflqL65A4M0lcT",
 
-  //           skipOTP: false,
+            customer: {
+              countryCode: "91",
 
-  //           customer: {
-  //             countryCode:
-  //               "+91",
+              phoneNumber: String(
+                shippingDetails.address.mobileNo
+              ).replace(/\D/g, ""),
 
-  //             phoneNumber:
-  //               shippingInfo.phone,
+              email: shippingDetails.address.email,
 
-  //             email:
-  //               shippingInfo.email,
+              name: shippingDetails.address.fullName,
+            },
 
-  //             name:
-  //               shippingInfo.name,
-  //           },
+            shippingAddress: {
+              postalCode:
+                shippingDetails.address.pinCode,
 
-  //           shippingAddress: {
-  //             postalCode:
-  //               shippingInfo.pincode,
+              country: "India",
 
-  //             country:
-  //               "India",
+              state:
+                shippingDetails.address.state,
 
-  //             state:
-  //               shippingInfo.state,
+              district:
+                shippingDetails.address.district,
 
-  //             district:
-  //               shippingInfo.city,
+              city:
+                shippingDetails.address.city,
 
-  //             city:
-  //               shippingInfo.city,
+              type: "Home",
 
-  //             type:
-  //               "Home",
+              line1:
+                shippingDetails.address.addressLine1,
 
-  //             line1:
-  //               shippingInfo.address,
+              name:
+                shippingDetails.address.fullName,
 
-  //             name:
-  //               shippingInfo.name,
+              nickname: "Home",
 
-  //             nickname:
-  //               "Home",
+              phoneNumber:
+                shippingDetails.address.mobileNo,
 
-  //             phoneNumber:
-  //               shippingInfo.phone,
+              landmark:
+                shippingDetails.address.landmark ||
+                "Near Area",
 
-  //             landmark:
-  //               shippingInfo.landmark ||
-  //               "Near Area",
+              countryPhoneCode: "+91",
 
-  //             countryPhoneCode:
-  //               "+91",
+              isDefault: true,
+            },
 
-  //             isDefault:
-  //               true,
-  //           },
+            disableAddressSelection: false,
 
-  //           disableAddressSelection:
-  //             false,
+            hideAddress: false,
 
-  //           hideAddress:
-  //             false,
+            hideOffersSection: false,
 
-  //           hideOffersSection:
-  //             false,
+            hideUserProfile: false,
 
-  //           hideUserProfile:
-  //             false,
+            hideTaxes: false,
 
-  //           hideTaxes:
-  //             false,
+            hideOffers: false,
+          },
+        },
 
-  //           hideOffers:
-  //             false,
+        // SDK CALLBACK
+        (sdkResponse) => {
 
-  //           trackOrderCtaText:
-  //             "Track Order",
-  //         },
-  //       },
+          console.log(
+            "BLAZE SDK EVENT:",
+            sdkResponse
+          );
 
-  //       (res) => {
+          const event =
+            sdkResponse?.payload?.event;
 
-  //         console.log(
-  //           "PROCESS RESPONSE:",
-  //           res
-  //         );
-  //       }
-  //     );
+          // SUCCESS
+          if (
+            event === "OrderComplete" ||
+            event === "Purchase" ||
+            event === "CheckoutCompleted"
+          ) {
 
-  //   } catch (err) {
+            toast.success(
+              "Payment successful"
+            );
 
-  //     console.error(err);
+            console.log(
+              "PAYMENT SUCCESS",
+              sdkResponse
+            );
+          }
 
-  //     alert("Checkout failed");
-  //   }
-  // };
+          // FAILURE
+          if (
+            event === "CheckoutFailed"
+          ) {
 
+            toast.error(
+              "Payment failed"
+            );
+
+            console.log(
+              "PAYMENT FAILED",
+              sdkResponse
+            );
+          }
+        }
+
+      );
+
+    }
+    catch (err) 
+    {
+
+        console.error(
+          "BREEZE CHECKOUT ERROR:",
+          err
+        );
+
+        console.error(
+          "BREEZE ERROR RESPONSE:",
+          err?.response?.data
+        );
+
+        console.error(
+          "BREEZE ERROR MESSAGE:",
+          err?.message
+        );
+
+        toast.error(
+          err?.response?.data?.message ||
+          err?.message ||
+          "Checkout failed"
+        );
+    }
+  };  
 
 
   useEffect(() => {
@@ -660,7 +905,8 @@ function ShoppingCart() {
                 </div>
 
                 <button
-                  onClick={handleProceedToCheckout}
+                  // onClick={handleProceedToCheckout}
+                  onClick={handleBreezeProceed}
                   className="w-full h-[50px] sm:h-[60px] bg-[#264A3F] rounded-full text-[12px] sm:text-[13px] uppercase tracking-[0.15em] text-white font-bold hover:bg-[#1a3329] hover:shadow-lg transition-all duration-300"
                 >
                   Secure Checkout

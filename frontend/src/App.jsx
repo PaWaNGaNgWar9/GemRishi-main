@@ -357,11 +357,11 @@ function App() {
 
   // }, []);
 
-      useEffect(() => {
-  
-        initBlaze();
-  
-      }, []);
+    useEffect(() => {
+
+      initBlaze();
+
+    }, []);
 
   return (
     <Provider store={store}>

@@ -134,36 +134,6 @@ const PremiumDropdown = ({ children, wide = false }) => {
   );
 };
 
-const JewelleryDropdown = ({ children }) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 8, scale: 0.98 }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute top-[100%] left-1/2 -translate-x-[30%] pt-4 z-[100]"
-    >
-      <div className="relative">
-
-        {/* Arrow */}
-        <div className="absolute -top-[6px] left-[30%] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100 z-20"></div>
-
-        <div className="relative bg-white rounded-sm shadow-[0_20px_40px_-10px_rgba(38,74,63,0.1)] border border-gray-100 overflow-hidden w-max max-w-[95vw]">
-
-          <div className="absolute top-0 left-0 w-full h-[3px] bg-[#264A3F]/10"></div>
-
-          <div className="max-h-[75vh] overflow-y-auto overflow-x-auto">
-            <div className="flex items-start w-max">
-              {children}
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
 
 // ==============================================================================
 // 4. Main Navbar Component
@@ -548,17 +518,17 @@ export default function Navbar({ handleLoginClick }) {
                   JEWELLERY{" "}
                   <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform ${hoveredMenu === "jewellery" ? "rotate-180" : ""}`} />
                 </div>
-                  <AnimatePresence>
-                    {hoveredMenu === "jewellery" && (
-                      <JewelleryDropdown>
-                        <JewelleryModal
-                          onHover={() => setHoveredMenu("jewellery")}
-                          onMouseLeave={() => setHoveredMenu(null)}
-                          closeNavbar={() => {}}
-                        />
-                      </JewelleryDropdown>
-                    )}
-                  </AnimatePresence>
+                <AnimatePresence>
+                  {hoveredMenu === "jewellery" && (
+                    <PremiumDropdown>
+                      <JewelleryModal 
+                        onHover={() => setHoveredMenu("jewellery")} 
+                        onMouseLeave={() => setHoveredMenu(null)} 
+                        closeNavbar={() => { }} 
+                      />
+                    </PremiumDropdown>
+                  )}
+                </AnimatePresence>
               </li>
 
               <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
