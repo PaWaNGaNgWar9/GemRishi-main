@@ -571,14 +571,12 @@ export const OrderDetailsPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <div className="space-y-3">
-                    <p className="font-medium text-[#120213]">
-                      {order?.paymentMethod}
-                    </p>
                     <p className="text-sm text-[#304c57] opacity-60">
                       {order?.breezeTransactionId ||
                         order?.razorpayOrderId ||
                         "Transaction ID missing"}
                     </p>
+
                     <p
                       className={`inline-block text-sm font-medium ${
                         statusColors[order.paymentStatus] ||
