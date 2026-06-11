@@ -307,36 +307,36 @@ export const platformWebhook = async (req, res) => {
       try {
         const existing = await Order.findOne({ orderId });
 
-        // if (!existing) {
-        //   await Order.create({
-        //     orderId,
-        //     razorpayOrderId: txnId,
-        //     totalAmount: String(payment?.amount || cart?.totalPrice || 0),
-        //     subTotal: cart?.totalPrice || 0,
-        //     discountAmount: cart?.totalDiscount || 0,
-        //     paymentStatus,
-        //     orderStatus: "Pending",
-        //     paymentMethod,
-        //     items,
-        //     address,
-        //   });
-        //   console.log("BREEZE ORDER CREATED:", orderId);
-        // } else {
-        //   existing.paymentStatus = paymentStatus;
-        //   await existing.save();
-        //   console.log("BREEZE ORDER UPDATED:", orderId);
-        // }
+        if (!existing) {
+          await Order.create({
+            orderId,
+            razorpayOrderId: txnId,
+            totalAmount: String(payment?.amount || cart?.totalPrice || 0),
+            subTotal: cart?.totalPrice || 0,
+            discountAmount: cart?.totalDiscount || 0,
+            paymentStatus,
+            orderStatus: "Pending",
+            paymentMethod,
+            items,
+            address,
+          });
+          console.log("BREEZE ORDER CREATED:", orderId);
+        } else {
+          existing.paymentStatus = paymentStatus;
+          await existing.save();
+          console.log("BREEZE ORDER UPDATED:", orderId);
+        }
 
-      if (!existing) {
-        console.warn(
-          "Order not found:",
-          orderId
-        );
+      // if (!existing) {
+      //   console.warn(
+      //     "Order not found:",
+      //     orderId
+      //   );
 
-        return res.status(200).json({
-          status: "SUCCESS",
-        });
-      }
+      //   return res.status(200).json({
+      //     status: "SUCCESS",
+      //   });
+      // }
 
       existing.paymentStatus = paymentStatus;
       existing.orderStatus = "Confirmed";
