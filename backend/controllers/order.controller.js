@@ -2324,6 +2324,9 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
     partialPay,
   });
 
+  console.log("ORDER USER:", userId);
+  console.log("ORDER ID:", order.orderId);
+
   await order.save();
 
   console.log("PAYMENT METHOD:", paymentMethod);
