@@ -306,33 +306,9 @@ export const platformWebhook = async (req, res) => {
 
       try {
 
-        console.log("WEBHOOK ORDER ID:", orderId);
-        console.log("SHOP ORDER ID:", cart?.id);
-
         const existing = await Order.findOne({
           orderId: cart?.id,
         });
-
-        // if (!existing) {
-        //   await Order.create({
-        //     orderId,
-        //     razorpayOrderId: txnId,
-        //     totalAmount: String(payment?.amount || cart?.totalPrice || 0),
-        //     subTotal: cart?.totalPrice || 0,
-        //     discountAmount: cart?.totalDiscount || 0,
-        //     paymentStatus,
-        //     orderStatus: "Pending",
-        //     paymentMethod,
-        //     items,
-        //     address,
-        //   });
-        //   console.log("BREEZE ORDER CREATED:", orderId);
-        // } else {
-        //   existing.paymentStatus = paymentStatus;
-        //   await existing.save();
-        //   console.log("BREEZE ORDER UPDATED:", orderId);
-        // }
-
 
       if (!existing) {
         console.warn(
@@ -346,15 +322,10 @@ export const platformWebhook = async (req, res) => {
       }
 
       existing.paymentStatus = paymentStatus;
-      existing.orderStatus = "Completed";
+      existing.orderStatus = "Pending";
       existing.breezeTransactionId = txnId;
 
       await existing.save();
-
-      console.log(
-        "BREEZE ORDER UPDATED:",
-        existing.orderId
-      );
 
       } catch (dbErr) {
         console.error("BREEZE WEBHOOK DB ERROR (non-fatal):", dbErr.message);
