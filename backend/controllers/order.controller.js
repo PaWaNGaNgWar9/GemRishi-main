@@ -556,6 +556,9 @@ export const getOrdersByUser = asyncHandler(async (req, res) => {
     .skip(skip)
     .limit(limit);
 
+    console.log("USER:", userId);
+    console.log("ORDERS FOUND:", orders.length);
+
   if (!orders.length) {
     return res.status(404).json({ success: false, msg: "No orders found" });
   }
