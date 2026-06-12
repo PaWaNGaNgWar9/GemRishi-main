@@ -514,7 +514,8 @@ export const OrderDetailsPage = () => {
                 <CardContent className="space-y-3">
                   <div>
                     <p className="font-medium text-[#120213] mb-2">
-                      {order?.userId?.fullName ||
+                      {order?.address?.fullName ||
+                        order?.userId?.fullName ||
                         order?.retailerId?.fullName ||
                         "N/A"}
                     </p>
@@ -552,7 +553,8 @@ export const OrderDetailsPage = () => {
                       )}
 
                       <p>
-                        {order?.userId?.country ||
+                        {order?.address?.country ||
+                          order?.userId?.country ||
                           order?.retailerId?.country ||
                           "N/A"}
                       </p>

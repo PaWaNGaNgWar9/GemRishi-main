@@ -191,6 +191,11 @@ export const platformWebhook = async (req, res) => {
       existing.orderStatus = "Pending";
       existing.breezeTransactionId = txnId;
 
+      /*
+      |--------------------------------------------------------------------------
+      | Save Breeze Address
+      |--------------------------------------------------------------------------
+      */
       existing.address = {
         fullName:
           shippingAddress?.name ||
@@ -229,6 +234,8 @@ export const platformWebhook = async (req, res) => {
       };
 
       await existing.save();
+
+      console.log("ORDER UPDATED FROM BREEZE:", existing.orderId);
 
       } catch (dbErr) {
         console.error("BREEZE WEBHOOK DB ERROR (non-fatal):", dbErr.message);
