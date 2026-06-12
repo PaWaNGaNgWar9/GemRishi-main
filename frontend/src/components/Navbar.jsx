@@ -629,7 +629,7 @@ export default function Navbar({ handleLoginClick }) {
             )}
 
             {/* 🛡️ Fully Protected Wishlist (Guaranteed to open Login if not authenticated) */}
-            <div
+            {/* <div
               className="relative group cursor-pointer"
               onClick={(e) => {
                 e.preventDefault();
@@ -649,10 +649,10 @@ export default function Navbar({ handleLoginClick }) {
                   {wishlistCount}
                 </span>
               )}
-            </div>
+            </div> */}
 
             {/* Desktop Auth / Profile */}
-            <div className="hidden lg:block">
+            {/* <div className="hidden lg:block">
               {isLoggedIn ? (
                 <ProfileDropdown user={user} handleLogout={handleLogout} />
               ) : (
@@ -660,7 +660,7 @@ export default function Navbar({ handleLoginClick }) {
                   Log In
                 </button>
               )}
-            </div>
+            </div> */}
 
             {/* Mobile Hamburger Trigger */}
             <div className="lg:hidden ml-1">
@@ -785,7 +785,7 @@ export default function Navbar({ handleLoginClick }) {
                     <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/aboutUs"); setIsNavOpen(false); }}>About Us</div>
                     <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/contactUs"); setIsNavOpen(false); }}>Contact Us</div>
                   </nav>
-                  <div className="mt-6 pt-6 border-t border-gray-100">
+                  {/* <div className="mt-6 pt-6 border-t border-gray-100">
                     {isLoggedIn ? (
                       <div className="flex items-center gap-3 p-3 bg-[#264A3F]/5 rounded-xl cursor-pointer" onClick={() => navigate("/personal/profile")}>
                         <div className="w-10 h-10 bg-[#264A3F] rounded-full flex items-center justify-center text-white"><PersonOutlineIcon /></div>
@@ -796,7 +796,7 @@ export default function Navbar({ handleLoginClick }) {
                         Log In / Sign Up
                       </button>
                     )}
-                  </div>
+                  </div> */}
                 </div>
               </motion.div>
             </>
