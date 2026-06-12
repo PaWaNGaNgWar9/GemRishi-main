@@ -198,13 +198,13 @@ function OrderDelivery({ slug }) {
 
 	// 🛒 Add to Cart
 	const handleAddToCart = async () => {
-		const userToken = getUserToken();
-		if (!userToken) {
-			toast.warn("Please log in to add items to the cart.", {
-				position: "top-center",
-			});
-			return;
-		}
+		// const userToken = getUserToken();
+		// if (!userToken) {
+		// 	toast.warn("Please log in to add items to the cart.", {
+		// 		position: "top-center",
+		// 	});
+		// 	return;
+		// }
 
 		if (!selectedProduct?._id) {
 			toast.error("Select a product first.", { position: "top-center" });
@@ -254,9 +254,23 @@ function OrderDelivery({ slug }) {
 
 			// console.log("🧾 Payload sent:", payload);
 
-			const res = await axios.post(`${URL}/cart/add_item_in_cart`, payload, {
-				headers: { Authorization: `Bearer ${userToken}` },
-			});
+			const userToken = getUserToken();
+
+			const config = {
+				withCredentials: true,
+			};
+
+			if (userToken) {
+				config.headers = {
+					Authorization: `Bearer ${userToken}`,
+				};
+			}
+
+			const res = await axios.post(
+				`${URL}/cart/add_item_in_cart`,
+				payload,
+				config
+			);
 
 			if (res.data.success) {
 				toast.success("Item added to cart successfully!", {

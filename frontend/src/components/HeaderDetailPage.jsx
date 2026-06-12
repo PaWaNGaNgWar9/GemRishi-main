@@ -221,13 +221,13 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 	};
 
 	const handleAddToCart = async () => {
-		const userToken = getUserToken();
-		if (!userToken) {
-			toast.warn("Please log in to add items to the cart.", {
-				position: "top-center",
-			});
-			return;
-		}
+		// const userToken = getUserToken();
+		// if (!userToken) {
+		// 	toast.warn("Please log in to add items to the cart.", {
+		// 		position: "top-center",
+		// 	});
+		// 	return;
+		// }
 
 		if (!product?._id) {
 			toast.error("Product not found.", { position: "top-center" });
@@ -321,12 +321,22 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 				customization: JSON.stringify(customization),
 			};
 
+			const userToken = getUserToken();
+
+			const config = {
+				withCredentials: true,
+			};
+
+			if (userToken) {
+				config.headers = {
+					Authorization: `Bearer ${userToken}`,
+				};
+			}
+
 			const response = await axios.post(
 				`${URL}/cart/add_item_in_cart`,
 				payload,
-				{
-					headers: { Authorization: `Bearer ${userToken}` },
-				}
+				config
 			);
 
 			if (response.data.success) {
