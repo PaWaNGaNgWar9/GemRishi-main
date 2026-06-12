@@ -1882,6 +1882,42 @@ function computeUnitPrice({ cartItem, latestRates }) {
   throw new Error(`Unknown itemType: ${itemType}`);
 }
 
+const getCartOwner = async (req, res) => {
+  let user;
+
+  if (req.user && req.user._id) {
+    user = await User.findById(req.user._id).select("cart");
+  } else {
+    let guestId = req.cookies?.guestId;
+
+    if (!guestId) {
+      guestId = new mongoose.Types.ObjectId();
+
+      // ✅ FIX 1: Make cross-origin cookies bulletproof for local development
+      res.cookie("guestId", guestId, {
+        httpOnly: true,
+        secure: true, // Required for SameSite None
+        sameSite: "None", // Required for cross-origin (frontend 5173 -> backend 7700)
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+      });
+    }
+
+    user = await User.findById(guestId).select("cart");
+
+    if (!user) {
+      user = await User.create({
+        _id: guestId,
+        name: "Guest User",
+        email: `guest_${guestId}@temp.com`,
+        password: `guest_${guestId}`,
+        isGuest: true,
+        cart: [],
+      });
+    }
+  }
+  return user;
+};
+
 /* -------------------- controller -------------------- */
 export const createProductOrder3 = asyncHandler(async (req, res) => {
   const user = await getCartOwner(req, res);
