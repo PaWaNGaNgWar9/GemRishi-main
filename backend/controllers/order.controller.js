@@ -1885,7 +1885,7 @@ function computeUnitPrice({ cartItem, latestRates }) {
 /* -------------------- controller -------------------- */
 export const createProductOrder3 = asyncHandler(async (req, res) => {
   const userId = req.user._id || req.user.id;
-  const { address, paymentMethod, promoCode } = req.body;
+  const { paymentMethod, promoCode } = req.body;
 
   // console.log(req.body);
 
@@ -1896,11 +1896,11 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
       msg: "Payment method is required",
     });
   }
-  if (!address) {
-    return res
-      .status(400)
-      .json({ success: false, field: "address", msg: "Address is required" });
-  }
+  // if (!address) {
+  //   return res
+  //     .status(400)
+  //     .json({ success: false, field: "address", msg: "Address is required" });
+  // }
 
   // load user cart fully enough for repricing + eligibility
   const user = await User.findById(userId)
@@ -2298,22 +2298,22 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
     return String(value).trim();
   };
 
-  const safeAddress = address || {};
-  const normalizedAddress = {
-    fullName: normalizeOrderAddressField(safeAddress.fullName),
-    email: normalizeOrderAddressField(safeAddress.email),
-    mobileNo: normalizeOrderAddressField(safeAddress.mobileNo),
-    addressLine1: normalizeOrderAddressField(safeAddress.addressLine1),
-    addressLine2: normalizeOrderAddressField(safeAddress.addressLine2),
-    landmark: normalizeOrderAddressField(safeAddress.landmark),
-    city: normalizeOrderAddressField(safeAddress.city),
-    district: normalizeOrderAddressField(safeAddress.district),
-    state: normalizeOrderAddressField(safeAddress.state),
-    pinCode: normalizeOrderAddressField(safeAddress.pinCode),
-    country: normalizeOrderAddressField(safeAddress.country),
-    addressType: normalizeOrderAddressField(safeAddress.addressType),
-    note: normalizeOrderAddressField(safeAddress.note),
-  };
+  // const safeAddress = address || {};
+  // const normalizedAddress = {
+  //   fullName: normalizeOrderAddressField(safeAddress.fullName),
+  //   email: normalizeOrderAddressField(safeAddress.email),
+  //   mobileNo: normalizeOrderAddressField(safeAddress.mobileNo),
+  //   addressLine1: normalizeOrderAddressField(safeAddress.addressLine1),
+  //   addressLine2: normalizeOrderAddressField(safeAddress.addressLine2),
+  //   landmark: normalizeOrderAddressField(safeAddress.landmark),
+  //   city: normalizeOrderAddressField(safeAddress.city),
+  //   district: normalizeOrderAddressField(safeAddress.district),
+  //   state: normalizeOrderAddressField(safeAddress.state),
+  //   pinCode: normalizeOrderAddressField(safeAddress.pinCode),
+  //   country: normalizeOrderAddressField(safeAddress.country),
+  //   addressType: normalizeOrderAddressField(safeAddress.addressType),
+  //   note: normalizeOrderAddressField(safeAddress.note),
+  // };
 
   const order = new Order({
     userId,
@@ -2324,7 +2324,7 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
     offerId: appliedOffer || undefined,
     items: orderItems,
     razorpayOrderId,
-    address: normalizedAddress,
+    // address: normalizedAddress,
     paymentMethod,
     onlinePayAmount,
     offlinePayAmount,
