@@ -260,7 +260,7 @@ function ShoppingCart() {
     }
 
     const userInfo = JSON.parse(userInfoString);
-    // const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
+    const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
 
     // Get address from shippingDetails or userProfile
     // const addressData = shippingDetails?.address || userProfile?.address;
@@ -345,7 +345,7 @@ function ShoppingCart() {
     // };
 
     const orderPayload = {
-      address,
+      // address,
       paymentMethod: selectedPaymentMethod,
       promoCode: promoCode || null,
       items: orderItems,
