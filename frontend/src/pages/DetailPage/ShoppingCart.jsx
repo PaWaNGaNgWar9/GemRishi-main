@@ -245,21 +245,21 @@ function ShoppingCart() {
 
 
   const handleCreateOrder = async (selectedPaymentMethod) => {
-    const userInfoString = localStorage.getItem("userInfo");
+    // const userInfoString = localStorage.getItem("userInfo");
     // const storedShippingDetails = localStorage.getItem("shippingDetails");
 
-    if (!userInfoString) {
-      alert("Please log in first.");
-      navigate("/login");
-      return null;
-    }
+    // if (!userInfoString) {
+    //   alert("Please log in first.");
+    //   navigate("/login");
+    //   return null;
+    // }
 
     if (cartData.length === 0) {
       alert("Your cart is empty.");
       return null;
     }
 
-    const userInfo = JSON.parse(userInfoString);
+    // const userInfo = JSON.parse(userInfoString);
     // const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
 
     // Get address from shippingDetails or userProfile
@@ -358,9 +358,10 @@ function ShoppingCart() {
         `${URL}/order/create-order`,
         orderPayload,
         {
+          withCredentials: true,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${userInfo.token}`,
+            // Authorization: `Bearer ${userInfo.token}`,
           },
         }
       );
