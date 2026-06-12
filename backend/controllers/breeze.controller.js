@@ -191,6 +191,42 @@ export const platformWebhook = async (req, res) => {
       existing.orderStatus = "Pending";
       existing.breezeTransactionId = txnId;
 
+      existing.address = {
+        fullName:
+          shippingAddress?.name ||
+          customer?.name ||
+          "",
+
+        email:
+          customer?.emailAddress ||
+          "",
+
+        mobileNo:
+          shippingAddress?.phoneNumber ||
+          customer?.phoneNumber ||
+          "",
+
+        addressLine1:
+          shippingAddress?.line1 || "",
+
+        addressLine2:
+          shippingAddress?.line2 || "",
+
+        city:
+          shippingAddress?.city || "",
+
+        state:
+          shippingAddress?.state || "",
+
+        pinCode:
+          shippingAddress?.postalCode || "",
+
+        country:
+          shippingAddress?.country || "India",
+
+        addressType:
+          shippingAddress?.type || "Home",
+      };
 
       await existing.save();
 
