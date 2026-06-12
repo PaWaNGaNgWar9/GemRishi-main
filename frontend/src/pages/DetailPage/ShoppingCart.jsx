@@ -246,7 +246,7 @@ function ShoppingCart() {
 
   const handleCreateOrder = async (selectedPaymentMethod) => {
     const userInfoString = localStorage.getItem("userInfo");
-    const storedShippingDetails = localStorage.getItem("shippingDetails");
+    // const storedShippingDetails = localStorage.getItem("shippingDetails");
 
     if (!userInfoString) {
       alert("Please log in first.");
@@ -260,53 +260,53 @@ function ShoppingCart() {
     }
 
     const userInfo = JSON.parse(userInfoString);
-    const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
+    // const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
 
     // Get address from shippingDetails or userProfile
-    const addressData = shippingDetails?.address || userProfile?.address;
+    // const addressData = shippingDetails?.address || userProfile?.address;
 
-    if (!addressData) {
-      alert("Please complete shipping details first.");
-      navigate("/shipping/address");
-      return null;
-    }
+    // if (!addressData) {
+    //   alert("Please complete shipping details first.");
+    //   navigate("/shipping/address");
+    //   return null;
+    // }
 
-    let address = {};
-    if (Array.isArray(addressData)) {
-      // Assume first address if array
-      const addr = addressData[0] || {};
-      address = {
-        fullName: normalizeAddressField(addr.fullName || userInfo.name || ""),
-        email: normalizeAddressField(addr.email || userInfo.email || ""),
-        mobileNo: normalizeAddressField(addr.mobileNo || userInfo.mobileNo || ""),
-        addressLine1: normalizeAddressField(addr.addressLine1 || ""),
-        addressLine2: normalizeAddressField(addr.addressLine2 || ""),
-        landmark: normalizeAddressField(addr.landmark || ""),
-        city: normalizeAddressField(addr.city || ""),
-        district: normalizeAddressField(addr.district || ""),
-        state: normalizeAddressField(addr.state || ""),
-        pinCode: normalizeAddressField(addr.pinCode || ""),
-        country: normalizeAddressField(addr.country || "India"),
-        addressType: normalizeAddressField(addr.addressType || "Home"),
-        note: normalizeAddressField(addr.note || ""),
-      };
-    } else {
-      address = {
-        fullName: normalizeAddressField(addressData.fullName || userInfo.name || ""),
-        email: normalizeAddressField(addressData.email || userInfo.email || ""),
-        mobileNo: normalizeAddressField(addressData.mobileNo || userInfo.mobileNo || ""),
-        addressLine1: normalizeAddressField(addressData.addressLine1 || ""),
-        addressLine2: normalizeAddressField(addressData.addressLine2 || ""),
-        landmark: normalizeAddressField(addressData.landmark || ""),
-        city: normalizeAddressField(addressData.city || ""),
-        district: normalizeAddressField(addressData.district || ""),
-        state: normalizeAddressField(addressData.state || ""),
-        pinCode: normalizeAddressField(addressData.pinCode || ""),
-        country: normalizeAddressField(addressData.country || "India"),
-        addressType: normalizeAddressField(addressData.addressType || "Home"),
-        note: normalizeAddressField(addressData.note || ""),
-      };
-    }
+    // let address = {};
+    // if (Array.isArray(addressData)) {
+    //   // Assume first address if array
+    //   const addr = addressData[0] || {};
+    //   address = {
+    //     fullName: normalizeAddressField(addr.fullName || userInfo.name || ""),
+    //     email: normalizeAddressField(addr.email || userInfo.email || ""),
+    //     mobileNo: normalizeAddressField(addr.mobileNo || userInfo.mobileNo || ""),
+    //     addressLine1: normalizeAddressField(addr.addressLine1 || ""),
+    //     addressLine2: normalizeAddressField(addr.addressLine2 || ""),
+    //     landmark: normalizeAddressField(addr.landmark || ""),
+    //     city: normalizeAddressField(addr.city || ""),
+    //     district: normalizeAddressField(addr.district || ""),
+    //     state: normalizeAddressField(addr.state || ""),
+    //     pinCode: normalizeAddressField(addr.pinCode || ""),
+    //     country: normalizeAddressField(addr.country || "India"),
+    //     addressType: normalizeAddressField(addr.addressType || "Home"),
+    //     note: normalizeAddressField(addr.note || ""),
+    //   };
+    // } else {
+    //   address = {
+    //     fullName: normalizeAddressField(addressData.fullName || userInfo.name || ""),
+    //     email: normalizeAddressField(addressData.email || userInfo.email || ""),
+    //     mobileNo: normalizeAddressField(addressData.mobileNo || userInfo.mobileNo || ""),
+    //     addressLine1: normalizeAddressField(addressData.addressLine1 || ""),
+    //     addressLine2: normalizeAddressField(addressData.addressLine2 || ""),
+    //     landmark: normalizeAddressField(addressData.landmark || ""),
+    //     city: normalizeAddressField(addressData.city || ""),
+    //     district: normalizeAddressField(addressData.district || ""),
+    //     state: normalizeAddressField(addressData.state || ""),
+    //     pinCode: normalizeAddressField(addressData.pinCode || ""),
+    //     country: normalizeAddressField(addressData.country || "India"),
+    //     addressType: normalizeAddressField(addressData.addressType || "Home"),
+    //     note: normalizeAddressField(addressData.note || ""),
+    //   };
+    // }
 
     // console.log("✅ Final Address Payload:", address);
     // console.log("✅ Cart Data for Order:", cartData);
