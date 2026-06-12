@@ -17,7 +17,7 @@ import {
   createProductRetailerOrder2,
   cancelOrderByUser2,
 } from "../controllers/order.controller.js";
-import { protect, protectAdmin, protectRetailer } from "../middlewares/authMiddleware.js";
+import { protect, protectAdmin, checkUserLoggedIn, protectRetailer } from "../middlewares/authMiddleware.js";
 import { body, validationResult } from "express-validator";
 import { customUpload, upload } from '../middlewares/multer.middleware.js';
 
@@ -77,7 +77,7 @@ router.post(
   createProductOrder
 );
 
-router.post("/create-order", upload.none(), protect, createProductOrder3);
+router.post("/create-order", upload.none(), checkUserLoggedIn, createProductOrder3);
 
 router.get("/get-all-orders", protectAdmin, getAllOrders);
 

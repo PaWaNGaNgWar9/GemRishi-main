@@ -1884,7 +1884,15 @@ function computeUnitPrice({ cartItem, latestRates }) {
 
 /* -------------------- controller -------------------- */
 export const createProductOrder3 = asyncHandler(async (req, res) => {
-  const userId = req.user._id || req.user.id;
+  const user = await getCartOwner(req, res);
+
+  if (!user) {
+    return res.status(400).json({
+      success: false,
+      msg: "Cart not found",
+    });
+  }
+  
   const { paymentMethod, promoCode } = req.body;
 
   // console.log(req.body);
@@ -1903,12 +1911,11 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
   // }
 
   // load user cart fully enough for repricing + eligibility
-  const user = await User.findById(userId)
-    .populate({
+    await user.populate({
       path: "cart.item",
       populate: { path: "subCategory" }, // for Product subCategory offer checks
     })
-    .populate({
+    await user.populate({
       path: "cart.customization.jewelryId",
       model: "Jewelry",
       select:
@@ -2316,7 +2323,7 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
   // };
 
   const order = new Order({
-    userId,
+    userId: user._id,
     orderId: generateOrderId(),
     totalAmount: finalTotal, // final after discount
     subTotal: subTotal, // recomputed subtotal
@@ -2331,7 +2338,7 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
     partialPay,
   });
 
-  console.log("ORDER USER:", userId);
+  console.log("ORDER USER:", user._id);
   console.log("ORDER ID:", order.orderId);
 
   await order.save();
