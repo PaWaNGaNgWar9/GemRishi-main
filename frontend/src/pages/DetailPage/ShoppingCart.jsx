@@ -387,15 +387,15 @@ function ShoppingCart() {
     }
   };
 
-  const normalizeAddressField = (value) => {
-    if (Array.isArray(value)) {
-      return value.join(" ").trim();
-    }
-    if (value == null) {
-      return "";
-    }
-    return String(value).trim();
-  };
+  // const normalizeAddressField = (value) => {
+  //   if (Array.isArray(value)) {
+  //     return value.join(" ").trim();
+  //   }
+  //   if (value == null) {
+  //     return "";
+  //   }
+  //   return String(value).trim();
+  // };
 
 
   const handleBreezeProceed = async () => {

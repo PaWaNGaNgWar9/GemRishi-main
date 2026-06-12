@@ -2288,15 +2288,15 @@ export const createProductOrder3 = asyncHandler(async (req, res) => {
     razorpayOrderId = data.id;
   }
 
-  const normalizeOrderAddressField = (value) => {
-    if (Array.isArray(value)) {
-      return value.join(" ").trim();
-    }
-    if (value == null) {
-      return "";
-    }
-    return String(value).trim();
-  };
+  // const normalizeOrderAddressField = (value) => {
+  //   if (Array.isArray(value)) {
+  //     return value.join(" ").trim();
+  //   }
+  //   if (value == null) {
+  //     return "";
+  //   }
+  //   return String(value).trim();
+  // };
 
   // const safeAddress = address || {};
   // const normalizedAddress = {
