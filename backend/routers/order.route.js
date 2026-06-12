@@ -51,7 +51,7 @@ const router = Router();
 
 router.post(
   "/create-order2",
-  protect,
+  checkUserLoggedIn,
   [
     body("totalAmount")
       .notEmpty()
