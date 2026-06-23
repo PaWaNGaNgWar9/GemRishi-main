@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
   <meta charset="UTF-8" />
 
   <link rel="icon" type="image/svg+xml" href="/logo.jpg" />
@@ -16,6 +17,7 @@
     Buy Certified Gemstones Online | GemRishi India Trusted Astrology Gems
   </title>
 
+
   <meta
     name="description"
     content="Discover certified natural gemstones and astrology jewelry from GemRishi India. Trusted source for authentic gems, birthstones, and healing crystals."
@@ -23,11 +25,15 @@
 
 
   <!-- Google Tag Manager -->
+
   <script>
+
     window.dataLayer = window.dataLayer || [];
 
     (function(w,d,s,l,i){
+
       w[l]=w[l]||[];
+
       w[l].push({
         'gtm.start': new Date().getTime(),
         event:'gtm.js'
@@ -38,43 +44,62 @@
       dl=l!='dataLayer'?'&l='+l:'';
 
       j.async=true;
+
       j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;
 
       f.parentNode.insertBefore(j,f);
 
+
     })(window,document,'script','dataLayer','GTM-M29F5B4M');
+
   </script>
+
   <!-- End Google Tag Manager -->
 
 
-  <!-- Meta Pixel Code -->
+  <!-- Meta Pixel -->
+
   <script>
 
     !function(f,b,e,v,n,t,s)
     {
+
       if(f.fbq)return;
 
-      n=f.fbq=function()
-      {
+      n=f.fbq=function(){
+
         n.callMethod ?
+
         n.callMethod.apply(n,arguments) :
+
         n.queue.push(arguments)
+
       };
 
       if(!f._fbq)
         f._fbq=n;
 
+
       n.push=n;
+
       n.loaded=!0;
+
       n.version='2.0';
+
       n.queue=[];
 
+
       t=b.createElement(e);
+
       t.async=!0;
+
       t.src=v;
 
+
       s=b.getElementsByTagName(e)[0];
+
       s.parentNode.insertBefore(t,s);
+
 
     }(
       window,
@@ -84,20 +109,25 @@
     );
 
 
-    fbq('init', '430058849371405');
-    fbq('track', 'PageView');
+    fbq('init','430058849371405');
+
+    fbq('track','PageView');
+
 
   </script>
-  <!-- End Meta Pixel Code -->
+
+  <!-- End Meta Pixel -->
 
 
 </head>
 
 
+
 <body>
 
 
-  <!-- Google Tag Manager (noscript) -->
+  <!-- Google Tag Manager noscript -->
+
   <noscript>
 
     <iframe
@@ -108,10 +138,14 @@
     </iframe>
 
   </noscript>
-  <!-- End Google Tag Manager (noscript) -->
+
+
+  <!-- End Google Tag Manager noscript -->
+
 
 
   <!-- Meta Pixel noscript -->
+
   <noscript>
 
     <img
@@ -122,16 +156,26 @@
     />
 
   </noscript>
+
+
   <!-- End Meta Pixel noscript -->
+
 
 
   <div id="root"></div>
 
 
-  <script type="module" src="/src/main.jsx"></script>
+  <!-- React entry -->
+
+  <script
+    type="module"
+    src="/src/main.jsx">
+  </script>
+
 
 
   <!-- Blaze SDK -->
+
   <script src="https://sdk.breeze.in/packages/blaze/0.1.0/cdn.js"></script>
 
 
@@ -149,6 +193,7 @@
         key => key.toLowerCase().includes("blaze")
       )
     );
+
 
   </script>
 
