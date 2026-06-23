@@ -372,9 +372,9 @@ function StoneCollection() {
     setSelectedFilters((prev) => ({ ...prev, minPrice: val[0], maxPrice: val[1] }));
       }}>
         <option value="">Quality</option>
-<option value="50-20000">Good (₹0 - ₹20K)</option>
-<option value="20001-100000">Premium (₹20K - ₹1.0L)</option>
-<option value="100001-500000">Luxury (₹1.0L - ₹5.0L)</option>
+<option value="50-20000">Good (₹0-₹20K)</option>
+<option value="20001-100000">Premium (₹20K-₹1.0L)</option>
+<option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
 <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
 </select>
 
@@ -565,9 +565,9 @@ function StoneCollection() {
        }}
             >
               <option value="">Quality</option>
-<option value="50-20000">Good (₹0 - ₹20K)</option>
-<option value="20001-100000">Premium (₹20K - ₹1.0L)</option>
-<option value="100001-500000">Luxury (₹1.0L - ₹5.0L)</option>
+<option value="50-20000">Good (₹0-₹20K)</option>
+<option value="20001-100000">Premium (₹20K-₹1.0L)</option>
+<option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
 <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
             </select>
         <button
