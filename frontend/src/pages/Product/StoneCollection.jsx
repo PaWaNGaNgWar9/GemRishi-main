@@ -36,7 +36,10 @@ function StoneCollection() {
     featured: "",
     sort: "",
     certificateType: "",
+<<<<<<< HEAD
       quality: "",
+=======
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
   };
 
   const [products, setProducts] = useState([]);
@@ -254,6 +257,10 @@ function StoneCollection() {
               <option value="GRS">GRS</option>
               <option value="SSEF">SSEF</option>
             </select>
+<<<<<<< HEAD
+=======
+
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
             {/** Price */}
             <select
               className="border px-3 py-2 rounded"
@@ -362,6 +369,7 @@ function StoneCollection() {
               <option value="Heated">Heated</option>
               <option value="Non Heated">Non Heated</option>
             </select>
+<<<<<<< HEAD
 {/* ----------------------------_Add By Pawan--------------------------------- */}
              {/* Quality */}
  <select
@@ -377,6 +385,8 @@ function StoneCollection() {
 <option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
 <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
 </select>
+=======
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
 
             <button
               className="cursor-pointer bg-red-600 p-2 rounded text-white"
@@ -390,7 +400,10 @@ function StoneCollection() {
           </div>
         </details>
       </div>
+<<<<<<< HEAD
   {/* ------------------------------------------------------------------------------ */}
+=======
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
 
       {/* DESKTOP FILTERS */}
       <div className="hidden lg:flex flex-wrap items-center gap-3 overflow-x-auto whitespace-nowrap pb-3 scrollbar-hide">
@@ -438,6 +451,10 @@ function StoneCollection() {
           <option value="GRS">GRS</option>
           <option value="SSEF">SSEF</option>
         </select>
+<<<<<<< HEAD
+=======
+
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
           value={selectedFilters.minPrice && selectedFilters.maxPrice ? `${selectedFilters.minPrice}-${selectedFilters.maxPrice}` : ""}
@@ -452,6 +469,10 @@ function StoneCollection() {
           <option value="20000-50000">20k–50k</option>
           <option value="50000-200000">50k–2L</option>
         </select>
+<<<<<<< HEAD
+=======
+
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm w-40 hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
           value={selectedFilters.origin}
@@ -521,7 +542,11 @@ function StoneCollection() {
 
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
+<<<<<<< HEAD
           value={selectedFilters.treatment} 
+=======
+          value={selectedFilters.treatment}
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
           onChange={(e) => setSelectedFilters((prev) => ({ ...prev, treatment: e.target.value }))}
         >
           <option value="">Treatment</option>
@@ -554,6 +579,7 @@ function StoneCollection() {
           <option value="newest">Newest First</option>
           <option value="oldest">Oldest First</option>
         </select>
+<<<<<<< HEAD
         {/* {--------------Quality-----------------} */}
 {/* ----------------------Add By Pawan------------------------------------------------ */}
         <select
@@ -570,6 +596,9 @@ function StoneCollection() {
 <option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
 <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
             </select>
+=======
+
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
         <button
           className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition text-sm font-medium"
           onClick={() => {
@@ -580,7 +609,11 @@ function StoneCollection() {
           Clear All
         </button>
       </div>
+<<<<<<< HEAD
 {/* ----------------------------------------------------------------------------------------- */}
+=======
+
+>>>>>>> e34b3cdb9ebbd6c9959f2d533a61af84e91ae8b7
       {/* PRODUCT GRID */}
       <div className={`w-full grid ${products.length === 1 ? "place-items-center grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4"} gap-4 sm:gap-6 mt-4 sm:mt-6`}>
         {products.map((product) => (
