@@ -137,7 +137,7 @@ function AppWrapper() {
         <Route path="/" element={<Home />} />
         <Route path="/gemstone/:slug" element={<ProductList />} />
         <Route path="/gemstone/filter/:slug" element={<FilterProductPage />} />
-        <Route path="/gemstones/:slug" element={<DetailPage />} />
+        <Route  path="/gemstones/:slug/:random?" element={<DetailPage />} />
         <Route path="/gemstones/:slug/:generateRandomString?" element={<DetailPage />} />
         <Route path="/search-results" element={<SearchResultsPage />} />
         <Route path="/aboutUs" element={<AboutUs />} />
@@ -224,11 +224,11 @@ function AppWrapper() {
 
         {/* Routes from second App */}
         <Route path="/jewelry" element={<Jewellery />} />
-        <Route path="/jewelry/:slug" element={<Productpage />} />
+        <Route  path="/jewelry/:slug/:random?" element={<Productpage />} />
         <Route path="/jewelry/:slug/:generateRandomString?" element={<Productpage />} />
         <Route path="/jewelry-list" element={<JewelryListPage />} />
         <Route path="/details/product/:slugOrId/:generateRandomString?" element={<ProductDetails />} />
-        <Route path="/gemstone/:generateRandomString?" element={<Gemstone />} />
+   <Route path="/gemstone" element={<Gemstone />} />
         <Route path="/jewellery" element={<Jewellery />} />
         <Route path="/suggest" element={<GemSuggestion />} />
         <Route path="/jewellery-results" element={<Jewellerybyfilter />} />
