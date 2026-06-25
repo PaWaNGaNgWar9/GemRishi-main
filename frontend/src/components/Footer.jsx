@@ -52,8 +52,7 @@ const preciousGemstones = [
 	// Ruby by ratti
 	{ label: "5 Ratti Ruby", slug: "ruby" },
 	{ label: "6 Ratti Ruby", slug: "ruby" },
-	{ label: "Ruby Manik", slug: "ruby" },
-	{ label: "African Ruby", path: "/gemstone/ruby-" },
+	{ label: "African Ruby", path: "/gemstone/ruby" },
 	// Ruby by price
 	{ label: "Ruby under Rs.10,000", path: "/gemstones/ruby-(-manik-)--4.7-carats/dsbhhrujifiuhed4ot340ot04ewgto" },
 	{ label: "Ruby under Rs.20,000", path: "/gemstones/ruby-(-manik-)--6.2-carats-1/dsbhhrujifiuhed4ot340ot04ewgto" },
@@ -83,7 +82,7 @@ const preciousGemstones = [
 	{ label: "South Sea Pearl", slug: "pearl" },
 	// By color
 	{ label: "Green Gemstones", slug: "emerald" },
-	{ label: "Red Gemstones", path: "/gemstone/ruby-" },
+	{ label: "Red Gemstones", slug: "ruby" },
 	{ label: "Blue Gemstones", slug: "blue-sapphire" },
 	{ label: "Pink Gemstones", slug: "pink-sapphire" },
 	{ label: "Yellow Gemstones", slug: "yellow-sapphire" },
