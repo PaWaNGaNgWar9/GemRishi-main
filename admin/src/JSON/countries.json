@@ -4,6 +4,10 @@
         "code": "AF"
     },
     {
+        "name": "Åland Islands",
+        "code": "AX"
+    },
+    {
         "name": "Albania",
         "code": "AL"
     },
@@ -48,7 +52,7 @@
         "code": "AW"
     },
     {
-        "name": "Asia/Pacific Region",
+        "name": "Asia/Pacific Region (Region)",
         "code": "AP"
     },
     {
@@ -78,6 +82,10 @@
     {
         "name": "Barbados",
         "code": "BB"
+    },
+    {
+        "name": "Basra (City, Iraq)",
+        "code": "IQ-BA"
     },
     {
         "name": "Belarus",
@@ -130,6 +138,10 @@
     {
         "name": "British Indian Ocean Territory",
         "code": "IO"
+    },
+    {
+        "name": "British Virgin Islands",
+        "code": "VG"
     },
     {
         "name": "Brunei Darussalam",
@@ -200,20 +212,16 @@
         "code": "KM"
     },
     {
-        "name": "Congo",
-        "code": "CG"
-    },
-    {
-        "name": "Congo, The Democratic Republic of the",
-        "code": "CD"
-    },
-    {
         "name": "Cook Islands",
         "code": "CK"
     },
     {
         "name": "Costa Rica",
         "code": "CR"
+    },
+    {
+        "name": "Côte d'Ivoire",
+        "code": "CI"
     },
     {
         "name": "Croatia",
@@ -236,8 +244,8 @@
         "code": "CZ"
     },
     {
-        "name": "Côte d'Ivoire",
-        "code": "CI"
+        "name": "Democratic Republic of the Congo",
+        "code": "CD"
     },
     {
         "name": "Denmark",
@@ -384,7 +392,7 @@
         "code": "HT"
     },
     {
-        "name": "Heard Island and Mcdonald Islands",
+        "name": "Heard Island and McDonald Islands",
         "code": "HM"
     },
     {
@@ -416,7 +424,7 @@
         "code": "ID"
     },
     {
-        "name": "Iran, Islamic Republic Of",
+        "name": "Iran (Persia)",
         "code": "IR"
     },
     {
@@ -468,10 +476,6 @@
         "code": "KI"
     },
     {
-        "name": "Korea, Republic of",
-        "code": "KR"
-    },
-    {
         "name": "Kuwait",
         "code": "KW"
     },
@@ -500,7 +504,7 @@
         "code": "LR"
     },
     {
-        "name": "Libyan Arab Jamahiriya",
+        "name": "Libya",
         "code": "LY"
     },
     {
@@ -568,11 +572,11 @@
         "code": "MX"
     },
     {
-        "name": "Micronesia, Federated States of",
+        "name": "Micronesia",
         "code": "FM"
     },
     {
-        "name": "Moldova, Republic of",
+        "name": "Moldova",
         "code": "MD"
     },
     {
@@ -620,7 +624,7 @@
         "code": "NL"
     },
     {
-        "name": "Netherlands Antilles",
+        "name": "Netherlands Antilles (Dissolved Country)",
         "code": "AN"
     },
     {
@@ -680,7 +684,7 @@
         "code": "PW"
     },
     {
-        "name": "Palestinian Territory, Occupied",
+        "name": "Palestine",
         "code": "PS"
     },
     {
@@ -724,7 +728,11 @@
         "code": "QA"
     },
     {
-        "name": "Reunion",
+        "name": "Republic of the Congo",
+        "code": "CG"
+    },
+    {
+        "name": "Réunion",
         "code": "RE"
     },
     {
@@ -732,7 +740,7 @@
         "code": "RO"
     },
     {
-        "name": "Russian Federation",
+        "name": "Russian Federation (Russia)",
         "code": "RU"
     },
     {
@@ -760,10 +768,6 @@
         "code": "MF"
     },
     {
-        "name": "Saint Martin",
-        "code": "MF"
-    },
-    {
         "name": "Saint Pierre and Miquelon",
         "code": "PM"
     },
@@ -780,7 +784,7 @@
         "code": "SM"
     },
     {
-        "name": "Sao Tome and Principe",
+        "name": "São Tomé and Príncipe",
         "code": "ST"
     },
     {
@@ -796,7 +800,7 @@
         "code": "RS"
     },
     {
-        "name": "Serbia and Montenegro",
+        "name": "Serbia and Montenegro (Dissolved Country)",
         "code": "CS"
     },
     {
@@ -840,8 +844,20 @@
         "code": "GS"
     },
     {
+        "name": "South Korea",
+        "code": "KR"
+    },
+    {
+        "name": "South Sea (Region)",
+        "code": "XSS"
+    },
+    {
         "name": "South Sudan",
         "code": "SS"
+    },
+    {
+        "name": "Southern Africa (Region)",
+        "code": "XSA"
     },
     {
         "name": "Spain",
@@ -864,7 +880,7 @@
         "code": "SJ"
     },
     {
-        "name": "Swaziland",
+        "name": "Swaziland (Eswatini)",
         "code": "SZ"
     },
     {
@@ -876,7 +892,7 @@
         "code": "CH"
     },
     {
-        "name": "Syrian Arab Republic",
+        "name": "Syria",
         "code": "SY"
     },
     {
@@ -888,7 +904,7 @@
         "code": "TJ"
     },
     {
-        "name": "Tanzania, United Republic of",
+        "name": "Tanzania",
         "code": "TZ"
     },
     {
@@ -936,6 +952,10 @@
         "code": "TV"
     },
     {
+        "name": "U.S. Virgin Islands",
+        "code": "VI"
+    },
+    {
         "name": "Uganda",
         "code": "UG"
     },
@@ -980,16 +1000,12 @@
         "code": "VN"
     },
     {
-        "name": "Virgin Islands, British",
-        "code": "VG"
-    },
-    {
-        "name": "Virgin Islands, U.S.",
-        "code": "VI"
-    },
-    {
         "name": "Wallis and Futuna",
         "code": "WF"
+    },
+    {
+        "name": "West Africa (Region)",
+        "code": "XWA"
     },
     {
         "name": "Western Sahara",
@@ -1006,9 +1022,5 @@
     {
         "name": "Zimbabwe",
         "code": "ZW"
-    },
-    {
-        "name": "Åland Islands",
-        "code": "AX"
     }
 ]
