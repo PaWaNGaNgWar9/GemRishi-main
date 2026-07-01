@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import BlueSapphire from "../../assets/Stone/BlueSapphire.svg";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -8,7 +8,9 @@ import { setCartItems, removeItemFromCart } from "../../redux/cartSlice";
 import { toast } from "react-toastify";
 import { appendRandomString } from "../../utils/randomString";
 import BlazeSDK from "@juspay/blaze-sdk-web";
-
+// ----------Add by Pawan for GA4 Tracking----------------
+import { trackPurchaseEvent, buildItemsFromCartData } from "../../utils/purchaseTracking";
+// -------Add by Pawan for GA4 Tracking----------------
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
   <div className="w-full bg-white rounded-[20px] sm:rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 flex gap-4 sm:gap-6 animate-pulse mb-4 sm:mb-6">
@@ -73,8 +75,10 @@ function ShoppingCart() {
 
   const [userProfile, setUserProfile] = useState(null);
   const [promoCode, setPromoCode] = useState("");
-
-  const [loading, setLoading] = useState(true);
+// -----------------comment By Pawan --------------------------------------------------------------
+const hasTrackedViewCart = useRef(false);
+// -------------------------------------------------------------------------------------------------
+const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const URL = import.meta.env.VITE_URL;
@@ -175,6 +179,41 @@ function ShoppingCart() {
       if (response.data?.success && response.data?.cart) {
         setCartData(response.data.cart);
         dispatch(setCartItems(response.data.cart));
+
+        if (!hasTrackedViewCart.current && response.data.cart.length > 0) {
+          hasTrackedViewCart.current = true;
+
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({ ecommerce: null });
+          window.dataLayer.push({
+            event: "view_cart",
+            ecommerce: {
+              currency: "INR",
+              value: response.data.cart.reduce(
+                (sum, ci) => sum + (Number(ci.totalPrice) || 0),
+                0
+              ),
+              items: response.data.cart.map((ci) => {
+                const isJewelry = ci.itemType === "Jewelry";
+                const hasJewelryCustomization = !!ci.customization?.jewelryId;
+                const name = isJewelry
+                  ? ci.item?.jewelryName
+                  : hasJewelryCustomization
+                  ? ci.customization.jewelryId?.jewelryName
+                  : ci.item?.name;
+                const qty = Number(ci.quantity) || 1;
+                return {
+                  item_id: String(ci.item?._id || ci._id || ""),
+                  item_name: name || "Unnamed Item",
+                  item_brand: "Gemrishi",
+                  item_category: ci.itemType || "",
+                  price: qty ? Number((ci.totalPrice / qty).toFixed(2)) : Number(ci.totalPrice) || 0,
+                  quantity: qty,
+                };
+              }),
+            },
+          });
+        }
       } else {
         setCartData([]);
         dispatch(setCartItems([]));
@@ -434,6 +473,31 @@ function ShoppingCart() {
       const finalAmount = Number(order.totalAmount);
 
       console.log("BACKEND FINAL:", finalAmount);
+ // =======Add By Pawan========================================================================
+      // GA4 Add Payment Info Tracking — dedup per order so re-renders/double-clicks don't double count
+      const paymentInfoKey = `tracked_payment_info_${order.orderId}`;
+      let alreadyTracked = false;
+      try {
+        alreadyTracked = !!sessionStorage.getItem(paymentInfoKey);
+        if (!alreadyTracked) sessionStorage.setItem(paymentInfoKey, "1");
+      } catch (e) {
+        console.warn("[add_payment_info] sessionStorage unavailable:", e);
+      }
+
+      if (!alreadyTracked) {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
+          event: "add_payment_info",
+          ecommerce: {
+            currency: "INR",
+            value: finalAmount,
+            payment_type: "breeze",
+            items: buildItemsFromCartData(cartData),
+          },
+        });
+      }
+      // Add By Pawan================================================================================
 
       if (!BlazeSDK?.process)
       {
@@ -685,6 +749,16 @@ function ShoppingCart() {
             toast.success(
               "Payment successful"
             );
+             // =======Add By Pawan========================================================================
+            // GA4 Purchase Tracking — trackPurchaseEvent internally dedupes by orderId,
+            // so it's safe even if the SDK fires this callback more than once for the same order.
+            trackPurchaseEvent({
+              orderId: order.orderId,
+              subtotal: order.totalAmount,
+              coupon: promoCode || "",
+              items: buildItemsFromCartData(cartData),
+            });
+            // Add By Pawan================================================================================
 
             console.log(
               "PAYMENT SUCCESS",

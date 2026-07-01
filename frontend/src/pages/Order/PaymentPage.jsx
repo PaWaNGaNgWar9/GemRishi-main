@@ -378,9 +378,27 @@ function PaymentPage() {
   };
 
   console.log("totl", paymentTotalAmount)
-
+// Commment By Pawan -----------------------------------------------------------
+  // const handleProceed = async () => {
+//   const orderResult = await handleCreateOrder();
+  // Comment By Pawan-----------------------------------------------------------
+   // Add By Pawan-----------------------------------------------------------
   const handleProceed = async () => {
-    const orderResult = await handleCreateOrder();
+  // GA4 Add Payment Info Tracking
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "add_payment_info",
+    ecommerce: {
+      currency: "INR",
+      value: cartData.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0),
+      payment_type: paymentMethod, // "online" or "cod"
+      items: buildItemsFromCartData(cartData),
+    },
+  });
+
+  const orderResult = await handleCreateOrder();
+   // Add By Pawan----------------------------------------------------------------
     if (!orderResult) return;
 
     const { order, data } = orderResult;
