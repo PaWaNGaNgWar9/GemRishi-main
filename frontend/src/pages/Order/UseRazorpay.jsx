@@ -4,7 +4,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+// -----------------Add By Pawan --------------------------------------------------------
+import {
+  trackPurchaseEvent,
+  buildItemsFromOrder,
+} from "../../utils/purchaseTracking";
+// -----------------Add By Pawan -------------------------------------------------------
 function UseRazorpay() {
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -51,15 +56,35 @@ function UseRazorpay() {
 								},
 							}
 						);
+//-----------------comment By Pawan ---------------------------------------------------------------
+						// if (verifyRes.data) {
+						// 	toast.success("Payment Successful!", { position: "top-center" });
 
-						if (verifyRes.data) {
-							toast.success("Payment Successful!", { position: "top-center" });
+						// 	// ✅ Redirect after 2s
+						// 	setTimeout(() => {
+						// 		navigate("/orders/and/purchases", { replace: true });
+						// 	}, 2000);
+						// } 
+//-----------------comment By Pawan --------------------------------------------------------------
+// //-----------------Add By Pawan ---------------------------------------------------------------
+if (verifyRes.data) {
+  toast.success("Payment Successful!", {
+    position: "top-center",
+  });
+  trackPurchaseEvent({
+    orderId: order.orderId,
+    subtotal: order.totalAmount,
+    items: buildItemsFromOrder(order),
+  });
+  // ----------------- End By Pawan --------------------------------------------------------
 
-							// ✅ Redirect after 2s
-							setTimeout(() => {
-								navigate("/orders/and/purchases", { replace: true });
-							}, 2000);
-						} else {
+  // ✅ Redirect after 2s
+  setTimeout(() => {
+    navigate("/orders/and/purchases", { replace: true });
+  }, 2000);
+}
+// //-----------------Add By Pawan-----------------------------------------------------------------
+						else {
 							toast.error("Payment verification failed!", {
 								position: "top-center",
 							});

@@ -10,6 +10,9 @@ import creditAndDebit from "../../assets/Payment/creditAndDebit.svg";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { removeItemFromCart } from "../../redux/cartSlice";
+// -----------------Add By Pawan --------------------------------------------------------
+import { trackPurchaseEvent, buildItemsFromCartData } from "../../utils/purchaseTracking";
+// -----------------Add By Pawan -------------------------------------------------------
 
 import "react-toastify/dist/ReactToastify.css";
 import {
@@ -383,13 +386,27 @@ function PaymentPage() {
     const { order, data } = orderResult;
     // Update paymentTotalAmount with backend calculated total
     setPaymentTotalAmount(order.totalAmount);
-
-    // case  01 -> no razorpay pure COD
+// ----------------Commment By Pawan -----------------------------------------------------------
+    // // case  01 -> no razorpay pure COD
+    // if (order.paymentMethod == "cod" && !order.partialPay) {
+    //   toast.success("Order placed Successfully.");
+    //   navigate("orders/and/purchases");
+    //   return;
+    // }
+    // ----------------Commment By Pawan -----------------------------------------------------------
+    // ----------------Add By Pawan ----------------------------------------------------------------
     if (order.paymentMethod == "cod" && !order.partialPay) {
-      toast.success("Order placed Successfully.");
-      navigate("orders/and/purchases");
-      return;
-    }
+  toast.success("Order placed Successfully.");
+  trackPurchaseEvent({
+    orderId: order.orderId,
+    subtotal: order.totalAmount,
+    coupon: promoCode || "",
+    items: buildItemsFromCartData(cartData),
+  });
+  navigate("orders/and/purchases");
+  return;
+}
+// ----------------Add By Pawan ----------------------------------------------------------------
 
     // case 02 -> partial payment or full razorpay
     navigate("/use-razorpay", {
@@ -688,21 +705,36 @@ function PaymentPage() {
             "BLAZE SDK EVENT:",
             sdkResponse
           );
-
+// -----------Comment By Pawan -------------------------------------------------------------
           // SUCCESS
-          if (
-            sdkResponse?.payload?.event ===
-            "CheckoutCompleted"
-          ) {
+          // if (
+          //   sdkResponse?.payload?.event ===
+          //   "CheckoutCompleted"
+          // ) {
 
-            toast.success(
-              "Payment successful"
-            );
+          //   toast.success(
+          //     "Payment successful"
+          //   );
 
-            console.log(
-              "PAYMENT SUCCESS"
-            );
-          }
+          //   console.log(
+          //     "PAYMENT SUCCESS"
+          //   );
+          //}
+// -----------Comment By Pawan -------------------------------------------------------------
+// ------------Add By Pawan ---------------------------------------------------------------
+if (
+  sdkResponse?.payload?.event === "CheckoutCompleted"
+) {
+  toast.success("Payment successful");
+  trackPurchaseEvent({
+    orderId: order.orderId,
+    subtotal: order.totalAmount,
+    coupon: promoCode || "",
+    items: buildItemsFromCartData(cartData),
+  });
+  console.log("PAYMENT SUCCESS");
+}
+// ------------Add By Pawan ---------------------------------------------------------------
 
           // FAILURE
           if (

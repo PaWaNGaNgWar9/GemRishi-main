@@ -149,10 +149,13 @@ function StoneCollection() {
       [key]: value,
     }));
   }
-
+// -------------------------Fixed By Pawan------------------------------------------------------
   const handleProductClick = (productSlug, e) => {
     if (e.target.closest("button")) return;
-    window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
+      navigate(appendRandomString(`/gemstones/${productSlug}`));
+    // -----------Commment By Pawan-----------------------------------------------------------------
+    // window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
+        // -----------Commment By Pawan-----------------------------------------------------------------
   };
 
   const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
@@ -365,16 +368,16 @@ function StoneCollection() {
 {/* ----------------------------_Add By Pawan--------------------------------- */}
              {/* Quality */}
  <select
-   className="border px-3 py-2 rounded"
+   className="border px-2 py-2 rounded"
    value={selectedFilters.minPrice && selectedFilters.maxPrice ? `${selectedFilters.minPrice}-${selectedFilters.maxPrice}` : ""}
     onChange={(e) => {
     const val = e.target.value.split("-");
     setSelectedFilters((prev) => ({ ...prev, minPrice: val[0], maxPrice: val[1] }));
       }}>
         <option value="">Quality</option>
-<option value="50-20000">Good (₹0 - ₹20K)</option>
-<option value="20001-100000">Premium (₹20K - ₹1.0L)</option>
-<option value="100001-500000">Luxury (₹1.0L - ₹5.0L)</option>
+<option value="50-20000">Good (₹0-₹20K)</option>
+<option value="20001-100000">Premium (₹20K-₹1.0L)</option>
+<option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
 <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
 </select>
 
@@ -557,17 +560,17 @@ function StoneCollection() {
         {/* {--------------Quality-----------------} */}
 {/* ----------------------Add By Pawan------------------------------------------------ */}
         <select
-     className="border px-3 py-2 rounded"
+     className="border px-2 py-2 rounded"
      value={selectedFilters.minPrice && selectedFilters.maxPrice ? `${selectedFilters.minPrice}-${selectedFilters.maxPrice}` : ""}
      onChange={(e) => {
      const val = e.target.value.split("-");
      setSelectedFilters((prev) => ({ ...prev, minPrice: val[0], maxPrice: val[1] }));
        }}
             >
-              <option value="">Quality</option>
-<option value="50-20000">Good (₹0 - ₹20K)</option>
-<option value="20001-100000">Premium (₹20K - ₹1.0L)</option>
-<option value="100001-500000">Luxury (₹1.0L - ₹5.0L)</option>
+<option value="">Quality</option>
+<option value="50-20000">Good (₹0-₹20K)</option>
+<option value="20001-100000">Premium (₹20K-₹1.0L)</option>
+<option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
 <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
             </select>
         <button
