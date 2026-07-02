@@ -798,6 +798,12 @@ const [loading, setLoading] = useState(true);
             hideOffersSection: false,
 
             hideUserProfile: false,
+            amountMeta: [
+            {
+        "label": "Convenience Fee",
+        "value": "₹25"
+      }
+    ],
 
             hideTaxes: false,
 
