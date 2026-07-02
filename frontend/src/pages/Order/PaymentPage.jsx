@@ -105,8 +105,26 @@ function PaymentPage() {
           console.error("Failed to parse userInfo", e);
         }
       }
+// --------Commment by Pawan ------------------------------------
+      // if (!userToken) {
+      //   setLoading(false);
+      //   return;
+      // }
 
-      console.log("[DEBUG] userToken:", userToken);
+      // try {
+      //   // Fetch cart data
+      //   const cartResponse = await axios.get(
+      //     `${URL}/cart/get_all_cart_list?page=1&limit=10`,
+      //     {
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         Authorization: `Bearer ${userToken}`,
+      //       },
+      //     }
+      //   );
+// --------Commment by Pawan ----------------------------------------
+// -----------------Add By Pawan: GA4 begin_checkout ===================================================
+ console.log("[DEBUG] userToken:", userToken);
 
       if (!userToken) {
         console.log("[DEBUG] EXIT: no userToken");
@@ -128,7 +146,7 @@ function PaymentPage() {
 
         console.log("[DEBUG] cartResponse.data:", cartResponse.data);
         console.log("[DEBUG] success:", cartResponse.data?.success, "| cart:", cartResponse.data?.cart);
-
+ // -----------------Add By Pawan: GA4 begin_checkout ===================================================
         if (cartResponse.data?.success && cartResponse.data?.cart) {
           // ✅ Normalize and store full cart data with customization
           const formattedCart = cartResponse.data.cart.map((item) => {
@@ -175,21 +193,21 @@ function PaymentPage() {
           });
           setCartData(formattedCart);
 
-          // ===== Add By Pawan: GA4 begin_checkout ===================================================
-          window.dataLayer = window.dataLayer || [];
-          window.dataLayer.push({ ecommerce: null });
-          window.dataLayer.push({
-            event: "begin_checkout",
-            ecommerce: {
-              currency: "INR",
-              value: formattedCart.reduce(
-                (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
-                0
-              ),
-              items: buildItemsFromCartData(formattedCart),
-            },
-          });
-          // ===== End Add By Pawan ===================================================================
+// ===== Add By Pawan: GA4 begin_checkout ===================================================
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({ ecommerce: null });
+window.dataLayer.push({
+  event: "begin_checkout",
+  ecommerce: {
+    currency: "INR",
+    value: formattedCart.reduce(
+      (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
+      0
+    ),
+    items: buildItemsFromCartData(formattedCart),
+  },
+});
+// ===== End Add By Pawan ===================================================================
         }
 
 
@@ -201,9 +219,12 @@ function PaymentPage() {
         });
         setUserProfile(profileResponse.data.user);
       } catch (err) {
+        // ----------------Add And comment by  Pawan--------------
+        // console.error("Error fetching data:", err);
         console.error("[DEBUG] EXIT: fetchData threw an error:", err);
         console.error("[DEBUG] err.response?.data:", err?.response?.data);
         console.error("[DEBUG] err.response?.status:", err?.response?.status);
+        // ----------------Add And comment by  Pawan--------------
       } finally {
         setLoading(false);
       }
@@ -254,9 +275,10 @@ function PaymentPage() {
     }
 
   }, [cartData, appliedDiscount]);
-
+  
   console.log("pmethod", paymentMethod)
 
+  // const handleCreateOrder = async () => {
   const handleCreateOrder = async (selectedPaymentMethod) => {
     const userInfoString = localStorage.getItem("userInfo");
     const storedShippingDetails = localStorage.getItem("shippingDetails");
@@ -321,6 +343,9 @@ function PaymentPage() {
       };
     }
 
+    // console.log("✅ Final Address Payload:", address);
+    // console.log("✅ Cart Data for Order:", cartData);
+
     // ✅ Build order items
     const orderItems = cartData.map((item) => {
       let itemTotal = item.price * item.quantity;
@@ -347,12 +372,21 @@ function PaymentPage() {
       };
     });
 
+    // const orderPayload = {
+    //   address,
+    //   paymentMethod: paymentMethod === "online" ? "razorpay" : "cod",
+    //   promoCode: promoCode || null,
+    //   items: orderItems,
+    // };
+
     const orderPayload = {
       address,
       paymentMethod: selectedPaymentMethod,
       promoCode: promoCode || null,
       items: orderItems,
     };
+
+    // console.log("📦 Sending Order Payload:", orderPayload);
 
     try {
       const response = await axios.post(
@@ -389,12 +423,67 @@ function PaymentPage() {
   };
 
   console.log("totl", paymentTotalAmount)
+// Commment By Pawan -----------------------------------------------------------
+  // const handleProceed = async () => {
+//   const orderResult = await handleCreateOrder();
+  // Comment By Pawan-----------------------------------------------------------
+   // Add By Pawan-----------------------------------------------------------
+  const handleProceed = async () => {
+    // fires the moment user clicks proceed/pay — intent, not success
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_payment_info",
+      ecommerce: {
+        currency: "INR",
+        value: paymentTotalAmount,
+        payment_type: paymentMethod,
+        items: buildItemsFromCartData(cartData),
+      },
+    });
 
-  // NOTE: the old handleProceed (Razorpay flow, unused/dead code) has been removed.
-  // It duplicated add_payment_info/checkout_progress pushes and called
-  // handleCreateOrder() without a payment-method argument. The button now only
-  // uses handleBreezeProceed below, so this file no longer carries that dead code.
+    const orderResult = await handleCreateOrder();
+    if (!orderResult) return;
 
+    const { order, data } = orderResult;
+    setPaymentTotalAmount(order.totalAmount);
+
+    // fires only after order is confirmed created on backend
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "checkout_progress",
+      ecommerce: {
+        currency: "INR",
+        value: order.totalAmount,
+        payment_type: paymentMethod,
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+
+    if (order.paymentMethod == "cod" && !order.partialPay) {
+      toast.success("Order placed Successfully.");
+      trackPurchaseEvent({
+        orderId: order.orderId,
+        subtotal: order.totalAmount,
+        coupon: promoCode || "",
+        items: buildItemsFromCartData(cartData),
+      });
+      navigate("orders/and/purchases");
+      return;
+    }
+
+    navigate("/use-razorpay", {
+      state: {
+        order,
+        razorpay: {
+          orderId: data.id,
+          amount: data.amount,
+          currency: data.currency || "INR",
+        },
+      },
+    });
+  };
+  // Add By Pawan-----------------------------------------------------------------------
   const [promoCode, setPromoCode] = useState("");
   const [totalDiscountApplied, setTotalDiscountApplied] = useState(0);
 
@@ -425,19 +514,21 @@ function PaymentPage() {
     }
   };
 
-  const handleBreezeProceed = async () => {
+// ===== Add By Pawan: GA4 add_payment_info ==============================================
+      const handleBreezeProceed = async () => {
     try {
-      // ---------------------------------------------------------------
-      // NOTE (fix): add_payment_info used to fire here, immediately on
-      // click — before order creation and cart signing. Because those
-      // two awaited network calls take time, the event was logged well
-      // before the Breeze secure checkout screen actually opened, which
-      // looked like it was "firing at the wrong moment" in GTM/GA4.
-      //
-      // It has been moved further down, right before BlazeSDK.process()
-      // is called — i.e. as close as possible to the moment the secure
-      // checkout UI actually opens.
-      // ---------------------------------------------------------------
+      // fires on click, before order attempt
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "add_payment_info",
+        ecommerce: {
+          currency: "INR",
+          value: paymentTotalAmount,
+          payment_type: "breeze",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -450,7 +541,6 @@ function PaymentPage() {
       const finalAmount = Number(order.totalAmount);
 
       // fires once order is actually created
-      window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
         event: "checkout_progress",
@@ -463,6 +553,9 @@ function PaymentPage() {
       });
 
       console.log("BACKEND FINAL:", finalAmount);
+// ===== End Add By Pawan ==========================================================================
+
+     
 
       if (!BlazeSDK?.process)
       {
@@ -497,6 +590,7 @@ function PaymentPage() {
       }
 
       const cartId =
+        // "cart_" + Date.now();
         order.orderId;
 
       const breezeCart = {
@@ -614,17 +708,6 @@ function PaymentPage() {
         "SIGN RESPONSE:",
         response.data
       );
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: finalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
-        },
-      });
-      // ===== End Add By Pawan =====================================================
 
       // PROCESS CHECKOUT
       BlazeSDK.process(
@@ -713,20 +796,36 @@ function PaymentPage() {
             "BLAZE SDK EVENT:",
             sdkResponse
           );
-
+// -----------Comment By Pawan -------------------------------------------------------------
           // SUCCESS
-          if (
-            sdkResponse?.payload?.event === "CheckoutCompleted"
-          ) {
-            toast.success("Payment successful");
-            trackPurchaseEvent({
-              orderId: order.orderId,
-              subtotal: order.totalAmount,
-              coupon: promoCode || "",
-              items: buildItemsFromCartData(cartData),
-            });
-            console.log("PAYMENT SUCCESS");
-          }
+          // if (
+          //   sdkResponse?.payload?.event ===
+          //   "CheckoutCompleted"
+          // ) {
+
+          //   toast.success(
+          //     "Payment successful"
+          //   );
+
+          //   console.log(
+          //     "PAYMENT SUCCESS"
+          //   );
+          //}
+// -----------Comment By Pawan -------------------------------------------------------------
+// ------------Add By Pawan ---------------------------------------------------------------
+if (
+  sdkResponse?.payload?.event === "CheckoutCompleted"
+) {
+  toast.success("Payment successful");
+  trackPurchaseEvent({
+    orderId: order.orderId,
+    subtotal: order.totalAmount,
+    coupon: promoCode || "",
+    items: buildItemsFromCartData(cartData),
+  });
+  console.log("PAYMENT SUCCESS");
+}
+// ------------Add By Pawan ---------------------------------------------------------------
 
           // FAILURE
           if (

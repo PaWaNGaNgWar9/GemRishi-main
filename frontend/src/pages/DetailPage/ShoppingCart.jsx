@@ -479,19 +479,29 @@ const [loading, setLoading] = useState(true);
     try {
       console.log("BREEZE STARTED");
 
-      // //---comment By Pawan-------
-      // // GA4 begin_checkout: fires on click, this is where the checkout process starts
-      // window.dataLayer = window.dataLayer || [];
-      // window.dataLayer.push({ ecommerce: null });
-      // window.dataLayer.push({
-      //   event: "begin_checkout",
-      //   ecommerce: {
-      //     currency: "INR",
-      //     value: totalAmount,
-      //     items: buildItemsFromCartData(cartData),
-      //   },
-      // });
-      // //---comment By Pawan------------------------
+      //---Add By Pawan-------
+      // GA4 begin_checkout + add_payment_info: fire on click, BEFORE order creation
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "begin_checkout",
+        ecommerce: {
+          currency: "INR",
+          value: totalAmount,
+          items: buildItemsFromCartData(cartData),
+        },
+      });
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "add_payment_info",
+        ecommerce: {
+          currency: "INR",
+          value: totalAmount,
+          payment_type: "breeze",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
+      //---Add By Pawan-------
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -524,6 +534,23 @@ const [loading, setLoading] = useState(true);
       const finalAmount = Number(order.totalAmount);
 
       console.log("BACKEND FINAL:", finalAmount);
+      //---Add By Pawan-------
+      // add_payment_info now fires earlier, on click, before order creation (see top of
+      // this function). Post-order confirmation is tracked as "checkout_progress" instead,
+      // matching the pattern used in PaymentPage.jsx.
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "checkout_progress",
+        ecommerce: {
+          currency: "INR",
+          value: finalAmount,
+          payment_type: "breeze",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
+      //---Add By Pawan-------
+
       if (!BlazeSDK?.process)
       {
 
@@ -679,21 +706,6 @@ const [loading, setLoading] = useState(true);
         "SENDING SHOP ORDER ID:",
         order.orderId
       );
-
-      // //---comment By Pawan-----------------
-      
-      // window.dataLayer = window.dataLayer || [];
-      // window.dataLayer.push({ ecommerce: null });
-      // window.dataLayer.push({
-      //   event: "add_payment_info",
-      //   ecommerce: {
-      //     currency: "INR",
-      //     value: finalAmount,
-      //     payment_type: "breeze",
-      //     items: buildItemsFromCartData(cartData),
-      //   },
-      // });
-      // //---comment By Pawan----------------
 
       // PROCESS CHECKOUT
       BlazeSDK.process(
