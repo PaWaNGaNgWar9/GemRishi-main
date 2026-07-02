@@ -168,6 +168,22 @@ function PaymentPage() {
             };
           });
           setCartData(formattedCart);
+
+// ===== Add By Pawan: GA4 begin_checkout ===================================================
+window.dataLayer = window.dataLayer || [];
+window.dataLayer.push({ ecommerce: null });
+window.dataLayer.push({
+  event: "begin_checkout",
+  ecommerce: {
+    currency: "INR",
+    value: formattedCart.reduce(
+      (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
+      0
+    ),
+    items: buildItemsFromCartData(formattedCart),
+  },
+});
+// ===== End Add By Pawan ===================================================================
         }
 
 
@@ -481,6 +497,19 @@ function PaymentPage() {
 
       // USE BACKEND TOTAL
       const finalAmount = Number(order.totalAmount);
+// ===== Add By Pawan: GA4 add_payment_info ==============================================
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
+        event: "add_payment_info",
+        ecommerce: {
+        currency: "INR",
+        value: finalAmount,
+        payment_type: "breeze",
+        items: buildItemsFromCartData(cartData),
+  },
+});
+// ===== End Add By Pawan ==========================================================================
 
       console.log("BACKEND FINAL:", finalAmount);
 
