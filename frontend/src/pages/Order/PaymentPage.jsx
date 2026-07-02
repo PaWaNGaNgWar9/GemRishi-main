@@ -715,6 +715,36 @@ function PaymentPage() {
         // SDK CALLBACK
         (sdkResponse) => {
 
+          //---Add By Pawan-------
+          // DIAGNOSTIC: log every distinct event name Breeze sends through this
+          // callback. Do a test checkout, open the browser console, and select
+          // a payment mode (UPI/card/netbanking) inside the Breeze sheet — the
+          // event name that appears right at that moment is what we need to
+          // wire add_payment_info to below, replacing the pre-checkout push.
+          console.log(
+            "[GA4 DEBUG] Breeze event name:",
+            sdkResponse?.payload?.event
+          );
+
+          // TODO: once the real event name for "payment mode selected" is
+          // confirmed from the console log above, replace "REPLACE_WITH_REAL_EVENT_NAME"
+          // below and remove the add_payment_info push earlier in this function
+          // (the one before BlazeSDK.process()).
+          if (sdkResponse?.payload?.event === "REPLACE_WITH_REAL_EVENT_NAME") {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+              event: "add_payment_info",
+              ecommerce: {
+                currency: "INR",
+                value: finalAmount,
+                payment_type: "breeze",
+                items: buildItemsFromCartData(cartData),
+              },
+            });
+          }
+          //---Add By Pawan-------
+
           console.log(
             "BLAZE SDK EVENT:",
             sdkResponse
