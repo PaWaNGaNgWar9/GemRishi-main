@@ -13,7 +13,7 @@ import {
 function UseRazorpay() {
 	const location = useLocation();
 	const navigate = useNavigate();
-	const { order } = location.state || {};
+	const { order, razorpay } = location.state || {};
 	const URL = import.meta.env.VITE_URL;
 	const RAZORPAY_KEY = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
@@ -33,13 +33,15 @@ function UseRazorpay() {
 		script.src = "https://checkout.razorpay.com/v1/checkout.js";
 		script.async = true;
 		script.onload = () => {
+			// -----------------Add By Pawan --------------------------------------------------------
 			const options = {
 				key: RAZORPAY_KEY,
-				amount: order.amount || order.totalAmount,
-				currency: "INR",
+				amount: razorpay?.amount || order.totalAmount,
+				currency: razorpay?.currency || "INR",
 				name: "Gemrishi",
 				description: "Complete your payment",
-				order_id: order.razorpayOrderId,
+				order_id: razorpay?.orderId,
+		  // -----------------Add By Pawan --------------------------------------------------------		
 				handler: async function (response) {
 					try {
 						const userInfo = JSON.parse(localStorage.getItem("userInfo"));

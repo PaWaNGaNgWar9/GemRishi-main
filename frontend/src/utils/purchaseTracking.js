@@ -1,8 +1,4 @@
 // ===== Add By Pawan ==========================================================================
-
-/*
- * GTM / GA4 "purchase" ecommerce event helper.
- */
 export function trackPurchaseEvent({
   orderId,
   subtotal,
@@ -81,7 +77,7 @@ export function buildItemsFromOrder(order) {
         : null;
     const quantity = Number(item.quantity) || 1;
     const price =
-      Number(linked?.price) || (Number(item.itemTotal) || 0) / quantity || 0;
+      (Number(item.itemTotal) || 0) / quantity || Number(linked?.price) || 0;
     const variant =
       item.customization?.quality?.name ||
       item.customization?.goldKarat?.name ||

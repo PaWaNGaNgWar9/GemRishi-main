@@ -798,12 +798,13 @@ const [loading, setLoading] = useState(true);
             hideOffersSection: false,
 
             hideUserProfile: false,
-            amountMeta: [
-            {
-        "label": "Convenience Fee",
-        "value": "₹25"
-      }
-    ],
+    // ----------- Add by Pawan (Abhinav) for Convenience Fee in Breeze Checkout----------------
+    //       amountMeta: [
+    //         {
+    //     "label": "Convenience Fee",
+    //     "value": "₹25"
+    //   }
+    // ],
 
             hideTaxes: false,
 

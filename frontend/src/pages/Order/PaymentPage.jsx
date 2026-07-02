@@ -105,8 +105,29 @@ function PaymentPage() {
           console.error("Failed to parse userInfo", e);
         }
       }
+// --------Commment by Pawan ------------------------------------
+      // if (!userToken) {
+      //   setLoading(false);
+      //   return;
+      // }
+
+      // try {
+      //   // Fetch cart data
+      //   const cartResponse = await axios.get(
+      //     `${URL}/cart/get_all_cart_list?page=1&limit=10`,
+      //     {
+      //       headers: {
+      //         "Content-Type": "application/json",
+      //         Authorization: `Bearer ${userToken}`,
+      //       },
+      //     }
+      //   );
+// --------Commment by Pawan ----------------------------------------
+// -----------------Add By Pawan: GA4 begin_checkout ===================================================
+ console.log("[DEBUG] userToken:", userToken);
 
       if (!userToken) {
+        console.log("[DEBUG] EXIT: no userToken");
         setLoading(false);
         return;
       }
@@ -123,6 +144,9 @@ function PaymentPage() {
           }
         );
 
+        console.log("[DEBUG] cartResponse.data:", cartResponse.data);
+        console.log("[DEBUG] success:", cartResponse.data?.success, "| cart:", cartResponse.data?.cart);
+ // -----------------Add By Pawan: GA4 begin_checkout ===================================================
         if (cartResponse.data?.success && cartResponse.data?.cart) {
           // ✅ Normalize and store full cart data with customization
           const formattedCart = cartResponse.data.cart.map((item) => {
@@ -195,7 +219,12 @@ window.dataLayer.push({
         });
         setUserProfile(profileResponse.data.user);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        // ----------------Add And comment by  Pawan--------------
+        // console.error("Error fetching data:", err);
+        console.error("[DEBUG] EXIT: fetchData threw an error:", err);
+        console.error("[DEBUG] err.response?.data:", err?.response?.data);
+        console.error("[DEBUG] err.response?.status:", err?.response?.status);
+        // ----------------Add And comment by  Pawan--------------
       } finally {
         setLoading(false);
       }
@@ -400,68 +429,49 @@ window.dataLayer.push({
   // Comment By Pawan-----------------------------------------------------------
    // Add By Pawan-----------------------------------------------------------
   const handleProceed = async () => {
-  // Comment by pawan----------------------------------------------------------------
-  // // GA4 Add Payment Info Tracking
-  // window.dataLayer = window.dataLayer || [];
-  // window.dataLayer.push({ ecommerce: null });
-  // window.dataLayer.push({
-  //   event: "add_payment_info",
-  //   ecommerce: {
-  //     currency: "INR",
-  //     value: cartData.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0),
-  //     payment_type: paymentMethod, // "online" or "cod"
-  //     items: buildItemsFromCartData(cartData),
-  //   },
-  // });
-  // Comment by pawan----------------------------------------------------------------
-
-  const orderResult = await handleCreateOrder();
-   // Add By Pawan----------------------------------------------------------------
-    if (!orderResult) return;
-
-    //Add by pawan----------------------------------------------------------------
-    // moved add_payment_info push to AFTER order creation succeeds — previously
-    // it fired even when handleCreateOrder failed/returned null, over-counting
-    // add_payment_info for orders that were never actually created
+    // fires the moment user clicks proceed/pay — intent, not success
     window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ ecommerce: null });
     window.dataLayer.push({
       event: "add_payment_info",
       ecommerce: {
         currency: "INR",
-        value: cartData.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0),
-        payment_type: paymentMethod, // "online" or "cod"
+        value: paymentTotalAmount,
+        payment_type: paymentMethod,
         items: buildItemsFromCartData(cartData),
       },
     });
-    //Add by pawan----------------------------------------------------------------
+
+    const orderResult = await handleCreateOrder();
+    if (!orderResult) return;
 
     const { order, data } = orderResult;
-    // Update paymentTotalAmount with backend calculated total
     setPaymentTotalAmount(order.totalAmount);
-// ----------------Commment By Pawan -----------------------------------------------------------
-    // // case  01 -> no razorpay pure COD
-    // if (order.paymentMethod == "cod" && !order.partialPay) {
-    //   toast.success("Order placed Successfully.");
-    //   navigate("orders/and/purchases");
-    //   return;
-    // }
-    // ----------------Commment By Pawan -----------------------------------------------------------
-    // ----------------Add By Pawan ----------------------------------------------------------------
-    if (order.paymentMethod == "cod" && !order.partialPay) {
-  toast.success("Order placed Successfully.");
-  trackPurchaseEvent({
-    orderId: order.orderId,
-    subtotal: order.totalAmount,
-    coupon: promoCode || "",
-    items: buildItemsFromCartData(cartData),
-  });
-  navigate("orders/and/purchases");
-  return;
-}
-// ----------------Add By Pawan ----------------------------------------------------------------
 
-    // case 02 -> partial payment or full razorpay
+    // fires only after order is confirmed created on backend
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "checkout_progress",
+      ecommerce: {
+        currency: "INR",
+        value: order.totalAmount,
+        payment_type: paymentMethod,
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+
+    if (order.paymentMethod == "cod" && !order.partialPay) {
+      toast.success("Order placed Successfully.");
+      trackPurchaseEvent({
+        orderId: order.orderId,
+        subtotal: order.totalAmount,
+        coupon: promoCode || "",
+        items: buildItemsFromCartData(cartData),
+      });
+      navigate("orders/and/purchases");
+      return;
+    }
+
     navigate("/use-razorpay", {
       state: {
         order,
@@ -473,7 +483,7 @@ window.dataLayer.push({
       },
     });
   };
-
+  // Add By Pawan-----------------------------------------------------------------------
   const [promoCode, setPromoCode] = useState("");
   const [totalDiscountApplied, setTotalDiscountApplied] = useState(0);
 
@@ -504,8 +514,21 @@ window.dataLayer.push({
     }
   };
 
-  const handleBreezeProceed = async () => {
+// ===== Add By Pawan: GA4 add_payment_info ==============================================
+      const handleBreezeProceed = async () => {
     try {
+      // fires on click, before order attempt
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "add_payment_info",
+        ecommerce: {
+          currency: "INR",
+          value: paymentTotalAmount,
+          payment_type: "breeze",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -516,21 +539,23 @@ window.dataLayer.push({
 
       // USE BACKEND TOTAL
       const finalAmount = Number(order.totalAmount);
-// ===== Add By Pawan: GA4 add_payment_info ==============================================
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({ ecommerce: null });
-        window.dataLayer.push({
-        event: "add_payment_info",
+
+      // fires once order is actually created
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "checkout_progress",
         ecommerce: {
-        currency: "INR",
-        value: finalAmount,
-        payment_type: "breeze",
-        items: buildItemsFromCartData(cartData),
-  },
-});
-// ===== End Add By Pawan ==========================================================================
+          currency: "INR",
+          value: finalAmount,
+          payment_type: "breeze",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
 
       console.log("BACKEND FINAL:", finalAmount);
+// ===== End Add By Pawan ==========================================================================
+
+     
 
       if (!BlazeSDK?.process)
       {
