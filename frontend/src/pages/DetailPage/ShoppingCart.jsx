@@ -479,29 +479,41 @@ const [loading, setLoading] = useState(true);
     try {
       console.log("BREEZE STARTED");
 
-      //---Add By Pawan-------
-      // GA4 begin_checkout + add_payment_info: fire on click, BEFORE order creation
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "begin_checkout",
-        ecommerce: {
-          currency: "INR",
-          value: totalAmount,
-          items: buildItemsFromCartData(cartData),
-        },
-      });
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: totalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
-        },
-      });
-      //---Add By Pawan-------
+      //---Add By Pawan--------------------------------
+     window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "begin_checkout",
+      ecommerce: {
+        currency: "INR",
+        value: totalAmount,
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+
+    // ✅ moved up: shipping info must fire before payment info
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_shipping_info",
+      ecommerce: {
+        currency: "INR",
+        value: totalAmount,
+        shipping_tier: "Standard",
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_payment_info",
+      ecommerce: {
+        currency: "INR",
+        value: totalAmount,
+        payment_type: "breeze",
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+      //---Add By Pawan------------------------------------
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -534,14 +546,11 @@ const [loading, setLoading] = useState(true);
       const finalAmount = Number(order.totalAmount);
 
       console.log("BACKEND FINAL:", finalAmount);
-      //---Add By Pawan-------
-      // add_payment_info now fires earlier, on click, before order creation (see top of
-      // this function). Post-order confirmation is tracked as "checkout_progress" instead,
-      // matching the pattern used in PaymentPage.jsx.
+      //---Add By Pawan-----------------------------------------------
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
-        event: "checkout_progress",
+        event: "purchase",
         ecommerce: {
           currency: "INR",
           value: finalAmount,
@@ -549,7 +558,7 @@ const [loading, setLoading] = useState(true);
           items: buildItemsFromCartData(cartData),
         },
       });
-      //---Add By Pawan-------
+      //---Add By Pawan--------------------------------
 
       if (!BlazeSDK?.process)
       {

@@ -428,6 +428,24 @@ window.dataLayer.push({
 //   const orderResult = await handleCreateOrder();
   // Comment By Pawan-----------------------------------------------------------
    // Add By Pawan-----------------------------------------------------------
+   const handleShippingSubmit = () => {
+  // save address so PaymentPage.jsx can read it via localStorage.getItem("shippingDetails")
+  localStorage.setItem("shippingDetails", JSON.stringify({ address }));
+
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "add_shipping_info",
+    ecommerce: {
+      currency: "INR",
+      value: totalAmount,
+      shipping_tier: "Standard",
+      items: buildItemsFromCartData(cartData),
+    },
+  });
+
+  navigate("/payment");
+};
   const handleProceed = async () => {
     // fires the moment user clicks proceed/pay — intent, not success
     window.dataLayer = window.dataLayer || [];
@@ -813,16 +831,31 @@ window.dataLayer.push({
           //}
 // -----------Comment By Pawan -------------------------------------------------------------
 // ------------Add By Pawan ---------------------------------------------------------------
-if (
-  sdkResponse?.payload?.event === "CheckoutCompleted"
-) {
+if (sdkResponse?.payload?.event === "purchase") {
   toast.success("Payment successful");
+
+  // Change by Pawan: explicit GA4 purchase event fired only on confirmed payment success
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "purchase",
+    ecommerce: {
+      transaction_id: order.orderId, // Change by Pawan: required for GA4 purchase event dedupe
+      currency: "INR",
+      value: order.totalAmount,
+      coupon: promoCode || "",
+      payment_type: "breeze",
+      items: buildItemsFromCartData(cartData),
+    },
+  });
+
   trackPurchaseEvent({
     orderId: order.orderId,
     subtotal: order.totalAmount,
     coupon: promoCode || "",
     items: buildItemsFromCartData(cartData),
   });
+
   console.log("PAYMENT SUCCESS");
 }
 // ------------Add By Pawan ---------------------------------------------------------------
