@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import OrderSummary from "./OrderSummary";
@@ -67,6 +67,9 @@ const products = [
 
 function PaymentPage() {
   const navigate = useNavigate();
+  // ----------------Add By Pawan--------------------------------------------------------
+   const purchaseTrackedRef = useRef(false);
+    // ----------------Add By Pawan--------------------------------------------------------
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -389,12 +392,6 @@ function PaymentPage() {
   };
 
   console.log("totl", paymentTotalAmount)
-
-  // NOTE: the old handleProceed (Razorpay flow, unused/dead code) has been removed.
-  // It duplicated add_payment_info/checkout_progress pushes and called
-  // handleCreateOrder() without a payment-method argument. The button now only
-  // uses handleBreezeProceed below, so this file no longer carries that dead code.
-
   const [promoCode, setPromoCode] = useState("");
   const [totalDiscountApplied, setTotalDiscountApplied] = useState(0);
 
@@ -615,23 +612,6 @@ function PaymentPage() {
         response.data
       );
 
-      // ===== Add By Pawan: GA4 add_payment_info (moved) =========================
-      // Fires right before the secure checkout UI is actually invoked, instead
-      // of at the top of this handler. This is the closest we can get to "the
-      // moment secure checkout opens" without a dedicated SDK callback event
-      // (e.g. "CheckoutOpened") to hook into instead.
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: finalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
-        },
-      });
-      // ===== End Add By Pawan =====================================================
-
       // PROCESS CHECKOUT
       BlazeSDK.process(
 
@@ -715,59 +695,64 @@ function PaymentPage() {
         // SDK CALLBACK
         (sdkResponse) => {
 
-          //---Add By Pawan-------
-          // DIAGNOSTIC: log every distinct event name Breeze sends through this
-          // callback. Do a test checkout, open the browser console, and select
-          // a payment mode (UPI/card/netbanking) inside the Breeze sheet — the
-          // event name that appears right at that moment is what we need to
-          // wire add_payment_info to below, replacing the pre-checkout push.
-          console.log(
-            "[GA4 DEBUG] Breeze event name:",
-            sdkResponse?.payload?.event
-          );
-
-          // TODO: once the real event name for "payment mode selected" is
-          // confirmed from the console log above, replace "REPLACE_WITH_REAL_EVENT_NAME"
-          // below and remove the add_payment_info push earlier in this function
-          // (the one before BlazeSDK.process()).
-          if (sdkResponse?.payload?.event === "REPLACE_WITH_REAL_EVENT_NAME") {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ ecommerce: null });
-            window.dataLayer.push({
-              event: "add_payment_info",
-              ecommerce: {
-                currency: "INR",
-                value: finalAmount,
-                payment_type: "breeze",
-                items: buildItemsFromCartData(cartData),
-              },
-            });
-          }
-          //---Add By Pawan-------
-
           console.log(
             "BLAZE SDK EVENT:",
             sdkResponse
           );
 
-          // SUCCESS
-          if (
-            sdkResponse?.payload?.event === "CheckoutCompleted"
-          ) {
-            toast.success("Payment successful");
-            trackPurchaseEvent({
-              orderId: order.orderId,
-              subtotal: order.totalAmount,
-              coupon: promoCode || "",
-              items: buildItemsFromCartData(cartData),
+          // ===== Add By Pawan: GA4 add_payment_info =========================
+          if (sdkResponse?.payload?.event === "AddPaymentInfo") {
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+
+            window.dataLayer.push({
+              event: "add_payment_info",
+              ecommerce: {
+                currency: "INR",
+                value: finalAmount,
+                payment_type:
+                  sdkResponse?.payload?.data?.paymentMethodType || "breeze",
+                items: buildItemsFromCartData(cartData),
+              },
             });
-            console.log("PAYMENT SUCCESS");
           }
 
+
+if (
+ sdkResponse?.payload?.event === "Purchase" &&
+ !purchaseTrackedRef.current
+) {
+   purchaseTrackedRef.current = true;
+   toast.success("Payment successful");
+  trackPurchaseEvent({
+    orderId: order.orderId,
+    subtotal: Number(order.totalAmount),
+    coupon: promoCode || "",
+    items: buildItemsFromCartData(cartData),
+  });
+
+ console.log("PAYMENT SUCCESS");
+}
+          // ===== End Add By Pawan =====================================================
+
+          // SUCCESS-----------comment by Pawan ----------------------
+          // if (
+          //   sdkResponse?.payload?.event === "CheckoutCompleted"
+          // ) {
+          //   toast.success("Payment successful");
+          //   trackPurchaseEvent({
+          //     orderId: order.orderId,
+          //     subtotal: order.totalAmount,
+          //     coupon: promoCode || "",
+          //     items: buildItemsFromCartData(cartData),
+          //   });
+          //   console.log("PAYMENT SUCCESS");
+          // }
+// SUCCESS-----------comment by Pawan ----------------------
           // FAILURE
           if (
             sdkResponse?.payload?.event ===
-            "CheckoutFailed"
+            "PurchaseFailed"
           ) {
 
             toast.error(

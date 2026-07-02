@@ -479,19 +479,19 @@ const [loading, setLoading] = useState(true);
     try {
       console.log("BREEZE STARTED");
 
-      //---Add By Pawan-------
-      // GA4 begin_checkout: fires on click, this is where the checkout process starts
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "begin_checkout",
-        ecommerce: {
-          currency: "INR",
-          value: totalAmount,
-          items: buildItemsFromCartData(cartData),
-        },
-      });
-      //---Add By Pawan-------
+      // //---comment By Pawan-------
+      // // GA4 begin_checkout: fires on click, this is where the checkout process starts
+      // window.dataLayer = window.dataLayer || [];
+      // window.dataLayer.push({ ecommerce: null });
+      // window.dataLayer.push({
+      //   event: "begin_checkout",
+      //   ecommerce: {
+      //     currency: "INR",
+      //     value: totalAmount,
+      //     items: buildItemsFromCartData(cartData),
+      //   },
+      // });
+      // //---comment By Pawan------------------------
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -680,21 +680,20 @@ const [loading, setLoading] = useState(true);
         order.orderId
       );
 
-      //---Add By Pawan-------
-      // GA4 add_payment_info: fires right before the Breeze payment sheet opens
-      // (order already created + cart signed), not at the same instant as begin_checkout
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: finalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
-        },
-      });
-      //---Add By Pawan-------
+      // //---comment By Pawan-----------------
+      
+      // window.dataLayer = window.dataLayer || [];
+      // window.dataLayer.push({ ecommerce: null });
+      // window.dataLayer.push({
+      //   event: "add_payment_info",
+      //   ecommerce: {
+      //     currency: "INR",
+      //     value: finalAmount,
+      //     payment_type: "breeze",
+      //     items: buildItemsFromCartData(cartData),
+      //   },
+      // });
+      // //---comment By Pawan----------------
 
       // PROCESS CHECKOUT
       BlazeSDK.process(
