@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import OrderSummary from "./OrderSummary";
@@ -67,9 +67,6 @@ const products = [
 
 function PaymentPage() {
   const navigate = useNavigate();
-  // ----------------Add By Pawan--------------------------------------------------------
-   const purchaseTrackedRef = useRef(false);
-    // ----------------Add By Pawan--------------------------------------------------------
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -392,6 +389,12 @@ function PaymentPage() {
   };
 
   console.log("totl", paymentTotalAmount)
+
+  // NOTE: the old handleProceed (Razorpay flow, unused/dead code) has been removed.
+  // It duplicated add_payment_info/checkout_progress pushes and called
+  // handleCreateOrder() without a payment-method argument. The button now only
+  // uses handleBreezeProceed below, so this file no longer carries that dead code.
+
   const [promoCode, setPromoCode] = useState("");
   const [totalDiscountApplied, setTotalDiscountApplied] = useState(0);
 
@@ -611,6 +614,17 @@ function PaymentPage() {
         "SIGN RESPONSE:",
         response.data
       );
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "add_payment_info",
+        ecommerce: {
+          currency: "INR",
+          value: finalAmount,
+          payment_type: "breeze",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
+      // ===== End Add By Pawan =====================================================
 
       // PROCESS CHECKOUT
       BlazeSDK.process(
@@ -700,59 +714,24 @@ function PaymentPage() {
             sdkResponse
           );
 
-          // ===== Add By Pawan: GA4 add_payment_info =========================
-          if (sdkResponse?.payload?.event === "AddPaymentInfo") {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ ecommerce: null });
-
-            window.dataLayer.push({
-              event: "add_payment_info",
-              ecommerce: {
-                currency: "INR",
-                value: finalAmount,
-                payment_type:
-                  sdkResponse?.payload?.data?.paymentMethodType || "breeze",
-                items: buildItemsFromCartData(cartData),
-              },
+          // SUCCESS
+          if (
+            sdkResponse?.payload?.event === "CheckoutCompleted"
+          ) {
+            toast.success("Payment successful");
+            trackPurchaseEvent({
+              orderId: order.orderId,
+              subtotal: order.totalAmount,
+              coupon: promoCode || "",
+              items: buildItemsFromCartData(cartData),
             });
+            console.log("PAYMENT SUCCESS");
           }
 
-
-if (
- sdkResponse?.payload?.event === "Purchase" &&
- !purchaseTrackedRef.current
-) {
-   purchaseTrackedRef.current = true;
-   toast.success("Payment successful");
-  trackPurchaseEvent({
-    orderId: order.orderId,
-    subtotal: Number(order.totalAmount),
-    coupon: promoCode || "",
-    items: buildItemsFromCartData(cartData),
-  });
-
- console.log("PAYMENT SUCCESS");
-}
-          // ===== End Add By Pawan =====================================================
-
-          // SUCCESS-----------comment by Pawan ----------------------
-          // if (
-          //   sdkResponse?.payload?.event === "CheckoutCompleted"
-          // ) {
-          //   toast.success("Payment successful");
-          //   trackPurchaseEvent({
-          //     orderId: order.orderId,
-          //     subtotal: order.totalAmount,
-          //     coupon: promoCode || "",
-          //     items: buildItemsFromCartData(cartData),
-          //   });
-          //   console.log("PAYMENT SUCCESS");
-          // }
-// SUCCESS-----------comment by Pawan ----------------------
           // FAILURE
           if (
             sdkResponse?.payload?.event ===
-            "PurchaseFailed"
+            "CheckoutFailed"
           ) {
 
             toast.error(
