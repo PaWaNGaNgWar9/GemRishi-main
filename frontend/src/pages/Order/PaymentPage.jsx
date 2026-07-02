@@ -400,22 +400,41 @@ window.dataLayer.push({
   // Comment By Pawan-----------------------------------------------------------
    // Add By Pawan-----------------------------------------------------------
   const handleProceed = async () => {
-  // GA4 Add Payment Info Tracking
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ ecommerce: null });
-  window.dataLayer.push({
-    event: "add_payment_info",
-    ecommerce: {
-      currency: "INR",
-      value: cartData.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0),
-      payment_type: paymentMethod, // "online" or "cod"
-      items: buildItemsFromCartData(cartData),
-    },
-  });
+  // Comment by pawan----------------------------------------------------------------
+  // // GA4 Add Payment Info Tracking
+  // window.dataLayer = window.dataLayer || [];
+  // window.dataLayer.push({ ecommerce: null });
+  // window.dataLayer.push({
+  //   event: "add_payment_info",
+  //   ecommerce: {
+  //     currency: "INR",
+  //     value: cartData.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0),
+  //     payment_type: paymentMethod, // "online" or "cod"
+  //     items: buildItemsFromCartData(cartData),
+  //   },
+  // });
+  // Comment by pawan----------------------------------------------------------------
 
   const orderResult = await handleCreateOrder();
    // Add By Pawan----------------------------------------------------------------
     if (!orderResult) return;
+
+    //Add by pawan----------------------------------------------------------------
+    // moved add_payment_info push to AFTER order creation succeeds — previously
+    // it fired even when handleCreateOrder failed/returned null, over-counting
+    // add_payment_info for orders that were never actually created
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_payment_info",
+      ecommerce: {
+        currency: "INR",
+        value: cartData.reduce((sum, item) => sum + (Number(item.totalPrice) || 0), 0),
+        payment_type: paymentMethod, // "online" or "cod"
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+    //Add by pawan----------------------------------------------------------------
 
     const { order, data } = orderResult;
     // Update paymentTotalAmount with backend calculated total
@@ -1061,7 +1080,3 @@ if (
 }
 
 export default PaymentPage;
-
-
-
-

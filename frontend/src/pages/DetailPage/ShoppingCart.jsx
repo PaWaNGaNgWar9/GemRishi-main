@@ -75,7 +75,7 @@ function ShoppingCart() {
 
   const [userProfile, setUserProfile] = useState(null);
   const [promoCode, setPromoCode] = useState("");
-// -----------------comment By Pawan --------------------------------------------------------------
+// -----------------Add By Pawan --------------------------------------------------------------
 const hasTrackedViewCart = useRef(false);
 // -------------------------------------------------------------------------------------------------
 const [loading, setLoading] = useState(true);
@@ -243,6 +243,10 @@ const [loading, setLoading] = useState(true);
       } catch (e) { }
     }
 
+     //Add by pawan----------------------------------------------------------------
+    // have its name/price/qty to send to GA4
+    const removedItem = cartData.find((ci) => ci._id === cartItemId);
+    //Add by pawan----------------------------------------------------------------
     // Optional: Optimistic UI update could go here
     setLoading(true);
 
@@ -254,6 +258,39 @@ const [loading, setLoading] = useState(true);
         `${URL}/cart/remove_item_from_cart?cartItemId=${cartItemId}`,
         { headers, withCredentials: true }
       );
+
+//Add by pawan-------------------------------------------------------------------------------
+      if (removedItem) {
+        const isJewelry = removedItem.itemType === "Jewelry";
+        const hasJewelryCustomization = !!removedItem.customization?.jewelryId;
+        const name = isJewelry
+          ? removedItem.item?.jewelryName
+          : hasJewelryCustomization
+          ? removedItem.customization.jewelryId?.jewelryName
+          : removedItem.item?.name;
+        const qty = Number(removedItem.quantity) || 1;
+ 
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
+          event: "remove_from_cart",
+          ecommerce: {
+            currency: "INR",
+            value: Number(removedItem.totalPrice) || 0,
+            items: [
+              {
+                item_id: String(removedItem.item?._id || removedItem._id || ""),
+                item_name: name || "Unnamed Item",
+                item_brand: "Gemrishi",
+                item_category: removedItem.itemType || "",
+                price: qty ? Number((removedItem.totalPrice / qty).toFixed(2)) : Number(removedItem.totalPrice) || 0,
+                quantity: qty,
+              },
+            ],
+          },
+        });
+      }
+      //Add by pawan------------------------------------------------------------------------------
 
       dispatch(removeItemFromCart(cartItemId));
       await fetchCartItems();

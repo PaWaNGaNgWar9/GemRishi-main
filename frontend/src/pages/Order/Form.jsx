@@ -17,6 +17,10 @@ function Form() {
   const { data: profileData } = useProfileQuery(undefined, {
     skip: !user, // Only fetch if the user is logged in
   });
+  //Add by pawan------------------------------------------------------------------------
+  const cartItems = useSelector((state) => state.cart.items) || [];
+  const hasTrackedFormStart = useRef(false);
+  //Add by pawan-------------------------------------------------------------------------
 
   // ------------------ State Management ------------------
   const [formData, setFormData] = useState({
@@ -145,6 +149,13 @@ function Form() {
 
   // ------------------ Handlers ------------------
   const handleChange = (e) => {
+    //Add by pawan----------------------------------------------------------------
+    if (!hasTrackedFormStart.current) {
+      hasTrackedFormStart.current = true;
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ event: "form_start", form_name: "shipping_address" });
+    }
+    //Add by pawan----------------------------------------------------------------
     const { name, value, type, checked } = e.target;
 
     if (name.startsWith("address.")) {
@@ -188,6 +199,43 @@ function Form() {
     }
 
     localStorage.setItem("shippingDetails", JSON.stringify(formData));
+        //Add by pawan----------------------------------------------------------------
+    // this "form" is a div, not a real <form>, so GTM's native Form
+    // Submission trigger can never see it — push both events manually.
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_shipping_info",
+      ecommerce: {
+        currency: "INR",
+        value: cartItems.reduce(
+          (sum, ci) => sum + (Number(ci.totalPrice) || 0),
+          0
+        ),
+        shipping_tier: "Standard",
+        items: cartItems.map((ci) => {
+          const isJewelry = ci.itemType === "Jewelry";
+          const hasJewelryCustomization = !!ci.customization?.jewelryId;
+          const name = isJewelry
+            ? ci.item?.jewelryName
+            : hasJewelryCustomization
+            ? ci.customization.jewelryId?.jewelryName
+            : ci.item?.name;
+          const qty = Number(ci.quantity) || 1;
+          return {
+            item_id: String(ci.item?._id || ci._id || ""),
+            item_name: name || "Unnamed Item",
+            item_brand: "Gemrishi",
+            item_category: ci.itemType || "",
+            price: qty ? Number((ci.totalPrice / qty).toFixed(2)) : Number(ci.totalPrice) || 0,
+            quantity: qty,
+          };
+        }),
+      },
+    });
+ 
+    window.dataLayer.push({ event: "form_submit", form_name: "shipping_address" });
+    //Add by pawan--------------------------------------------------------------------------
     navigate("/review_And/confirm/details", { state: { productId: location?.state?.productId } });
   };
 
