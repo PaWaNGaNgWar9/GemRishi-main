@@ -11,6 +11,41 @@ import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
 import { trackPurchaseEvent, buildItemsFromCartData } from "../../utils/purchaseTracking";
 // -------Add by Pawan for GA4 Tracking----------------
+
+//Add by pawan----------------------------------------------------------------
+// buildItemsFromCartData (from utils/purchaseTracking.js) expects a FLAT shape
+// (item.productId, item.jewelryId, item.name, item.price) that only exists in
+// PaymentPage.jsx's normalized cart. Here, cartData is the RAW API response —
+// product/jewelry data is nested under item.item, price is item.totalPrice.
+// This mirrors the exact mapping already used (and proven correct) for view_cart.
+function buildBreezeItemsFromRawCart(cartData = []) {
+  return cartData.map((ci) => {
+    const isJewelry = ci.itemType === "Jewelry";
+    const hasJewelryCustomization = !!ci.customization?.jewelryId;
+    const name = isJewelry
+      ? ci.item?.jewelryName
+      : hasJewelryCustomization
+      ? ci.customization.jewelryId?.jewelryName
+      : ci.item?.name;
+    const qty = Number(ci.quantity) || 1;
+    const variant =
+      ci.customization?.quality?.name ||
+      ci.customization?.goldKarat?.name ||
+      ci.customization?.certificate?.name ||
+      "";
+    return {
+      item_id: String(ci.item?._id || ci._id || ""),
+      item_name: name || "Unnamed Item",
+      item_brand: "Gemrishi",
+      item_category: ci.itemType || "",
+      item_variant: variant,
+      price: qty ? Number((ci.totalPrice / qty).toFixed(2)) : Number(ci.totalPrice) || 0,
+      quantity: qty,
+    };
+  });
+}
+//Add by pawan----------------------------------------------------------------
+
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
   <div className="w-full bg-white rounded-[20px] sm:rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 flex gap-4 sm:gap-6 animate-pulse mb-4 sm:mb-6">
@@ -75,7 +110,7 @@ function ShoppingCart() {
 
   const [userProfile, setUserProfile] = useState(null);
   const [promoCode, setPromoCode] = useState("");
-// -----------------Add By Pawan --------------------------------------------------------------
+// -----------------comment By Pawan --------------------------------------------------------------
 const hasTrackedViewCart = useRef(false);
 // -------------------------------------------------------------------------------------------------
 const [loading, setLoading] = useState(true);
@@ -243,10 +278,12 @@ const [loading, setLoading] = useState(true);
       } catch (e) { }
     }
 
-     //Add by pawan----------------------------------------------------------------
+    //Add by pawan----------------------------------------------------------------
+    // capture the item BEFORE it's removed from cartData, so we still
     // have its name/price/qty to send to GA4
     const removedItem = cartData.find((ci) => ci._id === cartItemId);
     //Add by pawan----------------------------------------------------------------
+
     // Optional: Optimistic UI update could go here
     setLoading(true);
 
@@ -259,7 +296,7 @@ const [loading, setLoading] = useState(true);
         { headers, withCredentials: true }
       );
 
-//Add by pawan-------------------------------------------------------------------------------
+      //Add by pawan----------------------------------------------------------------
       if (removedItem) {
         const isJewelry = removedItem.itemType === "Jewelry";
         const hasJewelryCustomization = !!removedItem.customization?.jewelryId;
@@ -269,7 +306,7 @@ const [loading, setLoading] = useState(true);
           ? removedItem.customization.jewelryId?.jewelryName
           : removedItem.item?.name;
         const qty = Number(removedItem.quantity) || 1;
- 
+
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ ecommerce: null });
         window.dataLayer.push({
@@ -290,7 +327,7 @@ const [loading, setLoading] = useState(true);
           },
         });
       }
-      //Add by pawan------------------------------------------------------------------------------
+      //Add by pawan----------------------------------------------------------------
 
       dispatch(removeItemFromCart(cartItemId));
       await fetchCartItems();
@@ -530,7 +567,10 @@ const [loading, setLoading] = useState(true);
             currency: "INR",
             value: finalAmount,
             payment_type: "breeze",
-            items: buildItemsFromCartData(cartData),
+            // items: buildItemsFromCartData(cartData), // Comment by pawan — wrong shape for raw cartData, always returned id/name undefined, price 0
+            //Add by pawan----------------------------------------------------------------
+            items: buildBreezeItemsFromRawCart(cartData),
+            //Add by pawan----------------------------------------------------------------
           },
         });
       }
@@ -793,7 +833,10 @@ const [loading, setLoading] = useState(true);
               orderId: order.orderId,
               subtotal: order.totalAmount,
               coupon: promoCode || "",
-              items: buildItemsFromCartData(cartData),
+              // items: buildItemsFromCartData(cartData), // Comment by pawan — wrong shape for raw cartData, always returned id/name undefined, price 0
+              //Add by pawan----------------------------------------------------------------
+              items: buildBreezeItemsFromRawCart(cartData),
+              //Add by pawan----------------------------------------------------------------
             });
             // Add By Pawan================================================================================
 
