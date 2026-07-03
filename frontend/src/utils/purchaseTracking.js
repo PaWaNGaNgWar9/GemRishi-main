@@ -64,6 +64,33 @@ export function buildItemsFromCartData(cartData = []) {
     };
   });
 }
+export function buildItemsFromRawCart(cartData = []) {
+  return cartData.map((cartItem) => {
+    const isJewelry = cartItem.itemType === "Jewelry";
+    const hasJewelryCustomization = !!cartItem.customization?.jewelryId;
+    const name = isJewelry
+      ? cartItem.item?.jewelryName
+      : hasJewelryCustomization
+      ? cartItem.customization.jewelryId?.jewelryName
+      : cartItem.item?.name;
+    const variant =
+      cartItem.customization?.quality?.name ||
+      cartItem.customization?.goldKarat?.name ||
+      cartItem.customization?.certificate?.name ||
+      "";
+    const qty = Number(cartItem.quantity) || 1;
+    return {
+      id: String(cartItem.item?._id || cartItem._id || ""),
+      name: name || "Unnamed Item",
+      category: cartItem.itemType || "",
+      variant,
+      price: qty
+        ? Number((Number(cartItem.totalPrice || 0) / qty).toFixed(2))
+        : Number(cartItem.totalPrice) || 0,
+      quantity: qty,
+    };
+  });
+}
 
 export function buildItemsFromOrder(order) {
   return (order?.items || []).map((item) => {

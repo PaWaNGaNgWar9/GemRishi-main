@@ -9,7 +9,10 @@ import { toast } from "react-toastify";
 import { appendRandomString } from "../../utils/randomString";
 import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
-import { trackPurchaseEvent, buildItemsFromCartData } from "../../utils/purchaseTracking";
+import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
+// (Add By Pawan) buildItemsFromRawCart added — see purchaseTracking.js for why
+// buildItemsFromCartData(cartData) was producing id:undefined / name:undefined / price:0
+// for every ecommerce event fired from this file.
 // -------Add by Pawan for GA4 Tracking----------------
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
@@ -479,7 +482,7 @@ const [loading, setLoading] = useState(true);
     try {
       console.log("BREEZE STARTED");
 
-      //---Add By Pawan---------------------------------------
+      //---Add By Pawan--------------------------------
      window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ ecommerce: null });
     window.dataLayer.push({
@@ -487,9 +490,52 @@ const [loading, setLoading] = useState(true);
       ecommerce: {
         currency: "INR",
         value: totalAmount,
-        items: buildItemsFromCartData(cartData),
+        // (Add By Pawan) COMMENTED OUT — BUG: cartData here has a NESTED shape
+        // ({ item: {...}, quantity, totalPrice }), but buildItemsFromCartData() expects a
+        // FLAT shape ({ name, price, productId }). Every field it read was undefined, so
+        // this always sent id: undefined, name: undefined, price: 0 to GA4.
+        // items: buildItemsFromCartData(cartData),
+        // (Add By Pawan) FIX — buildItemsFromRawCart() matches ShoppingCart.jsx's actual
+        // cartData shape (see purchaseTracking.js).
+        items: buildItemsFromRawCart(cartData),
       },
     });
+    // (Add By Pawan) reset ecommerce immediately after the push too, not just before — GTM's
+    // data layer variables otherwise keep reading this event's ecommerce object as "current"
+    // and it can leak into the next, unrelated dataLayer event (e.g. GTM's own
+    // gtm.historyChange-v2 when the Breeze widget updates the URL) until something overwrites it.
+    window.dataLayer.push({ ecommerce: null });
+
+    // ------------------------------------------------------------------------------
+    // (Add By Pawan) COMMENTED OUT — BUG: this used to fire add_shipping_info and
+    // add_payment_info immediately on click, together with begin_checkout, before the
+    // order even existed and before the Breeze widget had opened. That's why every event
+    // fired together on click regardless of what the user actually did next.
+    // Moved below: these two now fire once the order is confirmed created, right before
+    // the Breeze widget opens (see "(Add By Pawan) FIX" block after handleCreateOrder).
+    // // ✅ moved up: shipping info must fire before payment info
+    // window.dataLayer.push({ ecommerce: null });
+    // window.dataLayer.push({
+    //   event: "add_shipping_info",
+    //   ecommerce: {
+    //     currency: "INR",
+    //     value: totalAmount,
+    //     shipping_tier: "Standard",
+    //     items: buildItemsFromCartData(cartData),
+    //   },
+    // });
+    //
+    // window.dataLayer.push({ ecommerce: null });
+    // window.dataLayer.push({
+    //   event: "add_payment_info",
+    //   ecommerce: {
+    //     currency: "INR",
+    //     value: totalAmount,
+    //     payment_type: "breeze",
+    //     items: buildItemsFromCartData(cartData),
+    //   },
+    // });
+    // ------------------------------------------------------------------------------
       //---Add By Pawan------------------------------------
 
       // CREATE ORDER FIRST
@@ -525,6 +571,11 @@ const [loading, setLoading] = useState(true);
       console.log("BACKEND FINAL:", finalAmount);
       //---Add By Pawan-----------------------------------------------
       // (Add By Pawan) COMMENTED OUT — BUG: this pushed a "purchase" event right after the
+      // order was created but BEFORE the Breeze widget had even opened and BEFORE any
+      // payment happened. This is what caused "purchase" to fire on every checkout attempt,
+      // even failed/abandoned ones. The correct purchase push is further below, inside the
+      // BlazeSDK success callback, gated on event === "OrderComplete" / "Purchase" /
+      // "CheckoutCompleted" — that is the only place purchase should fire from.
       // window.dataLayer = window.dataLayer || [];
       // window.dataLayer.push({ ecommerce: null });
       // window.dataLayer.push({
@@ -538,6 +589,16 @@ const [loading, setLoading] = useState(true);
       // });
 
       // (Add By Pawan) FIX — add_shipping_info + add_payment_info now fire here instead:
+      // the order is confirmed created on the backend and we're about to hand off to the
+      // Breeze widget, where the user actually fills in address + payment method. The widget
+      // doesn't expose per-step callbacks back to us, so this is the closest honest moment
+      // to represent "user is entering shipping/payment info" — instead of firing at click
+      // time before any of that has happened.
+      // NOTE: these two still fire back-to-back in the same tick (no real time gap between
+      // them) because Breeze's widget is a single black-box UI for both steps — it does not
+      // send us a callback for "address confirmed" vs "payment method selected" separately.
+      // There is currently no way to split these into two genuinely separate moments without
+      // Breeze/Juspay exposing additional per-step SDK events.
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
@@ -546,9 +607,15 @@ const [loading, setLoading] = useState(true);
           currency: "INR",
           value: finalAmount,
           shipping_tier: "Standard",
-          items: buildItemsFromCartData(cartData),
+          // (Add By Pawan) COMMENTED OUT — BUG: same buildItemsFromCartData() /
+          // cartData shape mismatch as begin_checkout above.
+          // items: buildItemsFromCartData(cartData),
+          items: buildItemsFromRawCart(cartData),
         },
       });
+      // (Add By Pawan) reset after push — see note on begin_checkout above about
+      // ecommerce data leaking into unrelated dataLayer events (e.g. gtm.historyChange-v2)
+      // when it isn't cleared right after use.
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
         event: "add_payment_info",
@@ -556,10 +623,14 @@ const [loading, setLoading] = useState(true);
           currency: "INR",
           value: finalAmount,
           payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
+          // items: buildItemsFromCartData(cartData), // (Add By Pawan) COMMENTED OUT — same bug
+          items: buildItemsFromRawCart(cartData), // (Add By Pawan) FIX
         },
       });
+      // (Add By Pawan) reset after push
+      window.dataLayer.push({ ecommerce: null });
       //---Add By Pawan--------------------------------
+
 
       if (!BlazeSDK?.process)
       {
@@ -783,6 +854,12 @@ const [loading, setLoading] = useState(true);
             hideOffersSection: false,
 
             hideUserProfile: false,
+            amountMeta: [
+      {
+        "label": "Convenience Fee",
+        "value": "₹25"
+      }
+    ],
 
             hideTaxes: false,
 
@@ -812,11 +889,24 @@ const [loading, setLoading] = useState(true);
               "Payment successful"
             );
              // =======Add By Pawan========================================================================
+            // GA4 Purchase Tracking — trackPurchaseEvent internally dedupes by orderId,
+            // so it's safe even if the SDK fires this callback more than once for the same order.
+            // (Add By Pawan) COMMENTED OUT — BUG: same buildItemsFromCartData() / cartData
+            // shape mismatch as begin_checkout / add_shipping_info / add_payment_info above.
+            // This was sending id: undefined, name: undefined, price: 0 for every completed
+            // purchase from this page.
+            // trackPurchaseEvent({
+            //   orderId: order.orderId,
+            //   subtotal: order.totalAmount,
+            //   coupon: promoCode || "",
+            //   items: buildItemsFromCartData(cartData),
+            // });
+            // (Add By Pawan) FIX
             trackPurchaseEvent({
               orderId: order.orderId,
               subtotal: order.totalAmount,
               coupon: promoCode || "",
-              items: buildItemsFromCartData(cartData),
+              items: buildItemsFromRawCart(cartData),
             });
             // Add By Pawan================================================================================
 
