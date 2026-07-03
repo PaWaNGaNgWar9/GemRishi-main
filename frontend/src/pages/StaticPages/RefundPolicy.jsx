@@ -86,21 +86,69 @@ const RefundPolicy = () => {
 					<p className="text-[#626262] text-[16px] sm:text-[18px] leading-relaxed mb-4">
 						Returns will ONLY be processed if ALL of the following conditions are fully met:
 					</p>
-					
-					<h3 className="text-[18px] sm:text-[20px] font-medium text-[#264A3F] mb-2">
-						4.1 Unboxing Video (Compulsory)
-					</h3>
-					<p className="text-[#626262] text-[16px] sm:text-[18px] leading-relaxed mb-2">
-						A continuous, unedited video from the sealed package opening is required and must clearly show:
-					</p>
-					<ul className="list-disc pl-6 text-[#626262] text-[16px] sm:text-[18px] leading-relaxed mb-4">
-						<li>The initial parcel condition and seals</li>
-						<li>The product itself</li>
-						<li>The laboratory certificate & invoice</li>
-					</ul>
-					<p className="text-[#626262] text-[16px] sm:text-[18px] italic leading-relaxed mb-4">
-						Customers are strongly advised to record this at the exact time of delivery.
-					</p>
+{/* ---------------------------------Add By Pawan-------------------------------------------- */}
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+	<div>
+		<h3 className="text-[18px] sm:text-[20px] font-medium text-[#264A3F] mb-2">
+			4.1 Unboxing Video (Compulsory)
+		</h3>
+
+		<p className="text-[#626262] text-[16px] sm:text-[18px] leading-relaxed mb-2">
+			A continuous, unedited video from the sealed package opening is required and must clearly show:
+		</p>
+
+		<ul className="list-disc pl-6 text-[#626262] text-[16px] sm:text-[18px] leading-relaxed mb-4">
+			<li>The initial parcel condition and seals</li>
+			<li>The product itself</li>
+			<li>The laboratory certificate & invoice</li>
+		</ul>
+
+		<p className="text-[#626262] text-[16px] sm:text-[18px] italic leading-relaxed mb-4">
+			Customers are strongly advised to record this at the exact time of delivery.
+		</p>
+	</div>
+
+{/* ---------------------------------Add By Pawan-------------------------------------------  */}
+	{/* YouTube Video */}
+	<div className="w-full flex justify-center md:justify-end md:ml-20">
+	<div className="
+		relative 
+		w-full 
+		max-w-[620px] 
+		aspect-video 
+		rounded-2xl 
+		p-2
+		bg-gradient-to-br from-[#264A3F]/20 via-white to-[#D4AF37]/20
+		shadow-[0_8px_25px_rgba(38,74,63,0.15)]
+		hover:shadow-[0_12px_35px_rgba(38,74,63,0.25)]
+		transition-all 
+		duration-300
+	">
+
+		<div className="
+			w-full 
+			h-full 
+			rounded-xl 
+			overflow-hidden 
+			bg-white
+			border 
+			border-white
+		">
+
+			<iframe
+				className="w-full h-full"
+				src="https://www.youtube.com/embed/tdJtAOPbf54"
+				title="Unboxing Video"
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+				allowFullScreen
+			></iframe>
+
+		</div>
+
+	</div>
+</div>
+</div>
+{/* ----------------------------------------------------------------------------------- */}
 
 					<h3 className="text-[18px] sm:text-[20px] font-medium text-[#264A3F] mb-2">
 						4.2 Product Condition
