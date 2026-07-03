@@ -479,7 +479,7 @@ const [loading, setLoading] = useState(true);
     try {
       console.log("BREEZE STARTED");
 
-      //---Add By Pawan--------------------------------
+      //---Add By Pawan---------------------------------------
      window.dataLayer = window.dataLayer || [];
     window.dataLayer.push({ ecommerce: null });
     window.dataLayer.push({
@@ -487,29 +487,6 @@ const [loading, setLoading] = useState(true);
       ecommerce: {
         currency: "INR",
         value: totalAmount,
-        items: buildItemsFromCartData(cartData),
-      },
-    });
-
-    // ✅ moved up: shipping info must fire before payment info
-    window.dataLayer.push({ ecommerce: null });
-    window.dataLayer.push({
-      event: "add_shipping_info",
-      ecommerce: {
-        currency: "INR",
-        value: totalAmount,
-        shipping_tier: "Standard",
-        items: buildItemsFromCartData(cartData),
-      },
-    });
-
-    window.dataLayer.push({ ecommerce: null });
-    window.dataLayer.push({
-      event: "add_payment_info",
-      ecommerce: {
-        currency: "INR",
-        value: totalAmount,
-        payment_type: "breeze",
         items: buildItemsFromCartData(cartData),
       },
     });
@@ -547,10 +524,34 @@ const [loading, setLoading] = useState(true);
 
       console.log("BACKEND FINAL:", finalAmount);
       //---Add By Pawan-----------------------------------------------
+      // (Add By Pawan) COMMENTED OUT — BUG: this pushed a "purchase" event right after the
+      // window.dataLayer = window.dataLayer || [];
+      // window.dataLayer.push({ ecommerce: null });
+      // window.dataLayer.push({
+      //   event: "purchase",
+      //   ecommerce: {
+      //     currency: "INR",
+      //     value: finalAmount,
+      //     payment_type: "breeze",
+      //     items: buildItemsFromCartData(cartData),
+      //   },
+      // });
+
+      // (Add By Pawan) FIX — add_shipping_info + add_payment_info now fire here instead:
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
-        event: "purchase",
+        event: "add_shipping_info",
+        ecommerce: {
+          currency: "INR",
+          value: finalAmount,
+          shipping_tier: "Standard",
+          items: buildItemsFromCartData(cartData),
+        },
+      });
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "add_payment_info",
         ecommerce: {
           currency: "INR",
           value: finalAmount,
@@ -782,12 +783,6 @@ const [loading, setLoading] = useState(true);
             hideOffersSection: false,
 
             hideUserProfile: false,
-            amountMeta: [
-      {
-        "label": "Convenience Fee",
-        "value": "₹25"
-      }
-    ],
 
             hideTaxes: false,
 
@@ -817,8 +812,6 @@ const [loading, setLoading] = useState(true);
               "Payment successful"
             );
              // =======Add By Pawan========================================================================
-            // GA4 Purchase Tracking — trackPurchaseEvent internally dedupes by orderId,
-            // so it's safe even if the SDK fires this callback more than once for the same order.
             trackPurchaseEvent({
               orderId: order.orderId,
               subtotal: order.totalAmount,

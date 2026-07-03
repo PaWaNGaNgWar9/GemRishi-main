@@ -194,19 +194,39 @@ function PaymentPage() {
           setCartData(formattedCart);
 
 // ===== Add By Pawan: GA4 begin_checkout ===================================================
-window.dataLayer = window.dataLayer || [];
-window.dataLayer.push({ ecommerce: null });
-window.dataLayer.push({
-  event: "begin_checkout",
-  ecommerce: {
-    currency: "INR",
-    value: formattedCart.reduce(
-      (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
-      0
-    ),
-    items: buildItemsFromCartData(formattedCart),
-  },
-});
+// window.dataLayer = window.dataLayer || [];
+// window.dataLayer.push({ ecommerce: null });
+// window.dataLayer.push({
+//   event: "begin_checkout",
+//   ecommerce: {
+//     currency: "INR",
+//     value: formattedCart.reduce(
+//       (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
+//       0
+//     ),
+//     items: buildItemsFromCartData(formattedCart),
+//   },
+// });
+
+// (Add By Pawan) FIX — guarded so begin_checkout fires once per checkout session, not once
+// per mount.
+const beginCheckoutKey = "tracked_begin_checkout";
+if (!sessionStorage.getItem(beginCheckoutKey)) {
+  sessionStorage.setItem(beginCheckoutKey, "1");
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "begin_checkout",
+    ecommerce: {
+      currency: "INR",
+      value: formattedCart.reduce(
+        (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
+        0
+      ),
+      items: buildItemsFromCartData(formattedCart),
+    },
+  });
+}
 // ===== End Add By Pawan ===================================================================
         }
 
@@ -830,24 +850,42 @@ window.dataLayer.push({
           //   );
           //}
 // -----------Comment By Pawan -------------------------------------------------------------
-// ------------Add By Pawan ---------------------------------------------------------------
-if (sdkResponse?.payload?.event === "purchase") {
-  toast.success("Payment successful");
 
-  // Change by Pawan: explicit GA4 purchase event fired only on confirmed payment success
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ ecommerce: null });
-  window.dataLayer.push({
-    event: "purchase",
-    ecommerce: {
-      transaction_id: order.orderId, // Change by Pawan: required for GA4 purchase event dedupe
-      currency: "INR",
-      value: order.totalAmount,
-      coupon: promoCode || "",
-      payment_type: "breeze",
-      items: buildItemsFromCartData(cartData),
-    },
-  });
+// if (sdkResponse?.payload?.event === "purchase") {
+//   toast.success("Payment successful");
+//
+//   // Change by Pawan: explicit GA4 purchase event fired only on confirmed payment success
+//   window.dataLayer = window.dataLayer || [];
+//   window.dataLayer.push({ ecommerce: null });
+//   window.dataLayer.push({
+//     event: "purchase",
+//     ecommerce: {
+//       transaction_id: order.orderId, // Change by Pawan: required for GA4 purchase event dedupe
+//       currency: "INR",
+//       value: order.totalAmount,
+//       coupon: promoCode || "",
+//       payment_type: "breeze",
+//       items: buildItemsFromCartData(cartData),
+//     },
+//   });
+//
+//   trackPurchaseEvent({
+//     orderId: order.orderId,
+//     subtotal: order.totalAmount,
+//     coupon: promoCode || "",
+//     items: buildItemsFromCartData(cartData),
+//   });
+//
+//   console.log("PAYMENT SUCCESS");
+// }
+
+// (Add By Pawan) FIX — correct event names, single purchase push via trackPurchaseEvent
+if (
+  sdkResponse?.payload?.event === "OrderComplete" ||
+  sdkResponse?.payload?.event === "Purchase" ||
+  sdkResponse?.payload?.event === "CheckoutCompleted"
+) {
+  toast.success("Payment successful");
 
   trackPurchaseEvent({
     orderId: order.orderId,
@@ -859,6 +897,7 @@ if (sdkResponse?.payload?.event === "purchase") {
   console.log("PAYMENT SUCCESS");
 }
 // ------------Add By Pawan ---------------------------------------------------------------
+
 
           // FAILURE
           if (
