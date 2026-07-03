@@ -10,9 +10,10 @@ import { appendRandomString } from "../../utils/randomString";
 import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
 import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
-// (Add By Pawan) buildItemsFromRawCart added — see purchaseTracking.js for why
-// buildItemsFromCartData(cartData) was producing id:undefined / name:undefined / price:0
-// for every ecommerce event fired from this file.
+// (Add By Pawan) buildItemsFromRawCart added — this file's cartData is the raw nested API
+// shape ({ item: {...}, quantity, totalPrice }), not the flat shape buildItemsFromCartData()
+// expects, so every event built with buildItemsFromCartData(cartData) here was sending
+// id: undefined, name: undefined, price: 0 to GA4. See purchaseTracking.js.
 // -------Add by Pawan for GA4 Tracking----------------
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
@@ -316,6 +317,25 @@ const [loading, setLoading] = useState(true);
     }
 
     if (userToken) {
+      // (Add By Pawan) FIX — begin_checkout now fires exactly once, right here, the moment
+      // the customer actually starts checkout from the cart. Previously it fired later
+      // inside handleBreezeProceed, bundled in the same tick as add_shipping_info and
+      // add_payment_info, which is why all three showed up together in GTM. Guarded with
+      // sessionStorage so a re-click / back button doesn't double-fire it for the same session.
+      if (!sessionStorage.getItem("tracked_begin_checkout")) {
+        sessionStorage.setItem("tracked_begin_checkout", "1");
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({ ecommerce: null });
+        window.dataLayer.push({
+          event: "begin_checkout",
+          ecommerce: {
+            currency: "INR",
+            value: totalAmount,
+            items: buildItemsFromRawCart(cartData),
+          },
+        });
+        window.dataLayer.push({ ecommerce: null });
+      }
       navigate("/shipping/address", { state: { productId: location?.state?.productId } });
     } else {
       toast.info("Please Login to Checkout", { position: "top-center", autoClose: 3000 });
@@ -478,6 +498,12 @@ const [loading, setLoading] = useState(true);
   };
 
 
+  // (Add By Pawan) NOTE — this function is no longer wired to any button (see the
+  // "Secure Checkout" button below, which now calls handleProceedToCheckout instead).
+  // Kept in place per instructions rather than deleted. Checkout now goes through the real
+  // address/review/payment pages, and PaymentPage.jsx has its own handleBreezeProceed that
+  // does the equivalent job there using the customer's real submitted address instead of the
+  // dummy one hardcoded below.
   const handleBreezeProceed = async () => {
     try {
       console.log("BREEZE STARTED");
@@ -490,52 +516,32 @@ const [loading, setLoading] = useState(true);
       ecommerce: {
         currency: "INR",
         value: totalAmount,
-        // (Add By Pawan) COMMENTED OUT — BUG: cartData here has a NESTED shape
-        // ({ item: {...}, quantity, totalPrice }), but buildItemsFromCartData() expects a
-        // FLAT shape ({ name, price, productId }). Every field it read was undefined, so
-        // this always sent id: undefined, name: undefined, price: 0 to GA4.
-        // items: buildItemsFromCartData(cartData),
-        // (Add By Pawan) FIX — buildItemsFromRawCart() matches ShoppingCart.jsx's actual
-        // cartData shape (see purchaseTracking.js).
-        items: buildItemsFromRawCart(cartData),
+        items: buildItemsFromCartData(cartData),
       },
     });
-    // (Add By Pawan) reset ecommerce immediately after the push too, not just before — GTM's
-    // data layer variables otherwise keep reading this event's ecommerce object as "current"
-    // and it can leak into the next, unrelated dataLayer event (e.g. GTM's own
-    // gtm.historyChange-v2 when the Breeze widget updates the URL) until something overwrites it.
-    window.dataLayer.push({ ecommerce: null });
 
-    // ------------------------------------------------------------------------------
-    // (Add By Pawan) COMMENTED OUT — BUG: this used to fire add_shipping_info and
-    // add_payment_info immediately on click, together with begin_checkout, before the
-    // order even existed and before the Breeze widget had opened. That's why every event
-    // fired together on click regardless of what the user actually did next.
-    // Moved below: these two now fire once the order is confirmed created, right before
-    // the Breeze widget opens (see "(Add By Pawan) FIX" block after handleCreateOrder).
-    // // ✅ moved up: shipping info must fire before payment info
-    // window.dataLayer.push({ ecommerce: null });
-    // window.dataLayer.push({
-    //   event: "add_shipping_info",
-    //   ecommerce: {
-    //     currency: "INR",
-    //     value: totalAmount,
-    //     shipping_tier: "Standard",
-    //     items: buildItemsFromCartData(cartData),
-    //   },
-    // });
-    //
-    // window.dataLayer.push({ ecommerce: null });
-    // window.dataLayer.push({
-    //   event: "add_payment_info",
-    //   ecommerce: {
-    //     currency: "INR",
-    //     value: totalAmount,
-    //     payment_type: "breeze",
-    //     items: buildItemsFromCartData(cartData),
-    //   },
-    // });
-    // ------------------------------------------------------------------------------
+    // ✅ moved up: shipping info must fire before payment info
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_shipping_info",
+      ecommerce: {
+        currency: "INR",
+        value: totalAmount,
+        shipping_tier: "Standard",
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "add_payment_info",
+      ecommerce: {
+        currency: "INR",
+        value: totalAmount,
+        payment_type: "breeze",
+        items: buildItemsFromCartData(cartData),
+      },
+    });
       //---Add By Pawan------------------------------------
 
       // CREATE ORDER FIRST
@@ -570,67 +576,18 @@ const [loading, setLoading] = useState(true);
 
       console.log("BACKEND FINAL:", finalAmount);
       //---Add By Pawan-----------------------------------------------
-      // (Add By Pawan) COMMENTED OUT — BUG: this pushed a "purchase" event right after the
-      // order was created but BEFORE the Breeze widget had even opened and BEFORE any
-      // payment happened. This is what caused "purchase" to fire on every checkout attempt,
-      // even failed/abandoned ones. The correct purchase push is further below, inside the
-      // BlazeSDK success callback, gated on event === "OrderComplete" / "Purchase" /
-      // "CheckoutCompleted" — that is the only place purchase should fire from.
-      // window.dataLayer = window.dataLayer || [];
-      // window.dataLayer.push({ ecommerce: null });
-      // window.dataLayer.push({
-      //   event: "purchase",
-      //   ecommerce: {
-      //     currency: "INR",
-      //     value: finalAmount,
-      //     payment_type: "breeze",
-      //     items: buildItemsFromCartData(cartData),
-      //   },
-      // });
-
-      // (Add By Pawan) FIX — add_shipping_info + add_payment_info now fire here instead:
-      // the order is confirmed created on the backend and we're about to hand off to the
-      // Breeze widget, where the user actually fills in address + payment method. The widget
-      // doesn't expose per-step callbacks back to us, so this is the closest honest moment
-      // to represent "user is entering shipping/payment info" — instead of firing at click
-      // time before any of that has happened.
-      // NOTE: these two still fire back-to-back in the same tick (no real time gap between
-      // them) because Breeze's widget is a single black-box UI for both steps — it does not
-      // send us a callback for "address confirmed" vs "payment method selected" separately.
-      // There is currently no way to split these into two genuinely separate moments without
-      // Breeze/Juspay exposing additional per-step SDK events.
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
-        event: "add_shipping_info",
-        ecommerce: {
-          currency: "INR",
-          value: finalAmount,
-          shipping_tier: "Standard",
-          // (Add By Pawan) COMMENTED OUT — BUG: same buildItemsFromCartData() /
-          // cartData shape mismatch as begin_checkout above.
-          // items: buildItemsFromCartData(cartData),
-          items: buildItemsFromRawCart(cartData),
-        },
-      });
-      // (Add By Pawan) reset after push — see note on begin_checkout above about
-      // ecommerce data leaking into unrelated dataLayer events (e.g. gtm.historyChange-v2)
-      // when it isn't cleared right after use.
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
+        event: "purchase",
         ecommerce: {
           currency: "INR",
           value: finalAmount,
           payment_type: "breeze",
-          // items: buildItemsFromCartData(cartData), // (Add By Pawan) COMMENTED OUT — same bug
-          items: buildItemsFromRawCart(cartData), // (Add By Pawan) FIX
+          items: buildItemsFromCartData(cartData),
         },
       });
-      // (Add By Pawan) reset after push
-      window.dataLayer.push({ ecommerce: null });
       //---Add By Pawan--------------------------------
-
 
       if (!BlazeSDK?.process)
       {
@@ -891,22 +848,11 @@ const [loading, setLoading] = useState(true);
              // =======Add By Pawan========================================================================
             // GA4 Purchase Tracking — trackPurchaseEvent internally dedupes by orderId,
             // so it's safe even if the SDK fires this callback more than once for the same order.
-            // (Add By Pawan) COMMENTED OUT — BUG: same buildItemsFromCartData() / cartData
-            // shape mismatch as begin_checkout / add_shipping_info / add_payment_info above.
-            // This was sending id: undefined, name: undefined, price: 0 for every completed
-            // purchase from this page.
-            // trackPurchaseEvent({
-            //   orderId: order.orderId,
-            //   subtotal: order.totalAmount,
-            //   coupon: promoCode || "",
-            //   items: buildItemsFromCartData(cartData),
-            // });
-            // (Add By Pawan) FIX
             trackPurchaseEvent({
               orderId: order.orderId,
               subtotal: order.totalAmount,
               coupon: promoCode || "",
-              items: buildItemsFromRawCart(cartData),
+              items: buildItemsFromCartData(cartData),
             });
             // Add By Pawan================================================================================
 
@@ -1139,8 +1085,20 @@ const [loading, setLoading] = useState(true);
                 </div>
 
                 <button
-                  // onClick={handleProceedToCheckout}
-                  onClick={handleBreezeProceed}
+                  // (Add By Pawan) COMMENTED OUT — BUG: this jumped straight from the cart to
+                  // creating an order + opening the Breeze widget, skipping the real address
+                  // (Form.jsx) and review (ReviewAndConfirm.jsx) pages entirely, using a
+                  // hardcoded dummy address ("NA", "Mumbai", "400001") instead of what the
+                  // customer actually typed. That's also why begin_checkout, add_shipping_info
+                  // and add_payment_info all fired together in one function on this single click.
+                  // onClick={handleBreezeProceed}
+                  // (Add By Pawan) FIX — routes through the real multi-step checkout
+                  // (address → review → payment) like a normal e-commerce flow. begin_checkout
+                  // fires inside handleProceedToCheckout; add_shipping_info fires when the
+                  // address form is submitted (Form.jsx); add_payment_info fires when the
+                  // customer reaches the Payment Option page (PaymentPage.jsx); purchase fires
+                  // once Breeze confirms the payment succeeded.
+                  onClick={handleProceedToCheckout}
                   className="w-full h-[50px] sm:h-[60px] bg-[#264A3F] rounded-full text-[12px] sm:text-[13px] uppercase tracking-[0.15em] text-white font-bold hover:bg-[#1a3329] hover:shadow-lg transition-all duration-300"
                 >
                   Secure Checkout

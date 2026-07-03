@@ -64,6 +64,12 @@ export function buildItemsFromCartData(cartData = []) {
     };
   });
 }
+
+// (Add By Pawan) buildItemsFromRawCart — for files (ShoppingCart.jsx) whose cartData comes
+// straight from the API in its raw nested shape ({ item: {...}, quantity, totalPrice }),
+// instead of the flat shape ({ name, price, productId }) that buildItemsFromCartData()
+// above expects. Using buildItemsFromCartData() on raw cart data silently produced
+// id: undefined, name: undefined, price: 0 in every event.
 export function buildItemsFromRawCart(cartData = []) {
   return cartData.map((cartItem) => {
     const isJewelry = cartItem.itemType === "Jewelry";

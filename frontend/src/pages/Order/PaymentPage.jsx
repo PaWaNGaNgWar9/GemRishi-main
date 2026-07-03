@@ -193,11 +193,10 @@ function PaymentPage() {
           });
           setCartData(formattedCart);
 
-// ===== Add By Pawan: GA4 begin_checkout ===================================================
-// (Add By Pawan) COMMENTED OUT — BUG: this fired on every mount of this page (page refresh,
-// browser back/forward, re-navigating here), so a single real checkout could log multiple
-// begin_checkout events. Kept below for reference; replaced with a sessionStorage-guarded
-// version right after so it only fires once per checkout session.
+// (Add By Pawan) COMMENTED OUT — BUG: begin_checkout should fire once, at the moment
+// checkout actually starts (the "Secure Checkout" click on the cart page), not every time
+// this Payment Option page's cart data loads (which happens on every visit/refresh/back-
+// navigation to this page). Moved to ShoppingCart.jsx's handleProceedToCheckout.
 // window.dataLayer = window.dataLayer || [];
 // window.dataLayer.push({ ecommerce: null });
 // window.dataLayer.push({
@@ -212,26 +211,30 @@ function PaymentPage() {
 //   },
 // });
 
-// (Add By Pawan) FIX — guarded so begin_checkout fires once per checkout session, not once
-// per mount.
-const beginCheckoutKey = "tracked_begin_checkout";
-if (!sessionStorage.getItem(beginCheckoutKey)) {
-  sessionStorage.setItem(beginCheckoutKey, "1");
+// (Add By Pawan) FIX — add_payment_info fires here instead: this is the moment the
+// customer actually lands on the "Payment Option" step (ShoppingMap step 3), i.e. "goes to
+// the option of payment mode", matching the standard GA4 checkout funnel:
+// begin_checkout (cart) -> add_shipping_info (address submitted, Form.jsx) ->
+// add_payment_info (this page) -> purchase (Breeze SDK success callback).
+// Guarded with sessionStorage so refreshing/re-rendering this page doesn't re-fire it.
+if (!sessionStorage.getItem("tracked_add_payment_info")) {
+  sessionStorage.setItem("tracked_add_payment_info", "1");
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push({ ecommerce: null });
   window.dataLayer.push({
-    event: "begin_checkout",
+    event: "add_payment_info",
     ecommerce: {
       currency: "INR",
       value: formattedCart.reduce(
         (sum, i) => sum + Number(i.price) * Number(i.quantity || 1),
         0
       ),
+      payment_type: "breeze",
       items: buildItemsFromCartData(formattedCart),
     },
   });
+  window.dataLayer.push({ ecommerce: null });
 }
-// ===== End Add By Pawan ===================================================================
         }
 
 
@@ -452,6 +455,10 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
 //   const orderResult = await handleCreateOrder();
   // Comment By Pawan-----------------------------------------------------------
    // Add By Pawan-----------------------------------------------------------
+   // (Add By Pawan) NOTE — handleShippingSubmit and handleProceed below are not called
+   // anywhere in this file's JSX (the actual button uses handleBreezeProceed further down).
+   // They also reference variables that don't exist in this scope (`address`, `totalAmount`)
+   // so they'd throw if ever invoked. Left in place per instructions, not deleted.
    const handleShippingSubmit = () => {
   // save address so PaymentPage.jsx can read it via localStorage.getItem("shippingDetails")
   localStorage.setItem("shippingDetails", JSON.stringify({ address }));
@@ -559,18 +566,22 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
 // ===== Add By Pawan: GA4 add_payment_info ==============================================
       const handleBreezeProceed = async () => {
     try {
-      // fires on click, before order attempt
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: paymentTotalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
-        },
-      });
+      // (Add By Pawan) COMMENTED OUT — BUG: this fired add_payment_info again on every
+      // click of "Confirm & Proceed", duplicating the add_payment_info that now fires once
+      // when the customer first lands on this Payment Option page (see the fetchData
+      // useEffect above). Firing it again here would double-count it if they click more
+      // than once, or fire it even if page-load tracking already sent it.
+      // window.dataLayer = window.dataLayer || [];
+      // window.dataLayer.push({ ecommerce: null });
+      // window.dataLayer.push({
+      //   event: "add_payment_info",
+      //   ecommerce: {
+      //     currency: "INR",
+      //     value: paymentTotalAmount,
+      //     payment_type: "breeze",
+      //     items: buildItemsFromCartData(cartData),
+      //   },
+      // });
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -855,24 +866,22 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
           //}
 // -----------Comment By Pawan -------------------------------------------------------------
 // ------------Add By Pawan ---------------------------------------------------------------
-// (Add By Pawan) COMMENTED OUT — BUG #1: the SDK never actually sends
-// event === "purchase" — real payloads use "OrderComplete" / "Purchase" /
-// "CheckoutCompleted" (confirmed against the same widget's callback in ShoppingCart.jsx).
-// Because of the wrong string here, this branch never ran and the purchase event never
-// fired for Breeze payments made from this page.
+// (Add By Pawan) COMMENTED OUT — BUG #1: the SDK never actually sends event === "purchase"
+// — real payloads use "OrderComplete" / "Purchase" / "CheckoutCompleted" (confirmed against
+// the same widget's callback in ShoppingCart.jsx). Because of the wrong string here, this
+// branch never ran and purchase never fired for Breeze payments made from this page.
 // BUG #2: even if the string had matched, this pushed "purchase" manually AND called
 // trackPurchaseEvent() right after — trackPurchaseEvent() already pushes "purchase" itself
 // (with dedupe by orderId), so both together would have double-fired purchase.
 // if (sdkResponse?.payload?.event === "purchase") {
 //   toast.success("Payment successful");
 //
-//   // Change by Pawan: explicit GA4 purchase event fired only on confirmed payment success
 //   window.dataLayer = window.dataLayer || [];
 //   window.dataLayer.push({ ecommerce: null });
 //   window.dataLayer.push({
 //     event: "purchase",
 //     ecommerce: {
-//       transaction_id: order.orderId, // Change by Pawan: required for GA4 purchase event dedupe
+//       transaction_id: order.orderId,
 //       currency: "INR",
 //       value: order.totalAmount,
 //       coupon: promoCode || "",
@@ -894,10 +903,11 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
 // (Add By Pawan) FIX — correct event names, single purchase push via trackPurchaseEvent
 // (which internally dedupes by orderId, so it's safe even if the SDK calls this callback
 // more than once for the same order).
+const breezeEvent = sdkResponse?.payload?.event;
 if (
-  sdkResponse?.payload?.event === "OrderComplete" ||
-  sdkResponse?.payload?.event === "Purchase" ||
-  sdkResponse?.payload?.event === "CheckoutCompleted"
+  breezeEvent === "OrderComplete" ||
+  breezeEvent === "Purchase" ||
+  breezeEvent === "CheckoutCompleted"
 ) {
   toast.success("Payment successful");
 
@@ -911,7 +921,6 @@ if (
   console.log("PAYMENT SUCCESS");
 }
 // ------------Add By Pawan ---------------------------------------------------------------
-
 
           // FAILURE
           if (
