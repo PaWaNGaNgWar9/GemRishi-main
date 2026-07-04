@@ -152,10 +152,10 @@ function StoneCollection() {
 // -------------------------Fixed By Pawan------------------------------------------------------
   const handleProductClick = (productSlug, e) => {
     if (e.target.closest("button")) return;
-      navigate(appendRandomString(`/gemstones/${productSlug}`));
+      // navigate(appendRandomString(`/gemstones/${productSlug}`));
     // -----------Commment By Pawan-----------------------------------------------------------------
-    // window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
-        // -----------Commment By Pawan-----------------------------------------------------------------
+     window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
+     // -----------Commment By Pawan-----------------------------------------------------------------
   };
 
   const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
