@@ -387,7 +387,6 @@ function HeaderDetailPage({ onSendId }) {
         });
       } else if (error.response?.status === 400) {
         // ✅ Catch the 400 error and show an "Already added" alert
-        // It tries to grab the exact message from your backend, or falls back to a default message.
         const errorMsg = error.response?.data?.message || error.response?.data?.msg || "This item is already in your cart!";
         toast.info(errorMsg, { position: "top-center" });
       } else {

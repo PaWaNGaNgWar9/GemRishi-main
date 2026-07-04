@@ -106,7 +106,6 @@ const Gemstoneguide = () => {
   </div>
 </div>
 {/* --------------------------------Add By Pawan------------------------------------------------- */}
-
 				{/* How to Select the Right Gemstone */}
 				<h2 className="text-[22px] sm:text-[26px] font-semibold text-[#264A3F] mb-4">
 					How to Select the Right Gemstone
