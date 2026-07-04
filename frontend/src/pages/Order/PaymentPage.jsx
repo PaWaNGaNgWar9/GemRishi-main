@@ -194,10 +194,6 @@ function PaymentPage() {
           setCartData(formattedCart);
 
 // ===== Add By Pawan: GA4 begin_checkout ===================================================
-// (Add By Pawan) COMMENTED OUT — BUG: this fired on every mount of this page (page refresh,
-// browser back/forward, re-navigating here), so a single real checkout could log multiple
-// begin_checkout events. Kept below for reference; replaced with a sessionStorage-guarded
-// version right after so it only fires once per checkout session.
 // window.dataLayer = window.dataLayer || [];
 // window.dataLayer.push({ ecommerce: null });
 // window.dataLayer.push({
