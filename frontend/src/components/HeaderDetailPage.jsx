@@ -63,9 +63,9 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 	const [showPopup, setShowPopup] = useState(false);
 
 	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
-//---------------------Path fix by Pawan--------------------------------------------------
+//---------------------Path fix by Pawan--------------------------------------------------------
 	const shareUrl = `/gemstones/${product?.slug}`;
-//---------------------Path fix by Pawan--------------------------------------------------
+//---------------------Path fix by Pawan--------------------------------------------------------
 
 	useEffect(() => {
 		if (product && metalRates) {
