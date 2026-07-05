@@ -497,7 +497,7 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 							<div className="flex gap-4 items-center sm:self-center">
 								<WishlistButton itemId={product?._id} itemType="Jewelry" />
 {/* --------------------------------Add by Pawan-------------------------------------------- */}
-								<ShareButton
+								<SharePopup
                                  productUrl={shareUrl}
                                  productName={product?.jewelryName || product?.name || "Our Product"}
                                   />

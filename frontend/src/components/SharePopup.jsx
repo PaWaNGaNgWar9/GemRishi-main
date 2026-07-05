@@ -7,21 +7,21 @@ import { FaPinterest } from "react-icons/fa"; // ✅ Pinterest from react-icons
 
 export default function SharePopup({ productUrl, productName }) {
 	const [isOpen, setIsOpen] = useState(false);
-
+// ----------------Updated by Pawan-----------------------------------------------------
 	// Sharing links
 	const shareLinks = {
 		facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
 			productUrl
 		)}`,
 		whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(
-			`Check this out: ${productName} - ${productUrl}`
+			productUrl
 		)}`,
 		pinterest: `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
 			productUrl
 		)}&description=${encodeURIComponent(productName)}`,
 		instagram: "https://www.instagram.com/",
 	};
-
+// ------------------Updated by Pawan-----------------------------------------------------
 	return (
 		<div className="relative">
 			{/* Share Button */}
