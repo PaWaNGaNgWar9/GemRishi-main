@@ -14,6 +14,7 @@ import SharePopup from "./SharePopup";
 import ReactImageMagnify from "react-image-magnify";
 // -----------Add By Pawan----------------------------------------------------------
 import {generateRandomString} from "../utils/randomString";
+import {appendRandomString} from "../utils/randomString";
 // -----------Add By Pawan----------------------------------------------------------
 
 
@@ -64,7 +65,9 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 
 	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
 //---------------------Path fix by Pawan--------------------------------------------------------
-	const shareUrl = `https://www.gemrishi.com/gemstones/${product.slug}/${generateRandomString}`;
+	const shareUrl = appendRandomString(
+  `https://www.gemrishi.com/gemstones/${product.slug}`
+);
 //---------------------Path fix by Pawan--------------------------------------------------------
 
 	useEffect(() => {
