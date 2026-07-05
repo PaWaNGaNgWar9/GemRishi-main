@@ -12,9 +12,9 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "../redux/cartSlice";
 import SharePopup from "./SharePopup";
 import ReactImageMagnify from "react-image-magnify";
-// ------------------Add By Pawan ---------------------------------
+// -----------------------------add by pawan--------------------------------------------------
 import { appendRandomString } from "../utils/randomString";
-// ------------------Add By Pawan ---------------------------------
+// -----------------------------add by pawan--------------------------------------------------
 
 
 
@@ -63,12 +63,10 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 	const [selected, setSelected] = useState(0);
 	const [showPopup, setShowPopup] = useState(false);
 
-	
-//---------------------Path fix by Pawan--------------------------------------------------------
-const cleanPath = `/details/product/${product?.slug}`; // just the real path
-const frontendUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;	
-const shareUrl = `${frontendUrl}${appendRandomString(`/details/product/${product?.slug}`)}`;
-//---------------------Path fix by Pawan--------------------------------------------------------
+	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
+// -----------------Add By Pawan --------------------------------------------------------
+	const shareUrl = appendRandomString(`/gemstones/${product?.slug}`);
+// -----------------Add By Pawan --------------------------------------------------------
 
 	useEffect(() => {
 		if (product && metalRates) {
@@ -498,12 +496,12 @@ const shareUrl = `${frontendUrl}${appendRandomString(`/details/product/${product
 							</h1>
 							<div className="flex gap-4 items-center sm:self-center">
 								<WishlistButton itemId={product?._id} itemType="Jewelry" />
-{/* --------------------------Add By Pawan---------------------------------------------- */}
+{/* --------------------------------Add by Pawan-------------------------------------------- */}
 								<SharePopup
                                  productUrl={shareUrl}
-                                 productName={product?.jewelryName || product?.name || 'Our Product'}
-/>
-{/* --------------------------Add By Pawan---------------------------------------------- */}
+                                 productName={product?.jewelryName || product?.name || "Our Product"}
+                                  />
+{/* --------------------------------Add by Pawan-------------------------------------------- */}
 							</div>
 						</div>
 
