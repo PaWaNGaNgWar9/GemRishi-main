@@ -12,10 +12,10 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "../redux/cartSlice";
 import SharePopup from "./SharePopup";
 import ReactImageMagnify from "react-image-magnify";
-// -----------Add By Pawan----------------------------------------------------------
-import {generateRandomString} from "../utils/randomString";
-import {appendRandomString} from "../utils/randomString";
-// -----------Add By Pawan----------------------------------------------------------
+// ------------------Add By Pawan ---------------------------------
+import { generateRandomString } from "../utils/randomString";
+// ------------------Add By Pawan ---------------------------------
+
 
 
 
@@ -65,7 +65,8 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 
 	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
 //---------------------Path fix by Pawan--------------------------------------------------------
-	const shareUrl = appendRandomString(`/gemstones/${product?.slug}`);
+const frontendUrl = window.location.origin;	
+const shareUrl = `${frontendUrl}/gemstones/${product?.slug}/${generateRandomString}`;
 //---------------------Path fix by Pawan--------------------------------------------------------
 
 	useEffect(() => {
@@ -496,10 +497,12 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 							</h1>
 							<div className="flex gap-4 items-center sm:self-center">
 								<WishlistButton itemId={product?._id} itemType="Jewelry" />
+{/* ----------------------------Add By Pawan --------------------------------------------- */}
 								<SharePopup
-									productUrl={shareUrl}  // ✅ clean URL, no random prefix
-									productName={product?.name || 'Our Product'}
-								/>
+                                  productUrl={shareUrl}
+                                  productName={product?.name || 'Our Product'}
+                                  />
+ {/* ----------------------------Add By Pawan --------------------------------------------- */}
 							</div>
 						</div>
 
