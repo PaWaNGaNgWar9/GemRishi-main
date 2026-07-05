@@ -65,9 +65,7 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 
 	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
 //---------------------Path fix by Pawan--------------------------------------------------------
-	const shareUrl = appendRandomString(
-  `https://www.gemrishi.com/gemstones/${product.slug}`
-);
+	const shareUrl = appendRandomString(`/gemstones/${product?.slug}`);
 //---------------------Path fix by Pawan--------------------------------------------------------
 
 	useEffect(() => {
