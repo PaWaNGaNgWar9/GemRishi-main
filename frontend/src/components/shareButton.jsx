@@ -2,11 +2,14 @@ import React from "react";
 import Share from "../../src/assets/DetailPage/Share.svg";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const ShareButton = () => {
+// --------------------Add by Pawan------------------------------------------------------------
+const ShareButton = ({ productUrl }) => {
 	const handleShare = () => {
-		const currentUrl = window.location.href;
-		navigator.clipboard.writeText(currentUrl);
+		const shareUrl = productUrl.startsWith("http")
+			? productUrl
+			: `${window.location.origin}${productUrl}`;
+
+		navigator.clipboard.writeText(shareUrl);
 
 		toast.success("🔗 Link Copied!", {
 			position: "top-center",
@@ -15,19 +18,17 @@ const ShareButton = () => {
 			closeOnClick: true,
 			pauseOnHover: true,
 			draggable: true,
-			progress: undefined,
-			theme: "light", // 👈 gives white background
+			theme: "light",
 			style: {
-				background: "#ffffff", // pure white background
-				color: "#222", // dark text for contrast
+				background: "#ffffff",
+				color: "#222",
 				borderRadius: "8px",
 				fontWeight: "500",
 				boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 			},
-			icon: "🔗", // optional custom icon
+			icon: "🔗",
 		});
 	};
-
 	return (
 		<div className="relative">
 			<button
