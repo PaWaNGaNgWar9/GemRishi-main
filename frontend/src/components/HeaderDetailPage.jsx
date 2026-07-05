@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "../redux/cartSlice";
 import SharePopup from "./SharePopup";
 import ReactImageMagnify from "react-image-magnify";
-import { generateRandomString } from "../utils/randomString";
+import { generateRandomString } from "../utils/randomStringGenerator";
 
 
 
@@ -64,7 +64,7 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 
 	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
 //---------------------Path fix by Pawan--------------------------------------------------------
-	const shareUrl = `/gemstones/${product?.slug}`;
+	const shareUrl = `/gemstones/${product?.slug}/${generateRandomString}`;
 //---------------------Path fix by Pawan--------------------------------------------------------
 
 	useEffect(() => {
