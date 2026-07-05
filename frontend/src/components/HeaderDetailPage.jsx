@@ -12,9 +12,7 @@ import { useDispatch } from "react-redux";
 import { addItemToCart } from "../redux/cartSlice";
 import SharePopup from "./SharePopup";
 import ReactImageMagnify from "react-image-magnify";
-import { generateRandomString } from "../utils/randomStringGenerator";
-
-
+import {generateRandomString} from "../utils/randomString";
 
 
 
