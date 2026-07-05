@@ -13,7 +13,7 @@ import { addItemToCart } from "../redux/cartSlice";
 import SharePopup from "./SharePopup";
 import ReactImageMagnify from "react-image-magnify";
 // ------------------Add By Pawan ---------------------------------
-import { generateRandomString } from "../utils/randomString";
+import { appendRandomString } from "../utils/randomString";
 // ------------------Add By Pawan ---------------------------------
 
 
@@ -63,10 +63,11 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 	const [selected, setSelected] = useState(0);
 	const [showPopup, setShowPopup] = useState(false);
 
-	const cleanPath = `/gemstones/${product?.slug}`; // just the real path
+	
 //---------------------Path fix by Pawan--------------------------------------------------------
-const frontendUrl = window.location.origin;	
-const shareUrl = `${frontendUrl}/gemstones/${product?.slug}/${generateRandomString}`;
+const cleanPath = `/details/product/${product?.slug}`; // just the real path
+const frontendUrl = import.meta.env.VITE_FRONTEND_URL || window.location.origin;	
+const shareUrl = `${frontendUrl}${appendRandomString(`/details/product/${product?.slug}`)}`;
 //---------------------Path fix by Pawan--------------------------------------------------------
 
 	useEffect(() => {
@@ -497,12 +498,12 @@ const shareUrl = `${frontendUrl}/gemstones/${product?.slug}/${generateRandomStri
 							</h1>
 							<div className="flex gap-4 items-center sm:self-center">
 								<WishlistButton itemId={product?._id} itemType="Jewelry" />
-{/* ----------------------------Add By Pawan --------------------------------------------- */}
+{/* --------------------------Add By Pawan---------------------------------------------- */}
 								<SharePopup
-                                  productUrl={shareUrl}
-                                  productName={product?.name || 'Our Product'}
-                                  />
- {/* ----------------------------Add By Pawan --------------------------------------------- */}
+                                 productUrl={shareUrl}
+                                 productName={product?.jewelryName || product?.name || 'Our Product'}
+/>
+{/* --------------------------Add By Pawan---------------------------------------------- */}
 							</div>
 						</div>
 
