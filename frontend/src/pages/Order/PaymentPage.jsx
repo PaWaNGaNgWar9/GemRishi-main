@@ -193,7 +193,7 @@ function PaymentPage() {
           });
           setCartData(formattedCart);
 
-// ===== Add By Pawan: GA4 begin_checkout ===================================================
+// ===== comment By Pawan: GA4 begin_checkout ===================================================
 // window.dataLayer = window.dataLayer || [];
 // window.dataLayer.push({ ecommerce: null });
 // window.dataLayer.push({
@@ -208,8 +208,7 @@ function PaymentPage() {
 //   },
 // });
 
-// (Add By Pawan) FIX — guarded so begin_checkout fires once per checkout session, not once
-// per mount.
+// (Add By Pawan) FIX — ----------------------------------------------
 const beginCheckoutKey = "tracked_begin_checkout";
 if (!sessionStorage.getItem(beginCheckoutKey)) {
   sessionStorage.setItem(beginCheckoutKey, "1");
@@ -556,13 +555,30 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
       const handleBreezeProceed = async () => {
     try {
       // fires on click, before order attempt
+//--------------------Add By Pawan  for Correct Amount------------------------------------------------------------- 
+      const totalAmount = cartData.reduce((sum, item) => {
+  let itemTotal = Number(item.price) * Number(item.quantity || 1);
+
+  if (item.customization) {
+    itemTotal += Number(item.customization.goldKarat?.price || 0);
+    itemTotal += Number(item.customization.certificate?.price || 0);
+    itemTotal += Number(item.customization.gemstoneWeight?.price || 0);
+    itemTotal += Number(item.customization.quality?.price || 0);
+    itemTotal += Number(item.customization.diamondSubstitute?.price || 0);
+  }
+
+  return sum + itemTotal;
+}, 0);
+
+console.log("Calculated Total:", totalAmount);
+//--------------------Add By Pawan  for Correct Amount------------------------------------------------------------- 
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
       window.dataLayer.push({
         event: "add_payment_info",
         ecommerce: {
           currency: "INR",
-          value: paymentTotalAmount,
+          value: totalAmount,
           payment_type: "breeze",
           items: buildItemsFromCartData(cartData),
         },
@@ -850,15 +866,7 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
           //   );
           //}
 // -----------Comment By Pawan -------------------------------------------------------------
-// ------------Add By Pawan ---------------------------------------------------------------
-// (Add By Pawan) COMMENTED OUT — BUG #1: the SDK never actually sends
-// event === "purchase" — real payloads use "OrderComplete" / "Purchase" /
-// "CheckoutCompleted" (confirmed against the same widget's callback in ShoppingCart.jsx).
-// Because of the wrong string here, this branch never ran and the purchase event never
-// fired for Breeze payments made from this page.
-// BUG #2: even if the string had matched, this pushed "purchase" manually AND called
-// trackPurchaseEvent() right after — trackPurchaseEvent() already pushes "purchase" itself
-// (with dedupe by orderId), so both together would have double-fired purchase.
+// ------------Add By Pawan --------------------------------------------------------------
 // if (sdkResponse?.payload?.event === "purchase") {
 //   toast.success("Payment successful");
 //
@@ -887,8 +895,6 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
 //   console.log("PAYMENT SUCCESS");
 // }
 
-// (Add By Pawan) FIX — correct event names, single purchase push via trackPurchaseEvent
-// (which internally dedupes by orderId, so it's safe even if the SDK calls this callback
 // more than once for the same order).
 if (
   sdkResponse?.payload?.event === "OrderComplete" ||
