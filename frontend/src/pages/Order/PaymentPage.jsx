@@ -1191,5 +1191,4 @@ if (
     </>
   );
 }
-
 export default PaymentPage;
