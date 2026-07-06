@@ -570,7 +570,7 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
   return sum + itemTotal;
 }, 0);
 
-console.log("Calculated Total:", totalAmount);
+// console.log("Calculated Total:", totalAmount); // this line for debugging 
 //--------------------Add By Pawan  for Correct Amount------------------------------------------------------------- 
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
