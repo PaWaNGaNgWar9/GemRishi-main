@@ -520,7 +520,7 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
       },
     });
   };
-  // Add By Pawan-----------------------------------------------------------------------
+// ----------------------------Add By Pawan----------------------------------------------------
   const [promoCode, setPromoCode] = useState("");
   const [totalDiscountApplied, setTotalDiscountApplied] = useState(0);
 
