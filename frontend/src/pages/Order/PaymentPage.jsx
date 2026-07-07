@@ -1432,7 +1432,9 @@ if (breezeEvent === "Purchase") {
               </div>
               comment if need by Pawan */}
 
-        {/* -------------New Code for COD add by pawan---------------------------- */}
+              {/* New Code for COD add by pawan */}
+              {/* COD is only offered below Rs. 20,000 — above that, Breeze
+                  online payment is the only option. */}
               {paymentTotalAmount > 0 && paymentTotalAmount < 20000 && (
                 <div
                   className={`w-full h-auto rounded-[10px] flex items-center p-4 mt-8 cursor-pointer
@@ -1457,7 +1459,7 @@ if (breezeEvent === "Purchase") {
                   </div>
                 </div>
               )}
-              {/* -----------------------New Code for COD add by pawan----------------------- */}
+              {/* New Code for COD add by pawan */}
               
               {/* <span className="text-sm text-red-500 mt-2">
                 Note: If Product is above 5000 and below 20000 Rs then 10%
@@ -1473,25 +1475,18 @@ if (breezeEvent === "Purchase") {
                   //comment if need by Pawan
 
                   // New Code for COD add by pawan
-                  // Route to COD's own order-creation flow (handleProceed)
-                  // when Cash on Delivery is selected; otherwise use the
-                  // Breeze online checkout.
                   onClick={paymentMethod === "cod" ? handleProceed : handleBreezeProceed}
-                  // New Code for COD add by pawan
-
                   //-------------Add by pawan for Breeze-------
                   disabled={paymentMethod !== "cod" && breezeSubmitting}
-                  //-------------Add by pawan for Breeze-------
                   className="w-full max-w-[458px] h-[60px] text-[20px] font-serif text-white bg-[#264A3F] rounded-[10px] cursor-pointer"
                 >
                   {paymentMethod === "cod"
                     ? "Place Order with Cash on Delivery"
-                    : /* -----------Comment By Pawan ------------- "Confirm & Proceed" ----------- */
-                      //-------------Add by pawan for Breeze-------
+                    : 
+                    //-------------Add by pawan for Breeze-------
                       (breezeSubmitting ? "Processing..." : "Confirm & Proceed")
                       //-------------Add by pawan for Breeze-------
                     }
-                    {/* Confirm */}
                 </button>
               </div>
               {/* */}

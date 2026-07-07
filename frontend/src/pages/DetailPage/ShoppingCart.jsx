@@ -75,6 +75,9 @@ function ShoppingCart() {
 
   const [userProfile, setUserProfile] = useState(null);
   const [promoCode, setPromoCode] = useState("");
+  //-------------Add By Pawan for breeze-------
+  const [breezeSubmitting, setBreezeSubmitting] = useState(false);
+  //-------------Add By Pawan for breeze-------
 // -----------------Add By Pawan --------------------------------------------------------------
 const hasTrackedViewCart = useRef(false);
 // -------------------------------------------------------------------------------------------------
@@ -466,6 +469,28 @@ const [loading, setLoading] = useState(true);
 
 
   const handleBreezeProceed = async () => {
+    //-------------Add By Pawan for breeze-------
+    // Guard against double order creation from rapid double-clicks on the
+    // Secure Checkout button while a Breeze checkout attempt is in flight
+    // (ported from PaymentPage.jsx).
+    if (breezeSubmitting) {
+      return;
+    }
+    setBreezeSubmitting(true);
+    //-------------Add By Pawan for breeze-------
+
+    //-------------Add By Pawan for breeze-------
+    // Hard backstop: if the Blaze SDK callback never fires a recognized
+    // event (network drop, SDK bug, user force-closes the checkout webview,
+    // etc.) the button would otherwise stay stuck on "Processing..." forever
+    // since setBreezeSubmitting(false) only runs on known success/failure
+    // paths. This resets it after 60s no matter what. Any real event
+    // handled below clears this timeout well before it fires.
+    const breezeSafetyTimeout = setTimeout(() => {
+      setBreezeSubmitting(false);
+    }, 60000);
+    //-------------Add By Pawan for breeze-------
+
     try {
       console.log("BREEZE STARTED");
 
@@ -517,7 +542,13 @@ const [loading, setLoading] = useState(true);
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
 
-      if (!orderResult) return;
+      if (!orderResult) {
+        //-------------Add By Pawan for breeze-------
+        clearTimeout(breezeSafetyTimeout);
+        setBreezeSubmitting(false);
+        //-------------Add By Pawan for breeze-------
+        return;
+      }
 
       const { order } = orderResult;
 
@@ -547,11 +578,6 @@ const [loading, setLoading] = useState(true);
       console.log("BACKEND FINAL:", finalAmount);
       //---Add By Pawan-----------------------------------------------
       // (Add By Pawan) COMMENTED OUT — BUG: this pushed a "purchase" event right after the
-      // order was created but BEFORE the Breeze widget had even opened and BEFORE any
-      // payment happened. This is what caused "purchase" to fire on every checkout attempt,
-      // even failed/abandoned ones. The correct purchase push is further below, inside the
-      // BlazeSDK success callback, gated on event === "OrderComplete" / "Purchase" /
-      // "CheckoutCompleted" — that is the only place purchase should fire from.
       // window.dataLayer = window.dataLayer || [];
       // window.dataLayer.push({ ecommerce: null });
       // window.dataLayer.push({
@@ -602,6 +628,11 @@ const [loading, setLoading] = useState(true);
         toast.error(
           "Payment SDK not loaded"
         );
+
+        //-------------Add By Pawan for breeze-------
+        clearTimeout(breezeSafetyTimeout);
+        setBreezeSubmitting(false);
+        //-------------Add By Pawan for breeze-------
 
         return;
       }
@@ -835,61 +866,178 @@ const [loading, setLoading] = useState(true);
             sdkResponse
           );
 
-          const event =
-            sdkResponse?.payload?.event;
+          //-------------Add By Pawan for breeze-------
+          console.log(
+            "BREEZE EVENT STREAM NAME:",
+            sdkResponse?.payload?.event
+          );
+          //-------------Add By Pawan for breeze-------
 
-          // SUCCESS
-          if (
-            event === "OrderComplete" ||
-            event === "Purchase" ||
-            event === "CheckoutCompleted"
-          ) {
+          //-------------Comment by pawan for breeze-------
+          // const event =
+          //   sdkResponse?.payload?.event;
+          //
+          // // SUCCESS
+          // if (
+          //   event === "OrderComplete" ||
+          //   event === "Purchase" ||
+          //   event === "CheckoutCompleted"
+          // ) {
+          //
+          //   toast.success(
+          //     "Payment successful"
+          //   );
+          //    // =======Add By Pawan========================================================================
+          //   // GA4 Purchase Tracking — trackPurchaseEvent internally dedupes by orderId,
+          //   // so it's safe even if the SDK fires this callback more than once for the same order.
+          //   trackPurchaseEvent({
+          //     orderId: order.orderId,
+          //     subtotal: order.totalAmount,
+          //     coupon: promoCode || "",
+          //     items: buildItemsFromRawCart(cartData),
+          //   });
+          //   // Add By Pawan================================================================================
+          //
+          //   console.log(
+          //     "PAYMENT SUCCESS",
+          //     sdkResponse
+          //   );
+          // }
+          //
+          // // FAILURE
+          // if (
+          //   event === "CheckoutFailed"
+          // ) {
+          //
+          //   toast.error(
+          //     "Payment failed"
+          //   );
+          //
+          //   console.log(
+          //     "PAYMENT FAILED",
+          //     sdkResponse
+          //   );
+          // }
+          //-------------Comment by pawan for breeze-------
 
-            toast.success(
-              "Payment successful"
-            );
-             // =======Add By Pawan========================================================================
-            // GA4 Purchase Tracking — trackPurchaseEvent internally dedupes by orderId,
-            // so it's safe even if the SDK fires this callback more than once for the same order.
-            // (Add By Pawan) COMMENTED OUT — BUG: same buildItemsFromCartData() / cartData
-            // shape mismatch as begin_checkout / add_shipping_info / add_payment_info above.
-            // This was sending id: undefined, name: undefined, price: 0 for every completed
-            // purchase from this page.
-            // trackPurchaseEvent({
-            //   orderId: order.orderId,
-            //   subtotal: order.totalAmount,
-            //   coupon: promoCode || "",
-            //   items: buildItemsFromCartData(cartData),
-            // });
-            // (Add By Pawan) FIX
-            trackPurchaseEvent({
-              orderId: order.orderId,
-              subtotal: order.totalAmount,
-              coupon: promoCode || "",
-              items: buildItemsFromRawCart(cartData),
+          //-------------Add By Pawan for breeze-------
+          // FIX: switched to the exact documented event names and wired
+          // real GA4 signals to the actual SDK milestones (mirrors
+          // PaymentPage.jsx's handleBreezeProceed):
+          //   - AddPaymentInfo (Breeze's payment page actually loaded) -> GA4 add_payment_info
+          //   - AddedAddress / UpdatedAddress (address saved inside Breeze) -> GA4 add_shipping_info
+          //   - OrderComplete (order created on Breeze's side) -> GA4 checkout_progress
+          //   - Purchase (whole flow completed) -> GA4 purchase + trackPurchaseEvent + redirect
+          // NOTE: the docs table has no cancel/failure event. If the user
+          // backs out of the Breeze sheet without completing, no event may
+          // fire at all here — that's why the 60s breezeSafetyTimeout
+          // above still exists, to reset the button in that case.
+          const breezeEvent = sdkResponse?.payload?.event;
+
+          if (breezeEvent === "AddPaymentInfo") {
+            // Breeze's own payment page has loaded inside the SDK sheet.
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+              event: "add_payment_info",
+              ecommerce: {
+                currency: "INR",
+                value: finalAmount,
+                payment_type: "breeze",
+                items: buildItemsFromRawCart(cartData),
+              },
             });
-            // Add By Pawan================================================================================
 
-            console.log(
-              "PAYMENT SUCCESS",
-              sdkResponse
-            );
+            console.log("BREEZE: AddPaymentInfo");
           }
 
-          // FAILURE
-          if (
-            event === "CheckoutFailed"
-          ) {
+          if (breezeEvent === "AddedAddress" || breezeEvent === "UpdatedAddress") {
+            // User added or changed a shipping address from inside the Breeze sheet.
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+              event: "add_shipping_info",
+              ecommerce: {
+                currency: "INR",
+                value: finalAmount,
+                shipping_tier: "Standard",
+                items: buildItemsFromRawCart(cartData),
+              },
+            });
 
-            toast.error(
-              "Payment failed"
-            );
-
-            console.log(
-              "PAYMENT FAILED",
-              sdkResponse
-            );
+            console.log("BREEZE:", breezeEvent);
           }
+
+          if (breezeEvent === "PayNow") {
+            // User clicked "Pay Now" inside the Breeze sheet — informational
+            // only, no GA4 event mapped to this one.
+            console.log("BREEZE: PayNow clicked");
+          }
+
+          if (breezeEvent === "OrderComplete") {
+            // Order has been created on Breeze's side.
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({ ecommerce: null });
+            window.dataLayer.push({
+              event: "checkout_progress",
+              ecommerce: {
+                currency: "INR",
+                value: finalAmount,
+                payment_type: "breeze",
+                items: buildItemsFromRawCart(cartData),
+              },
+            });
+
+            console.log("BREEZE: OrderComplete");
+          }
+
+          if (breezeEvent === "Purchase") {
+            // Entire purchase flow is completed — this is the real success signal.
+            toast.success("Payment successful");
+
+            // Guard against firing GA4 purchase tracking twice if this
+            // event is ever delivered more than once for the same order.
+            const purchaseKey = `tracked_purchase_${order.orderId}`;
+            if (!sessionStorage.getItem(purchaseKey)) {
+              sessionStorage.setItem(purchaseKey, "1");
+
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({ ecommerce: null });
+              window.dataLayer.push({
+                event: "purchase",
+                ecommerce: {
+                  transaction_id: order.orderId,
+                  currency: "INR",
+                  value: order.totalAmount,
+                  coupon: promoCode || "",
+                  payment_type: "breeze",
+                  items: buildItemsFromRawCart(cartData),
+                },
+              });
+
+              // trackPurchaseEvent internally dedupes by orderId too, so
+              // it's safe even if the SDK fires this callback more than
+              // once for the same order.
+              trackPurchaseEvent({
+                orderId: order.orderId,
+                subtotal: order.totalAmount,
+                coupon: promoCode || "",
+                items: buildItemsFromRawCart(cartData),
+              });
+            }
+
+            console.log("PAYMENT SUCCESS", sdkResponse);
+
+            // Redirect to order confirmation, matching what PaymentPage.jsx
+            // already does for its checkout flow — this page previously
+            // left the user stuck on the cart page after a successful
+            // payment.
+            navigate("orders/and/purchases");
+
+            clearTimeout(breezeSafetyTimeout);
+            setBreezeSubmitting(false);
+          }
+          //-------------Add By Pawan for breeze-------
         }
 
       );
@@ -918,6 +1066,11 @@ const [loading, setLoading] = useState(true);
           err?.message ||
           "Checkout failed"
         );
+
+        //-------------Add By Pawan for breeze-------
+        clearTimeout(breezeSafetyTimeout);
+        setBreezeSubmitting(false);
+        //-------------Add By Pawan for breeze-------
     }
   };  
 
@@ -1098,6 +1251,10 @@ const [loading, setLoading] = useState(true);
                   <span className="text-xl sm:text-2xl font-serif text-[#264A3F]">Rs. {formatPrice(totalAmount)}</span>
                 </div>
 
+                {/*-------------Comment by pawan for breeze-------
+                Old button had no disabled state / no submitting label, so a
+                user could double-click "Secure Checkout" and trigger two
+                order-creation calls before the Breeze SDK sheet opened.
                 <button
                   // onClick={handleProceedToCheckout}
                   onClick={handleBreezeProceed}
@@ -1105,6 +1262,17 @@ const [loading, setLoading] = useState(true);
                 >
                   Secure Checkout
                 </button>
+                -------------Comment by pawan for breeze------- */}
+                {/*-------------Add By Pawan for breeze-------*/}
+                <button
+                  // onClick={handleProceedToCheckout}
+                  onClick={handleBreezeProceed}
+                  disabled={breezeSubmitting}
+                  className="w-full h-[50px] sm:h-[60px] bg-[#264A3F] rounded-full text-[12px] sm:text-[13px] uppercase tracking-[0.15em] text-white font-bold hover:bg-[#1a3329] hover:shadow-lg transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {breezeSubmitting ? "Processing..." : "Secure Checkout"}
+                </button>
+                {/*-------------Add By Pawan for breeze-------*/}
 
                 <div className="mt-4 sm:mt-6 flex justify-center items-center gap-2 sm:gap-3 text-gray-400">
                   <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
