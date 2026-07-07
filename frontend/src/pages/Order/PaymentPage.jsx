@@ -492,7 +492,20 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
       },
     });
 
-    const orderResult = await handleCreateOrder();
+    //comment if need by Pawan
+    // Previously called handleCreateOrder() with no argument. Since
+    // handleCreateOrder(selectedPaymentMethod) now requires that argument
+    // to set orderPayload.paymentMethod, this was sending paymentMethod as
+    // undefined to the backend for every order placed through this
+    // function. Not caught earlier because this path wasn't exercised
+    // once Breeze became the default online flow — handleProceed is now
+    // only reachable from the COD button, so it always means "cod".
+    // const orderResult = await handleCreateOrder();
+    //comment if need by Pawan
+
+    //New Code for COD add by pawan
+    const orderResult = await handleCreateOrder("cod");
+    //New Code for COD add by pawan
     if (!orderResult) return;
 
     const { order, data } = orderResult;
@@ -1391,7 +1404,8 @@ if (breezeEvent === "Purchase") {
               </div> */}
 
               {/*COD */}
-              {/* <div
+              {/* comment if need by Pawan — old fully-disabled version kept for reference
+              <div
                 type="radio"
                 name="payment"
                 value="cod"
@@ -1415,7 +1429,35 @@ if (breezeEvent === "Purchase") {
                     Cash on Delivery
                   </p>
                 </div>
-              </div> */}
+              </div>
+              comment if need by Pawan */}
+
+        {/* -------------New Code for COD add by pawan---------------------------- */}
+              {paymentTotalAmount > 0 && paymentTotalAmount < 20000 && (
+                <div
+                  className={`w-full h-auto rounded-[10px] flex items-center p-4 mt-8 cursor-pointer
+                    ${paymentMethod === "cod"
+                      ? "border-2 border-[#0EC78E]"
+                      : "border border-[#AEABAB]"
+                    }`}
+                  onClick={() => handleCODSelect()}
+                >
+                  <div className="flex items-center gap-4 lg:pl-4">
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="cod"
+                      checked={paymentMethod === "cod"}
+                      onChange={() => handleCODSelect()}
+                      className="w-[25px] h-[25px] accent-[#264A3F] cursor-pointer"
+                    />
+                    <p className="text-[20px] lg:text-[24px] text-[#264A3F] font-serif">
+                      Cash on Delivery
+                    </p>
+                  </div>
+                </div>
+              )}
+              {/* -----------------------New Code for COD add by pawan----------------------- */}
               
               {/* <span className="text-sm text-red-500 mt-2">
                 Note: If Product is above 5000 and below 20000 Rs then 10%
@@ -1426,14 +1468,25 @@ if (breezeEvent === "Purchase") {
               <div className="w-full h-auto flex items-end mt-6">
                 <button
                   // onClick={handleProceed}
-                  onClick={handleBreezeProceed}
-                  //-------------Add by pawan for Breeze----------------------------
-                  disabled={breezeSubmitting}
+                  //comment if need by Pawan
+                  // onClick={handleBreezeProceed}
+                  //comment if need by Pawan
+
+                  // New Code for COD add by pawan
+                  // Route to COD's own order-creation flow (handleProceed)
+                  // when Cash on Delivery is selected; otherwise use the
+                  // Breeze online checkout.
+                  onClick={paymentMethod === "cod" ? handleProceed : handleBreezeProceed}
+                  // New Code for COD add by pawan
+
+                  //-------------Add by pawan for Breeze-------
+                  disabled={paymentMethod !== "cod" && breezeSubmitting}
+                  //-------------Add by pawan for Breeze-------
                   className="w-full max-w-[458px] h-[60px] text-[20px] font-serif text-white bg-[#264A3F] rounded-[10px] cursor-pointer"
                 >
                   {paymentMethod === "cod"
                     ? "Place Order with Cash on Delivery"
-                    :
+                    : /* -----------Comment By Pawan ------------- "Confirm & Proceed" ----------- */
                       //-------------Add by pawan for Breeze-------
                       (breezeSubmitting ? "Processing..." : "Confirm & Proceed")
                       //-------------Add by pawan for Breeze-------
