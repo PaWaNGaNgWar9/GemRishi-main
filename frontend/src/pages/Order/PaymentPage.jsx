@@ -80,6 +80,10 @@ function PaymentPage() {
   const [paymentTotalAmount, setPaymentTotalAmount] = useState(0);
   const [userProfile, setUserProfile] = useState(null);
 
+  //-------------Add by pawan for Breeze-------
+  const [breezeSubmitting, setBreezeSubmitting] = useState(false);
+  //-------------Add by pawan for Breeze-------
+
   const normalizeAddressField = (value) => {
     if (Array.isArray(value)) {
       return value.join(" ").trim();
@@ -189,6 +193,15 @@ function PaymentPage() {
 
               itemType:
                 item.itemType || "Product",
+
+              //-------------Add by pawan for Breeze-------
+              // Breeze cart items support an image field for the checkout UI;
+              // this was never populated before, so Breeze always received "undefined".
+              image:
+                item.item?.images?.[0]?.url ||
+                item.item?.image ||
+                "",
+              //-------------Add by pawan for Breeze-------
             };
           });
           setCartData(formattedCart);
@@ -520,7 +533,7 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
       },
     });
   };
-// ----------------------------Add By Pawan----------------------------------------------------
+  // Add By Pawan-----------------------------------------------------------------------
   const [promoCode, setPromoCode] = useState("");
   const [totalDiscountApplied, setTotalDiscountApplied] = useState(0);
 
@@ -553,6 +566,27 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
 
 // ===== Add By Pawan: GA4 add_payment_info ==============================================
       const handleBreezeProceed = async () => {
+    //-------------Add by pawan for Breeze-------
+    // Guard against double order creation from rapid double-clicks on the
+    // Confirm & Proceed button while a Breeze checkout attempt is in flight.
+    if (breezeSubmitting) {
+      return;
+    }
+    setBreezeSubmitting(true);
+    //-------------Add by pawan for Breeze-------
+
+    //New Code for Breeze add by pawan
+    // FIX: if the Blaze SDK callback never fires a recognized event (network
+    // drop, SDK bug, user force-closes the checkout webview, etc.) the
+    // button would previously stay stuck on "Processing..." forever since
+    // setBreezeSubmitting(false) only ran on known success/failure paths.
+    // This is a hard backstop that resets it after 60s no matter what.
+    // Any real event handled below clears this timeout well before it fires.
+    const breezeSafetyTimeout = setTimeout(() => {
+      setBreezeSubmitting(false);
+    }, 60000);
+    //New Code for Breeze add by pawan
+
     try {
       // fires on click, before order attempt
 //--------------------Add By Pawan  for Correct Amount------------------------------------------------------------- 
@@ -570,24 +604,45 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
   return sum + itemTotal;
 }, 0);
 
-// console.log("Calculated Total:", totalAmount); // this line for debugging 
+// console.log("Calculated Total:", totalAmount); //this is only for debugging 
 //--------------------Add By Pawan  for Correct Amount------------------------------------------------------------- 
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: totalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromCartData(cartData),
-        },
-      });
+
+      //comment if need by Pawan
+      // This fired add_payment_info the instant the user clicked
+      // "Confirm & Proceed", before the order even exists (using the
+      // client-side estimated totalAmount, not the backend total).
+      // Now that we listen for Breeze's real "AddPaymentInfo" SDK event
+      // (fired once Breeze's own payment page has actually loaded, using
+      // the confirmed backend finalAmount), keeping both would double-count
+      // this GA4 event for a single checkout attempt — especially bad if
+      // the user clicks Confirm but the SDK fails to load or they close it
+      // before Breeze's payment page ever renders. Disabled here in favor
+      // of the event-driven push inside the BlazeSDK.process callback.
+      // window.dataLayer = window.dataLayer || [];
+      // window.dataLayer.push({ ecommerce: null });
+      // window.dataLayer.push({
+      //   event: "add_payment_info",
+      //   ecommerce: {
+      //     currency: "INR",
+      //     value: totalAmount,
+      //     payment_type: "breeze",
+      //     items: buildItemsFromCartData(cartData),
+      //   },
+      // });
+      //comment if need by Pawan
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
 
-      if (!orderResult) return;
+      if (!orderResult) {
+        //-------------Add by pawan for Breeze-------
+        //New Code for Breeze add by pawan
+        clearTimeout(breezeSafetyTimeout);
+        //New Code for Breeze add by pawan
+        setBreezeSubmitting(false);
+        //-------------Add by pawan for Breeze-------
+        return;
+      }
 
       const { order } = orderResult;
 
@@ -622,23 +677,50 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
           "Payment SDK not loaded"
         );
 
+        //-------------Add by pawan for Breeze-------
+        //New Code for Breeze add by pawan
+        clearTimeout(breezeSafetyTimeout);
+        //New Code for Breeze add by pawan
+        setBreezeSubmitting(false);
+        //-------------Add by pawan for Breeze-------
+
         return;
       }
 
       // SHIPPING DETAILS
 
-      const shippingDetails =
-        JSON.parse(
-          localStorage.getItem(
-            "shippingDetails"
-          )
-        );
+      //comment if need by Pawan
+      // const shippingDetails =
+      //   JSON.parse(
+      //     localStorage.getItem(
+      //       "shippingDetails"
+      //     )
+      //   );
+      //comment if need by Pawan
+
+      //New Code for Breeze add by pawan
+      // FIX: made the "shippingDetails" key missing/null case explicit
+      // instead of relying on JSON.parse(null) coercing to JSON.parse("null").
+      // Behavior is the same either way, but this reads clearer and is safe
+      // if localStorage.getItem ever returns something JSON.parse can't
+      // handle directly.
+      const shippingDetails = JSON.parse(
+        localStorage.getItem("shippingDetails") || "null"
+      );
+      //New Code for Breeze add by pawan
 
       if (!shippingDetails?.address) {
 
         toast.error(
           "Shipping details missing"
         );
+
+        //-------------Add by pawan for Breeze-------
+        //New Code for Breeze add by pawan
+        clearTimeout(breezeSafetyTimeout);
+        //New Code for Breeze add by pawan
+        setBreezeSubmitting(false);
+        //-------------Add by pawan for Breeze-------
 
         return;
       }
@@ -783,9 +865,22 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
             customer: {
               countryCode: "91",
 
-              phoneNumber: String(
-                shippingDetails.address.mobileNo
-              ).replace(/\D/g, ""),
+              //comment if need by Pawan
+              // phoneNumber: String(
+              //   shippingDetails.address.mobileNo
+              // ).replace(/\D/g, ""),
+              //comment if need by Pawan
+
+              //New Code for Breeze add by pawan
+              // FIX: Blaze expects a bare 10-digit number (e.g. 9876543210),
+              // not one still carrying a country code (e.g. 919876543210 if
+              // the stored mobileNo ever includes "+91"). Stripping
+              // non-digits then slicing the last 10 digits handles both
+              // "+919876543210" and "9876543210" safely.
+              phoneNumber: String(shippingDetails.address.mobileNo)
+                .replace(/\D/g, "")
+                .slice(-10),
+              //New Code for Breeze add by pawan
 
               email: shippingDetails.address.email,
 
@@ -850,6 +945,19 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
             "BLAZE SDK EVENT:",
             sdkResponse
           );
+
+          //-------------Add by pawan for Breeze-------
+          // Log every event name the Breeze event stream sends, even ones
+          // we don't explicitly handle below, so the full vocabulary of
+          // events is visible in the console instead of being silently
+          // dropped. Useful for confirming exact names against
+          // docs.breeze.in/event-stream.
+          console.log(
+            "BREEZE EVENT STREAM NAME:",
+            sdkResponse?.payload?.event
+          );
+          //-------------Add by pawan for Breeze-------
+
 // -----------Comment By Pawan -------------------------------------------------------------
           // SUCCESS
           // if (
@@ -896,39 +1004,249 @@ if (!sessionStorage.getItem(beginCheckoutKey)) {
 // }
 
 // more than once for the same order).
-if (
-  sdkResponse?.payload?.event === "OrderComplete" ||
-  sdkResponse?.payload?.event === "Purchase" ||
-  sdkResponse?.payload?.event === "CheckoutCompleted"
-) {
-  toast.success("Payment successful");
+// -----------Comment By Pawan -------------------------------------------------------------
+// This block worked, but only caught 3 exact event names, never logged
+// unmatched events, and never navigated the user anywhere after success —
+// they were left sitting on the payment page with just a toast. Superseded
+// by the "Add by pawan for Breeze" block directly below, which keeps the
+// same event names plus adds a couple more, and adds the missing redirect
+// + submitting-state reset.
+// if (
+//   sdkResponse?.payload?.event === "OrderComplete" ||
+//   sdkResponse?.payload?.event === "Purchase" ||
+//   sdkResponse?.payload?.event === "CheckoutCompleted"
+// ) {
+//   toast.success("Payment successful");
+//
+//   trackPurchaseEvent({
+//     orderId: order.orderId,
+//     subtotal: order.totalAmount,
+//     coupon: promoCode || "",
+//     items: buildItemsFromCartData(cartData),
+//   });
+//
+//   console.log("PAYMENT SUCCESS");
+// }
+// -----------Comment By Pawan -------------------------------------------------------------
 
-  trackPurchaseEvent({
-    orderId: order.orderId,
-    subtotal: order.totalAmount,
-    coupon: promoCode || "",
-    items: buildItemsFromCartData(cartData),
+//-------------Add by pawan for Breeze-------
+// comment if need by Pawan
+// if (
+//   sdkResponse?.payload?.event === "OrderComplete" ||
+//   sdkResponse?.payload?.event === "Purchase" ||
+//   sdkResponse?.payload?.event === "CheckoutCompleted"
+// ) {
+//   toast.success("Payment successful");
+//
+//   trackPurchaseEvent({
+//     orderId: order.orderId,
+//     subtotal: order.totalAmount,
+//     coupon: promoCode || "",
+//     items: buildItemsFromCartData(cartData),
+//   });
+//
+//   console.log("PAYMENT SUCCESS");
+//
+//   // Redirect to order confirmation, matching what handleProceed already
+//   // does for the COD/Razorpay flow — Breeze previously left the user
+//   // stuck on the payment page after a successful payment.
+//   navigate("orders/and/purchases");
+//
+//   setBreezeSubmitting(false);
+// }
+// comment if need by Pawan
+
+//comment if need by Pawan
+// The block below (guessed event names like "CheckoutCompleted",
+// "CheckoutCancelled", "Closed", "OrderFailed", "PaymentFailed") was our
+// first pass before we had the actual docs open. Verified against
+// docs.breeze.in/event-stream (Event Summary table), the SDK only emits
+// these 6 events — there is NO documented cancel/close/failure event:
+//   AddPaymentInfo  -> Payment page loads
+//   AddedAddress    -> New address saved
+//   UpdatedAddress  -> Address modified
+//   PayNow          -> Pay button clicked (inside Breeze UI)
+//   OrderComplete   -> Order created
+//   Purchase        -> Entire purchase flow is completed
+// Replaced the guessed names below with these real ones. Keeping this old
+// block commented for reference only — do not re-enable.
+//
+// const breezeSuccessEvents = [
+//   "OrderComplete",
+//   "OrderCompleted",
+//   "Purchase",
+//   "PurchaseCompleted",
+//   "CheckoutCompleted",
+// ];
+// const breezeCancelEvents = ["CheckoutCancelled", "Cancelled"];
+// const breezeClosedEvents = ["Closed", "Dismissed"];
+// const breezeFailureEvents = [
+//   "CheckoutFailed",
+//   "OrderFailed",
+//   "PaymentFailed",
+// ];
+//comment if need by Pawan
+
+//New Code for Breeze add by pawan
+// FIX: switched to the exact event names from docs.breeze.in/event-stream
+// instead of guessed ones. Also wires real GA4 signals to the actual SDK
+// milestones instead of only firing them from our own click handlers:
+//   - AddPaymentInfo (Breeze's payment page actually loaded) -> GA4 add_payment_info
+//   - AddedAddress / UpdatedAddress (address saved inside Breeze) -> GA4 add_shipping_info
+//   - Purchase (whole flow completed) -> GA4 purchase + trackPurchaseEvent + redirect
+// NOTE: the docs table has no cancel/failure event. If the user backs out
+// of the Breeze sheet without completing, no event may fire at all here —
+// that's why the 60s breezeSafetyTimeout above still exists, to reset the
+// button in that case. Confirm with Breeze support whether an
+// undocumented event fires on abandonment; until then this is a known gap,
+// not something to paper over with guessed event names.
+const breezeEvent = sdkResponse?.payload?.event;
+
+if (breezeEvent === "AddPaymentInfo") {
+  // Breeze's own payment page has loaded inside the SDK sheet.
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "add_payment_info",
+    ecommerce: {
+      currency: "INR",
+      value: finalAmount,
+      payment_type: "breeze",
+      items: buildItemsFromCartData(cartData),
+    },
   });
 
-  console.log("PAYMENT SUCCESS");
+  console.log("BREEZE: AddPaymentInfo");
 }
+
+if (breezeEvent === "AddedAddress" || breezeEvent === "UpdatedAddress") {
+  // User added or changed a shipping address from inside the Breeze sheet.
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "add_shipping_info",
+    ecommerce: {
+      currency: "INR",
+      value: finalAmount,
+      shipping_tier: "Standard",
+      items: buildItemsFromCartData(cartData),
+    },
+  });
+
+  console.log("BREEZE:", breezeEvent);
+}
+
+if (breezeEvent === "PayNow") {
+  // User clicked "Pay Now" inside the Breeze sheet — informational only,
+  // no GA4 event mapped to this one.
+  console.log("BREEZE: PayNow clicked");
+}
+
+if (breezeEvent === "OrderComplete") {
+  // Order has been created on Breeze's side. Mirrors the checkout_progress
+  // signal handleProceed already fires for the COD/Razorpay flow.
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({ ecommerce: null });
+  window.dataLayer.push({
+    event: "checkout_progress",
+    ecommerce: {
+      currency: "INR",
+      value: finalAmount,
+      payment_type: "breeze",
+      items: buildItemsFromCartData(cartData),
+    },
+  });
+
+  console.log("BREEZE: OrderComplete");
+}
+
+if (breezeEvent === "Purchase") {
+  // Entire purchase flow is completed — this is the real success signal.
+  toast.success("Payment successful");
+
+  // FIX: guard against firing GA4 purchase tracking twice if this event
+  // is ever delivered more than once for the same order.
+  const purchaseKey = `tracked_purchase_${order.orderId}`;
+  if (!sessionStorage.getItem(purchaseKey)) {
+    sessionStorage.setItem(purchaseKey, "1");
+
+    window.dataLayer = window.dataLayer || [];
+    window.dataLayer.push({ ecommerce: null });
+    window.dataLayer.push({
+      event: "purchase",
+      ecommerce: {
+        transaction_id: order.orderId,
+        currency: "INR",
+        value: order.totalAmount,
+        coupon: promoCode || "",
+        payment_type: "breeze",
+        items: buildItemsFromCartData(cartData),
+      },
+    });
+
+    trackPurchaseEvent({
+      orderId: order.orderId,
+      subtotal: order.totalAmount,
+      coupon: promoCode || "",
+      items: buildItemsFromCartData(cartData),
+    });
+  }
+
+  console.log("PAYMENT SUCCESS");
+
+  // Redirect to order confirmation, matching what handleProceed already
+  // does for the COD/Razorpay flow — Breeze previously left the user
+  // stuck on the payment page after a successful payment.
+  navigate("orders/and/purchases");
+
+  clearTimeout(breezeSafetyTimeout);
+  setBreezeSubmitting(false);
+}
+//New Code for Breeze add by pawan
+//-------------Add by pawan for Breeze-------
 // ------------Add By Pawan ---------------------------------------------------------------
 
 
           // FAILURE
-          if (
-            sdkResponse?.payload?.event ===
-            "CheckoutFailed"
-          ) {
+// -----------Comment By Pawan -------------------------------------------------------------
+// Only matched "CheckoutFailed". This event is NOT in the documented
+// Event Summary table (docs.breeze.in/event-stream only lists
+// AddPaymentInfo, AddedAddress, UpdatedAddress, PayNow, OrderComplete,
+// Purchase). Leaving this fully commented out rather than guessing —
+// re-enable only if Breeze support confirms a real failure event name.
+          // if (
+          //   sdkResponse?.payload?.event ===
+          //   "CheckoutFailed"
+          // ) {
 
-            toast.error(
-              "Payment failed"
-            );
+          //   toast.error(
+          //     "Payment failed"
+          //   );
 
-            console.log(
-              "PAYMENT FAILED"
-            );
-          }
+          //   console.log(
+          //     "PAYMENT FAILED"
+          //   );
+          // }
+// -----------Comment By Pawan -------------------------------------------------------------
+
+          //comment if need by Pawan
+          // if (
+          //   sdkResponse?.payload?.event === "CheckoutFailed" ||
+          //   sdkResponse?.payload?.event === "OrderFailed" ||
+          //   sdkResponse?.payload?.event === "PaymentFailed"
+          // ) {
+
+          //   toast.error(
+          //     "Payment failed"
+          //   );
+
+          //   console.log(
+          //     "PAYMENT FAILED"
+          //   );
+
+          //   setBreezeSubmitting(false);
+          // }
+          // comment if need by Pawan
         }
       );
 
@@ -956,6 +1274,13 @@ if (
           err?.message ||
           "Checkout failed"
         );
+
+        //-------------Add by pawan for Breeze-------
+        //New Code for Breeze add by pawan
+        clearTimeout(breezeSafetyTimeout);
+        //New Code for Breeze add by pawan
+        setBreezeSubmitting(false);
+        //-------------Add by pawan for Breeze-------
     }
   };
 
@@ -1102,11 +1427,17 @@ if (
                 <button
                   // onClick={handleProceed}
                   onClick={handleBreezeProceed}
+                  //-------------Add by pawan for Breeze----------------------------
+                  disabled={breezeSubmitting}
                   className="w-full max-w-[458px] h-[60px] text-[20px] font-serif text-white bg-[#264A3F] rounded-[10px] cursor-pointer"
                 >
                   {paymentMethod === "cod"
                     ? "Place Order with Cash on Delivery"
-                    : "Confirm & Proceed"}
+                    :
+                      //-------------Add by pawan for Breeze-------
+                      (breezeSubmitting ? "Processing..." : "Confirm & Proceed")
+                      //-------------Add by pawan for Breeze-------
+                    }
                     {/* Confirm */}
                 </button>
               </div>
@@ -1191,4 +1522,5 @@ if (
     </>
   );
 }
+
 export default PaymentPage;
