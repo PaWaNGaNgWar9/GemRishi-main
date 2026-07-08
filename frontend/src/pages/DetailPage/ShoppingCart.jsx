@@ -98,7 +98,7 @@ const [loading, setLoading] = useState(true);
     });
   };
 
-  // --- UPSELL LOGIC ---
+  // --- UPSELL LOGIC --------------
   useEffect(() => {
     let mounted = true;
     const buildSkusFromCart = (cart) => {
@@ -154,7 +154,7 @@ const [loading, setLoading] = useState(true);
 
   const initialCartCount = cartData?.length || 1;
 
-  // --- FETCH CART ITEMS ---
+  // -------------------- FETCH CART ITEMS ------------------------
   const fetchCartItems = async () => {
     const userInfoString = localStorage.getItem("userInfo");
     let userToken = null;
