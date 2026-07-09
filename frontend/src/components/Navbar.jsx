@@ -445,20 +445,20 @@ export default function Navbar({ handleLoginClick }) {
     <div className="sticky top-0 z-[50]">
     <header className="w-full relative font-sans" ref={headerRef}>
       {/* 1. TOP BAR (Hidden on Mobile) */}
-      <div className="hidden lg:block w-full bg-green-100  border-b border-gray-200 px-8 py-2 text-xs text-gray-600">
+      <div className="hidden lg:block w-full bg-green-200  border-b border-gray-200 px-8 py-2 text-xs text-gray-600">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex gap-6">
-            <span className="flex items-center gap-1">
-              <span className="text-[#264A3F] font-bold">●</span> Free Shipping All Over India
+            <span className="flex items-center gap-1 font-bold">
+              <span className="text-[#264a2b] front-bold">●</span> Free Shipping All Over India
             </span>
             <span className="text-gray-300">|</span>
-            <span className="flex items-center gap-1">
+            <span className="flex items-center gap-1 font-bold">
               <span className="text-[#264A3F] font-bold">●</span> 10 Day No Hassle Returns
             </span>
           </div>
           <div className="flex items-center gap-6">
             <TypewriterText />
-            <div className="flex items-center gap-2 font-medium text-gray-800">
+            <div className="flex items-center gap-2 font-bold text-gray-800">
               <span>Need Help?</span>
               <span className="text-[#264A3F]">+91 98179 75978</span>
             </div>
@@ -467,7 +467,7 @@ export default function Navbar({ handleLoginClick }) {
       </div>
 
       {/* 2. MAIN NAVBAR */}
-      <div className="w-full bg-white border-b border-gray-100 sticky top-0 z-[50] shadow-sm relative">
+      <div className="w-full bg-green-100 border-b border-gray-100 sticky top-0 z-[50] shadow-sm relative">
         <div className="container mx-auto px-4 sm:px-8 h-[60px] lg:h-[75px] flex items-center justify-between">
           {/* A. LOGO */}
           <div className="flex-shrink-0 cursor-pointer relative z-50" onClick={() => navigate("/")}>
@@ -481,7 +481,7 @@ export default function Navbar({ handleLoginClick }) {
           {/* B. DESKTOP NAV */}
           <nav className="hidden lg:flex flex-1 items-center justify-center px-8">
             <ul className="flex items-center gap-6 xl:gap-8">
-              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/")}>
+              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/")}>
                 HOME
               </li>
 
@@ -491,7 +491,7 @@ export default function Navbar({ handleLoginClick }) {
                 onMouseEnter={() => setHoveredMenu("gemstones")}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="flex items-center gap-1 text-sm font-semibold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
+                <div className="flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
                   GEMSTONES{" "}
                   <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform ${hoveredMenu === "gemstones" ? "rotate-180" : ""}`} />
                 </div>
@@ -515,7 +515,7 @@ export default function Navbar({ handleLoginClick }) {
                 onMouseEnter={() => setHoveredMenu("jewellery")}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="flex items-center gap-1 text-sm font-semibold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
+                <div className="flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
                   JEWELLERY{" "}
                   <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform ${hoveredMenu === "jewellery" ? "rotate-180" : ""}`} />
                 </div>
@@ -532,16 +532,16 @@ export default function Navbar({ handleLoginClick }) {
                 </AnimatePresence>
               </li>
 
-              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
+              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
                 BLOGS
               </li>
-              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/suggest")}>
+              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/suggest")}>
                 SUGGESTION
               </li>
-              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/aboutUs")}>
+              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/aboutUs")}>
                 ABOUT
               </li>
-              <li className="text-sm font-semibold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/contactUs")}>
+              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/contactUs")}>
                 CONTACT
               </li>
             </ul>
