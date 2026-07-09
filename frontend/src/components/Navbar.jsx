@@ -75,7 +75,7 @@ const TypewriterText = () => {
       if (currentIndex > 0) {
         const timer = setTimeout(() => {
           setDisplayText(currentWord.substring(0, currentIndex - 1));
-          setCurrentIndex((prev) => prev - 1);
+          setCurrentIndex((prev) => prev - 1); 
         }, 50);
         return () => clearTimeout(timer);
       } else {
@@ -441,9 +441,11 @@ export default function Navbar({ handleLoginClick }) {
   if (isDataLoading) return <NavbarSkeleton />;
 
   return (
+    // -------------- for fix the Navbar ----------------------------------------------
+    <div className="sticky top-0 z-[50]">
     <header className="w-full relative font-sans" ref={headerRef}>
       {/* 1. TOP BAR (Hidden on Mobile) */}
-      <div className="hidden lg:block w-full bg-gray-50 border-b border-gray-200 px-8 py-2 text-xs text-gray-600">
+      <div className="hidden lg:block w-full bg-green-100  border-b border-gray-200 px-8 py-2 text-xs text-gray-600">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex gap-6">
             <span className="flex items-center gap-1">
@@ -467,7 +469,6 @@ export default function Navbar({ handleLoginClick }) {
       {/* 2. MAIN NAVBAR */}
       <div className="w-full bg-white border-b border-gray-100 sticky top-0 z-[50] shadow-sm relative">
         <div className="container mx-auto px-4 sm:px-8 h-[60px] lg:h-[75px] flex items-center justify-between">
-
           {/* A. LOGO */}
           <div className="flex-shrink-0 cursor-pointer relative z-50" onClick={() => navigate("/")}>
             <img
@@ -804,5 +805,6 @@ export default function Navbar({ handleLoginClick }) {
         </AnimatePresence>
       </div>
     </header>
+    </div>
   );
 }

@@ -63,6 +63,9 @@ import RandomWrapper from "./components/RandomWrapper";
 import { generateRandomString } from "./utils/randomString";
 import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import { initBlaze } from "./utils/blazeCheckout";
+// -------------------Add By Pawan--------------------------------------
+import SlideImage from "./pages/Home/SlideImage"; // Import the SlideImage component Add By Pawan
+// -------------------Add By Pawan--------------------------------------
 
 const BASE_URL = import.meta.env.BASE_URL;
 
@@ -135,6 +138,9 @@ function AppWrapper() {
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
+{/*---------------------------------- Add By Pawan ----------------------------------------*/}
+        <Route path="/slide-image" element={<SlideImage />} />
+{/*---------------------------------- Add By Pawan ----------------------------------------*/}
         <Route path="/gemstone/:slug" element={<ProductList />} />
         <Route path="/gemstone/filter/:slug" element={<FilterProductPage />} />
         <Route  path="/gemstones/:slug/:random?" element={<DetailPage />} />

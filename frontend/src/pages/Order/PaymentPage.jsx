@@ -10,9 +10,9 @@ import creditAndDebit from "../../assets/Payment/creditAndDebit.svg";
 import { ToastContainer, toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { removeItemFromCart } from "../../redux/cartSlice";
-// -----------------Add By Pawan --------------------------------------------------------
+// -----------------Add By Pawan ---------------------------------------------------------
 import { trackPurchaseEvent, buildItemsFromCartData } from "../../utils/purchaseTracking";
-// -----------------Add By Pawan -------------------------------------------------------
+// -----------------Add By Pawan ---------------------------------------------------------
 
 import "react-toastify/dist/ReactToastify.css";
 import {

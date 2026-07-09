@@ -153,7 +153,6 @@ const [loading, setLoading] = useState(true);
   }, [URL, cartData]);
 
   const initialCartCount = cartData?.length || 1;
-
   // -------------------- FETCH CART ITEMS ------------------------
   const fetchCartItems = async () => {
     const userInfoString = localStorage.getItem("userInfo");
@@ -719,8 +718,7 @@ const [loading, setLoading] = useState(true);
           const unitPrice = Number(item.totalPrice || 0);
 
           // DEFINE FINAL PRICE
-          // const finalUnitPrice =
-          //   unitPrice + customizationTotal;
+          const finalUnitPrice = unitPrice + customizationTotal;
 
           return {
 
@@ -740,7 +738,7 @@ const [loading, setLoading] = useState(true);
               Math.round(unitPrice * 100),
 
             finalPrice:
-              Math.round(unitPrice * 100),
+              Math.round(finalUnitPrice * 100),
 
             discount: 0,
 

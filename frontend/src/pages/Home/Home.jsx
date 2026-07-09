@@ -12,6 +12,9 @@ import GemstoneReviews from "./GemstoneReviews";
 import Legacy from "./Legacy";
 import GemstoneEducationYoutubeSection from "./GemstoneEducationYoutubeSection";
 import { FaWhatsapp } from "react-icons/fa";
+// -------------------Add By Pawan--------------------------------------
+import SlideImage from "./SlideImage"; 
+// -------------------Add By Pawan--------------------------------------
 
 function Home() {
   return (
@@ -50,6 +53,11 @@ function Home() {
         <section className="bg-green-50">
           <LegacyTrust />
         </section>
+{/* -------------------_Add By Pawan -------------------------------------------------------- */}
+          <section className="bg-green-25">
+            <SlideImage />
+          </section>
+{/* -------------------_Add By Pawan -------------------------------------------------------- */}
 
         {/* GemstoneEducationYoutubeSection section */}
         <section className="bg-green-220 ">
