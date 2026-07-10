@@ -25,6 +25,9 @@ import CategoryModal from "../pages/HomeModal/CategoryModal";
 import JewelleryModal from "../pages/HomeModal/JewelleryModal";
 import { useGetWish } from "../hooks/usegetwish";
 import { appendRandomString } from "../utils/randomString";
+// ===== Update by Pawan For reduce Loading time ===============================================
+import { useGetCategoryQuery, useGetJewelryCategoryQuery } from "../features/api/apiSlice";
+// ====== Update by Pawan For reduce Loading time ===============================================
 
 // ==============================================================================
 // 1. Skeleton Loader
@@ -33,16 +36,16 @@ const NavbarSkeleton = () => (
   <div className="w-full flex flex-col bg-white animate-pulse">
     <div className="h-[40px] w-full bg-gray-50 border-b border-gray-200"></div>
     <div className="h-[70px] w-full bg-white border-b border-gray-200 flex justify-between items-center px-4 md:px-8">
-      <div className="w-[100px] h-[40px] bg-gray-200 rounded"></div>
+      <div className="w-[100px] h-[40px] bg-gray-200 rounded-md"></div>
       <div className="hidden lg:flex gap-8">
-        <div className="w-20 h-4 bg-gray-200 rounded"></div>
-        <div className="w-20 h-4 bg-gray-200 rounded"></div>
-        <div className="w-20 h-4 bg-gray-200 rounded"></div>
-        <div className="w-20 h-4 bg-gray-200 rounded"></div>
+        <div className="w-20 h-4 bg-gray-200 rounded-full"></div>
+        <div className="w-20 h-4 bg-gray-200 rounded-full"></div>
+        <div className="w-20 h-4 bg-gray-200 rounded-full"></div>
+        <div className="w-20 h-4 bg-gray-200 rounded-full"></div>
       </div>
       <div className="flex gap-3">
-        <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-        <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+        <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
+        <div className="w-9 h-9 bg-gray-200 rounded-full"></div>
       </div>
     </div>
   </div>
@@ -56,7 +59,9 @@ const TypewriterText = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const words = ["Natural", "Astrologically Matched", "Hand Selected"];
+  const words = ["100% Natural Gemstones", "Precisely Astrologically Matched", 
+    "Expertly Hand-Selected" , "Authentically Natural","Tailored to Your Birth Chart",
+  "Carefully Curated by Experts"];
 
   useEffect(() => {
     const currentWord = words[currentWordIndex];
@@ -65,17 +70,17 @@ const TypewriterText = () => {
         const timer = setTimeout(() => {
           setDisplayText(currentWord.substring(0, currentIndex + 1));
           setCurrentIndex((prev) => prev + 1);
-        }, 100);
+        }, 20);
         return () => clearTimeout(timer);
       } else {
-        const timer = setTimeout(() => setIsDeleting(true), 2000);
+        const timer = setTimeout(() => setIsDeleting(true), 50);
         return () => clearTimeout(timer);
       }
     } else {
       if (currentIndex > 0) {
         const timer = setTimeout(() => {
           setDisplayText(currentWord.substring(0, currentIndex - 1));
-          setCurrentIndex((prev) => prev - 1); 
+          setCurrentIndex((prev) => prev - 1);
         }, 50);
         return () => clearTimeout(timer);
       } else {
@@ -110,30 +115,28 @@ const PremiumDropdown = ({ children, wide = false }) => {
       initial={{ opacity: 0, y: 10, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 8, scale: 0.98 }}
-      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      // Update by Pawan For reduce Loading time (was duration: 0.3)
+      transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
       className="absolute top-[100%] left-1/2 -translate-x-[30%] pt-4 z-[100]"
     >
       <div className="relative">
-
         {/* arrow */}
-        <div className="absolute -top-[6px] left-[30%] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100 z-20"></div>
+        <div className="absolute -top-[6px] left-[30%] w-4 h-4 bg-white rotate-45 border-l border-t border-gray-100 z-20 shadow-[-2px_-2px_4px_rgba(0,0,0,0.02)]"></div>
 
         <div
-          className={`relative bg-white rounded-sm shadow-[0_20px_40px_-10px_rgba(38,74,63,0.1)] border border-gray-100 overflow-hidden ${wide
-            ? "w-[1000px] max-w-[90vw]"
-            : "min-w-[260px] w-max"
-            }`}
+          className={`relative bg-white rounded-xl shadow-[0_24px_48px_-12px_rgba(38,74,63,0.14)] border border-gray-100/80 overflow-hidden backdrop-blur-sm ${
+            wide ? "w-[1000px] max-w-[90vw]" : "min-w-[260px] w-max"
+          }`}
         >
           <div className="absolute top-0 left-0 w-full h-[3px] bg-[#264A3F]/10"></div>
-            <div className="max-h-[75vh] overflow-y-auto">
-              {children}
-            </div>
+          <div className="max-h-[75vh] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-200 scrollbar-track-transparent">
+            {children}
+          </div>
         </div>
       </div>
     </motion.div>
   );
 };
-
 
 // ==============================================================================
 // 4. Main Navbar Component
@@ -170,6 +173,33 @@ export default function Navbar({ handleLoginClick }) {
 
   const [isDataLoading, setIsDataLoading] = useState(true);
 
+  // ===== Update by Pawan For reduce Loading time (start) =====
+  //already cached 
+  const { data: categoryData } = useGetCategoryQuery();
+  const { data: jewelleryData } = useGetJewelryCategoryQuery();
+
+  // Once the menu data arrives, silently pre-download every icon image
+  // in the background so it's already in the browser cache before the
+  useEffect(() => {
+    const urls = [];
+
+    categoryData?.categories?.forEach((cat) =>
+      cat?.subCategories?.forEach((item) => {
+        if (item?.image?.url) urls.push(item.image.url);
+      })
+    );
+    jewelleryData?.jewelryCategories?.forEach((cat) =>
+      cat?.jewelrySubCategories?.forEach((item) => {
+        if (item?.image?.url) urls.push(item.image.url);
+      })
+    );
+
+    urls.forEach((url) => {
+      const img = new Image();
+      img.src = url;
+    });
+  }, [categoryData, jewelleryData]);
+  // ===== Update by Pawan For reduce Loading time ==============================================
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
     if (isNavOpen) {
@@ -311,14 +341,15 @@ export default function Navbar({ handleLoginClick }) {
     return (
       <div className="flex flex-col w-full">
         {isSearching && (
-          <div className="p-8 flex justify-center items-center">
+          <div className="p-10 flex flex-col items-center justify-center gap-3">
             <div className="w-6 h-6 border-2 border-gray-200 border-t-[#264A3F] rounded-full animate-spin"></div>
+            <p className="text-[11px] tracking-wider uppercase text-gray-400">Searching</p>
           </div>
         )}
         {!isSearching && searchResults.length > 0 && (
-          <div className="px-8 pb-6">
-            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 border-b border-gray-100 pb-2">Top Results</h4>
-            <div className="space-y-1">
+          <div className="px-6 pb-6 pt-2">
+            <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-3 border-b border-gray-100 pb-3">Top Results</h4>
+            <div className="space-y-0.5">
               {searchResults.slice(0, 5).map((item) => (
                 <Link
                   key={item._id}
@@ -331,9 +362,9 @@ export default function Navbar({ handleLoginClick }) {
                     setIsResultsVisible(false);
                     setIsSearchBarVisible(false);
                   }}
-                  className="flex items-center gap-4 p-3 -mx-3 hover:bg-[#F9FAFB] rounded-lg cursor-pointer transition-all duration-300 group"
+                  className="flex items-center gap-4 p-3 rounded-lg cursor-pointer transition-all duration-300 group hover:bg-[#F9FAFB] hover:shadow-[0_2px_10px_rgba(38,74,63,0.06)]"
                 >
-                  <div className="w-14 h-14 bg-white border border-gray-100 rounded-md flex justify-center items-center overflow-hidden">
+                  <div className="w-14 h-14 shrink-0 bg-white border border-gray-100 rounded-lg flex justify-center items-center overflow-hidden">
                     <img
                       src={item.images?.[0]?.url || item.image || "/placeholder.svg"}
                       alt=""
@@ -353,7 +384,7 @@ export default function Navbar({ handleLoginClick }) {
             {searchResults.length > 5 && (
               <button
                 onClick={() => handleFullSearch(searchQuery)}
-                className="w-full mt-4 py-3 bg-[#264A3F] text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded hover:bg-gray-900 transition-colors"
+                className="w-full mt-4 py-3 bg-[#264A3F] text-white text-[10px] font-bold uppercase tracking-[0.2em] rounded-lg hover:bg-gray-900 active:scale-[0.98] transition-all duration-200 shadow-sm hover:shadow-md"
               >
                 View All {searchResults.length} Results
               </button>
@@ -361,7 +392,7 @@ export default function Navbar({ handleLoginClick }) {
           </div>
         )}
         {showNoResults && (
-          <div className="p-8 text-center">
+          <div className="p-10 text-center">
             <p className="text-gray-400 font-serif text-lg italic">We couldn't find anything matching your search.</p>
             <p className="text-xs text-gray-500 mt-2">Try adjusting your keywords or browsing our collections.</p>
           </div>
@@ -391,11 +422,14 @@ export default function Navbar({ handleLoginClick }) {
     return (
       <>
         {isSearching && (
-          <div className="p-4 text-center text-sm text-gray-500">Searching...</div>
+          <div className="p-4 flex items-center justify-center gap-2 text-sm text-gray-500">
+            <div className="w-4 h-4 border-2 border-gray-200 border-t-[#264A3F] rounded-full animate-spin"></div>
+            Searching...
+          </div>
         )}
         {!isSearching && searchResults.length > 0 && (
           <>
-            <div className="px-4 py-2 text-xs font-semibold text-gray-400 uppercase border-b border-gray-50">
+            <div className="px-4 py-2.5 text-xs font-semibold text-gray-400 uppercase tracking-wide border-b border-gray-50">
               Results ({searchResults.length})
             </div>
             {searchResults.map((item) => (
@@ -410,12 +444,12 @@ export default function Navbar({ handleLoginClick }) {
                   setIsResultsVisible(false);
                   setIsSearchBarVisible(false);
                 }}
-                className="flex items-center gap-3 p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
+                className="flex items-center gap-3 p-3 hover:bg-gray-50 active:bg-gray-100 cursor-pointer border-b border-gray-50 last:border-0 transition-colors"
               >
                 <img
                   src={item.images?.[0]?.url || item.image || "/placeholder.svg"}
                   alt=""
-                  className="w-10 h-10 rounded-md object-cover bg-gray-100"
+                  className="w-10 h-10 rounded-lg object-cover bg-gray-100 shrink-0"
                 />
 
                 <div className="flex-1 min-w-0">
@@ -427,12 +461,13 @@ export default function Navbar({ handleLoginClick }) {
                     {formatPrice(getPrice(item))}
                   </p>
                 </div>
+                <KeyboardArrowRightIcon className="text-gray-300" style={{ fontSize: 18 }} />
               </Link>
             ))}
           </>
         )}
         {showNoResults && (
-          <div className="p-4 text-center text-sm text-gray-500">No results found.</div>
+          <div className="p-6 text-center text-sm text-gray-500">No results found.</div>
         )}
       </>
     );
@@ -445,14 +480,14 @@ export default function Navbar({ handleLoginClick }) {
     <div className="sticky top-0 z-[50]">
     <header className="w-full relative font-sans" ref={headerRef}>
       {/* 1. TOP BAR (Hidden on Mobile) */}
-      <div className="hidden lg:block w-full bg-green-200  border-b border-gray-200 px-8 py-2 text-xs text-gray-600">
+      <div className="hidden lg:block w-full bg-green-200 border-b border-gray-200 px-8 py-1.5 text-xs text-gray-600">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex gap-6">
-            <span className="flex items-center gap-1 font-bold">
+            <span className="flex items-center text-black gap-1.5 font-bold">
               <span className="text-[#264a2b] front-bold">●</span> Free Shipping All Over India
             </span>
-            <span className="text-gray-300">|</span>
-            <span className="flex items-center gap-1 font-bold">
+            <span className="text-gray-500 font-bold">|</span>
+            <span className="flex items-center gap-1.5 font-bold text-black">
               <span className="text-[#264A3F] font-bold">●</span> 10 Day No Hassle Returns
             </span>
           </div>
@@ -465,12 +500,11 @@ export default function Navbar({ handleLoginClick }) {
           </div>
         </div>
       </div>
-
       {/* 2. MAIN NAVBAR */}
       <div className="w-full bg-green-100 border-b border-gray-100 sticky top-0 z-[50] shadow-sm relative">
-        <div className="container mx-auto px-4 sm:px-8 h-[60px] lg:h-[75px] flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-8 h-[64px] lg:h-[68px] flex items-center justify-between">
           {/* A. LOGO */}
-          <div className="flex-shrink-0 cursor-pointer relative z-50" onClick={() => navigate("/")}>
+          <div className="flex-shrink-0 cursor-pointer relative z-50 transition-transform duration-200 hover:scale-[1.02]" onClick={() => navigate("/")}>
             <img
               src="/GemRishi.svg"
               alt="GemRishi"
@@ -481,8 +515,9 @@ export default function Navbar({ handleLoginClick }) {
           {/* B. DESKTOP NAV */}
           <nav className="hidden lg:flex flex-1 items-center justify-center px-8">
             <ul className="flex items-center gap-6 xl:gap-8">
-              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/")}>
-                HOME
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/")}>
+                 HOME
+                <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
 
               {/* Gemstones */}
@@ -491,9 +526,10 @@ export default function Navbar({ handleLoginClick }) {
                 onMouseEnter={() => setHoveredMenu("gemstones")}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
-                  GEMSTONES{" "}
-                  <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform ${hoveredMenu === "gemstones" ? "rotate-180" : ""}`} />
+                <div className="relative flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400  py-2">
+                 GEMSTONES{" "}
+                  <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform duration-300 ${hoveredMenu === "gemstones" ? "rotate-180" : ""}`} />
+                  <span className={`absolute left-0 -bottom-0.5 h-[2px] bg-[#264A3F] transition-all duration-300 ${hoveredMenu === "gemstones" ? "w-full" : "w-0"}`}></span>
                 </div>
                 <AnimatePresence>
                   {hoveredMenu === "gemstones" && (
@@ -515,48 +551,53 @@ export default function Navbar({ handleLoginClick }) {
                 onMouseEnter={() => setHoveredMenu("jewellery")}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 group-hover:text-[#264A3F] transition-colors">
-                  JEWELLERY{" "}
-                  <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform ${hoveredMenu === "jewellery" ? "rotate-180" : ""}`} />
+                <div className="relative flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 py-2">
+             JEWELLERY{" "}
+                  <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform duration-300 ${hoveredMenu === "jewellery" ? "rotate-180" : ""}`} />
+                  <span className={`absolute left-0 -bottom-0.5 h-[2px] bg-[#264A3F] transition-all duration-300 ${hoveredMenu === "jewellery" ? "w-full" : "w-0"}`}></span>
                 </div>
                 <AnimatePresence>
                   {hoveredMenu === "jewellery" && (
                     <PremiumDropdown>
-                      <JewelleryModal 
-                        onHover={() => setHoveredMenu("jewellery")} 
-                        onMouseLeave={() => setHoveredMenu(null)} 
-                        closeNavbar={() => { }} 
+                      <JewelleryModal
+                        onHover={() => setHoveredMenu("jewellery")}
+                        onMouseLeave={() => setHoveredMenu(null)}
+                        closeNavbar={() => { }}
                       />
                     </PremiumDropdown>
                   )}
                 </AnimatePresence>
               </li>
 
-              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => window.open("https://gemrishi.com/blogs")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => window.open("https://gemrishi.com/blogs")}>
                 BLOGS
+                <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
-              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/suggest")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/suggest")}>
                 SUGGESTION
+                <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
-              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/aboutUs")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/aboutUs")}>
                 ABOUT
+                <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
-              <li className="text-sm font-bold tracking-wide text-gray-700 hover:text-[#264A3F] transition-colors cursor-pointer" onClick={() => navigate("/contactUs")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/contactUs")}>
                 CONTACT
+                <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
             </ul>
           </nav>
 
           {/* C. RIGHT ACTIONS */}
-          <div className="flex items-center gap-3 sm:gap-5 relative z-50">
+          <div className="flex items-center gap-2 sm:gap-4 relative z-50">
 
             {/* 👑 LUXURY DESKTOP SEARCH BAR */}
             <div className="hidden lg:block relative">
               {/* Search Icon Trigger */}
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-colors duration-300 cursor-pointer ${isSearchBarVisible
-                  ? "bg-[#264A3F] text-white"
-                  : "bg-transparent text-gray-700 hover:bg-gray-50"
+                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 cursor-pointer active:scale-95 ${isSearchBarVisible
+                  ? "bg-[#264A3F] text-white shadow-md"
+                  : "bg-transparent text-gray-700 hover:bg-gray-50 hover:shadow-sm"
                   }`}
                 onClick={() => toggleSearchBar()}
               >
@@ -571,11 +612,11 @@ export default function Navbar({ handleLoginClick }) {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 10 }}
                     transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute top-[130%] right-0 w-[480px] bg-white border border-gray-100 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] z-[100] overflow-hidden"
+                    className="absolute top-[130%] right-0 w-[480px] bg-white border border-gray-100 rounded-xl shadow-[0_40px_80px_-20px_rgba(0,0,0,0.18)] z-[100] overflow-hidden"
                   >
                     {/* The Input Section */}
                     <div className="p-4">
-                      <div className="flex items-center border-b border-gray-300 focus-within:border-[#264A3F] pb-1 transition-colors duration-300">
+                      <div className="flex items-center border-b border-gray-300 focus-within:border-[#264A3F] pb-2 transition-colors duration-300">
                         <SearchIcon className="text-gray-400 mr-4" style={{ fontSize: 24 }} />
                         <input
                           type="text"
@@ -597,8 +638,6 @@ export default function Navbar({ handleLoginClick }) {
                       </div>
                     </div>
 
-
-
                     {/* Results Container */}
                     {isResultsVisible && renderPremiumDesktopResults()}
                   </motion.div>
@@ -608,7 +647,7 @@ export default function Navbar({ handleLoginClick }) {
 
             {/* ✅ MOBILE SEARCH ICON (Triggers Dropdown Below Navbar) */}
             <div
-              className={`lg:hidden w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-colors ${isSearchBarVisible ? "bg-[#264A3F] text-white" : "bg-gray-50 text-gray-700 hover:bg-gray-200"
+              className={`lg:hidden w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 active:scale-95 ${isSearchBarVisible ? "bg-[#264A3F] text-white shadow-md" : "bg-gray-50 text-gray-700 hover:bg-gray-200"
                 }`}
               onClick={() => toggleSearchBar()}
             >
@@ -618,11 +657,11 @@ export default function Navbar({ handleLoginClick }) {
             {/* Cart */}
             {!insufficientStock && (
               <div className="relative group cursor-pointer" onClick={() => navigate("/shopping/cart")}>
-                <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-transparent hover:bg-gray-50 flex items-center justify-center transition-colors text-gray-700">
+                <div className="w-9 h-9 lg:w-10 lg:h-10 rounded-full bg-transparent hover:bg-gray-50 flex items-center justify-center transition-all duration-300 text-gray-700 active:scale-95 hover:shadow-sm">
                   <ShoppingCartOutlinedIcon style={{ fontSize: 22 }} />
                 </div>
                 {cartItemsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center shadow-sm ring-2 ring-white">
                     {cartItemsCount}
                   </span>
                 )}
@@ -665,7 +704,7 @@ export default function Navbar({ handleLoginClick }) {
 
             {/* Mobile Hamburger Trigger */}
             <div className="lg:hidden ml-1">
-              <button onClick={toggleNav} className="text-[#264A3F] focus:outline-none p-1 relative z-50">
+              <button onClick={toggleNav} className="text-[#264A3F] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#264A3F]/40 rounded-full p-1.5 relative z-50 transition-transform duration-200 active:scale-90">
                 {isNavOpen ? <CloseIcon /> : <MenuIcon />}
               </button>
             </div>
@@ -681,7 +720,7 @@ export default function Navbar({ handleLoginClick }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="lg:hidden fixed inset-0 top-[60px] bg-black/40 z-[40]"
+                className="lg:hidden fixed inset-0 top-[60px] bg-black/40 backdrop-blur-[2px] z-[40]"
                 onClick={() => {
                   setSearchQuery("");
                   setIsSearchBarVisible(false);
@@ -697,7 +736,7 @@ export default function Navbar({ handleLoginClick }) {
               >
                 <div className="p-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 flex items-center bg-gray-50 rounded-lg border border-[#264A3F] px-3 py-2.5">
+                    <div className="flex-1 flex items-center bg-gray-50 rounded-xl border border-[#264A3F] px-3 py-2.5 focus-within:shadow-md transition-shadow">
                       <SearchIcon className="text-gray-400 mr-2" style={{ fontSize: 20 }} />
                       <input
                         type="text"
@@ -710,7 +749,7 @@ export default function Navbar({ handleLoginClick }) {
                       />
                       {searchQuery && (
                         <CloseIcon
-                          className="text-gray-400 ml-2 cursor-pointer"
+                          className="text-gray-400 ml-2 cursor-pointer hover:text-gray-600 transition-colors"
                           style={{ fontSize: 18 }}
                           onClick={() => {
                             setSearchQuery("");
@@ -725,14 +764,14 @@ export default function Navbar({ handleLoginClick }) {
                         setIsSearchBarVisible(false);
                         setIsResultsVisible(false);
                       }}
-                      className="text-sm font-semibold text-gray-600 px-1"
+                      className="text-sm font-semibold text-gray-600 px-1 hover:text-gray-900 transition-colors"
                     >
                       Cancel
                     </button>
                   </div>
 
                   {isResultsVisible && (
-                    <div className="mt-4 w-full bg-white border border-gray-100 rounded-lg shadow-inner max-h-[50vh] overflow-y-auto">
+                    <div className="mt-4 w-full bg-white border border-gray-100 rounded-xl shadow-inner max-h-[50vh] overflow-y-auto">
                       {renderMobileSearchResults()}
                     </div>
                   )}
@@ -746,19 +785,19 @@ export default function Navbar({ handleLoginClick }) {
         <AnimatePresence>
           {isNavOpen && (
             <>
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNavOpen(false)} className="fixed inset-0 bg-black/50 z-[90] lg:hidden" />
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsNavOpen(false)} className="fixed inset-0 bg-black/50 backdrop-blur-[2px] z-[90] lg:hidden" />
               <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-white z-[100] shadow-2xl overflow-y-auto lg:hidden">
                 <div className="flex items-center justify-between p-5 border-b border-gray-100">
                   <img src="/GemRishi.svg" alt="Logo" className="h-[35px] w-auto" />
-                  <button onClick={() => setIsNavOpen(false)} className="text-gray-500 hover:text-red-500"><CloseIcon /></button>
+                  <button onClick={() => setIsNavOpen(false)} className="text-gray-500 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-gray-50 active:scale-90"><CloseIcon /></button>
                 </div>
                 <div className="p-4 flex flex-col h-[calc(100%-80px)] justify-between">
-                  <nav className="flex flex-col gap-2">
-                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer flex items-center gap-3" onClick={() => { navigate("/"); setIsNavOpen(false); }}>Home</div>
+                  <nav className="flex flex-col gap-1.5">
+                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer flex items-center gap-3 transition-colors" onClick={() => { navigate("/"); setIsNavOpen(false); }}>Home</div>
                     <div className="border-b border-gray-50">
-                      <div className="flex items-center justify-between p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => setMobileMenuOpen(mobileMenuOpen === "gemstones" ? null : "gemstones")}>
+                      <div className="flex items-center justify-between p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer transition-colors" onClick={() => setMobileMenuOpen(mobileMenuOpen === "gemstones" ? null : "gemstones")}>
                         <span>Gemstones</span>
-                        <KeyboardArrowDownIcon className={`w-5 h-5 text-gray-400 transition-transform ${mobileMenuOpen === "gemstones" ? "rotate-180" : ""}`} />
+                        <KeyboardArrowDownIcon className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${mobileMenuOpen === "gemstones" ? "rotate-180" : ""}`} />
                       </div>
                       <AnimatePresence>
                         {mobileMenuOpen === "gemstones" && (
@@ -769,9 +808,9 @@ export default function Navbar({ handleLoginClick }) {
                       </AnimatePresence>
                     </div>
                     <div className="border-b border-gray-50">
-                      <div className="flex items-center justify-between p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => setMobileMenuOpen(mobileMenuOpen === "jewellery" ? null : "jewellery")}>
+                      <div className="flex items-center justify-between p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer transition-colors" onClick={() => setMobileMenuOpen(mobileMenuOpen === "jewellery" ? null : "jewellery")}>
                         <span>Jewellery</span>
-                        <KeyboardArrowDownIcon className={`w-5 h-5 text-gray-400 transition-transform ${mobileMenuOpen === "jewellery" ? "rotate-180" : ""}`} />
+                        <KeyboardArrowDownIcon className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${mobileMenuOpen === "jewellery" ? "rotate-180" : ""}`} />
                       </div>
                       <AnimatePresence>
                         {mobileMenuOpen === "jewellery" && (
@@ -781,10 +820,10 @@ export default function Navbar({ handleLoginClick }) {
                         )}
                       </AnimatePresence>
                     </div>
-                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { window.open("https://gemrishi.com/blogs"); setIsNavOpen(false); }}>Our Blogs</div>
-                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/suggest"); setIsNavOpen(false); }}>Gem Suggestion</div>
-                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/aboutUs"); setIsNavOpen(false); }}>About Us</div>
-                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 rounded-lg cursor-pointer" onClick={() => { navigate("/contactUs"); setIsNavOpen(false); }}>Contact Us</div>
+                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer transition-colors" onClick={() => { window.open("https://gemrishi.com/blogs"); setIsNavOpen(false); }}>Our Blogs</div>
+                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer transition-colors" onClick={() => { navigate("/suggest"); setIsNavOpen(false); }}>Gem Suggestion</div>
+                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer transition-colors" onClick={() => { navigate("/aboutUs"); setIsNavOpen(false); }}>About Us</div>
+                    <div className="p-3 text-gray-800 font-semibold hover:bg-gray-50 active:bg-gray-100 rounded-lg cursor-pointer transition-colors" onClick={() => { navigate("/contactUs"); setIsNavOpen(false); }}>Contact Us</div>
                   </nav>
                   {/* <div className="mt-6 pt-6 border-t border-gray-100">
                     {isLoggedIn ? (
