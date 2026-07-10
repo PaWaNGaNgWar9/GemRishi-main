@@ -116,7 +116,7 @@ const PremiumDropdown = ({ children, wide = false }) => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 8, scale: 0.98 }}
       // Update by Pawan For reduce Loading time (was duration: 0.3)
-      transition={{ duration: 0.12, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="absolute top-[100%] left-1/2 -translate-x-[30%] pt-4 z-[100]"
     >
       <div className="relative">
