@@ -73,7 +73,7 @@ const TypewriterText = () => {
         }, 20);
         return () => clearTimeout(timer);
       } else {
-        const timer = setTimeout(() => setIsDeleting(true), 50);
+        const timer = setTimeout(() => setIsDeleting(true), 100);
         return () => clearTimeout(timer);
       }
     } else {
@@ -488,7 +488,7 @@ export default function Navbar({ handleLoginClick }) {
             </span>
             <span className="text-gray-500 font-bold">|</span>
             <span className="flex items-center gap-1.5 font-bold text-black">
-              <span className="text-[#264A3F] font-bold">●</span> 10 Day No Hassle Returns
+              <span className="text-[#264A3F] font-bold">●</span> 10 Days No Hassle Returns
             </span>
           </div>
           <div className="flex items-center gap-6">

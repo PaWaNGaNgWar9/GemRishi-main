@@ -63,7 +63,6 @@ const JewelleryModal = ({ closeNavbar }) => {
 
   // --- Dynamic Layout Logic ---
   const isSingleCategory = visibleCategories.length === 1;
-
   return (
     <div
       className={`
@@ -107,7 +106,6 @@ const JewelleryModal = ({ closeNavbar }) => {
                     }}
                   />
                 </div>
-
                 {/* Text: Consistent Typography */}
                 <span className="text-[13px] font-medium text-gray-600 group-hover:text-black group-hover:translate-x-1 transition-all duration-300">
                   {item.name}
@@ -120,5 +118,4 @@ const JewelleryModal = ({ closeNavbar }) => {
     </div>
   );
 };
-
 export default JewelleryModal;
