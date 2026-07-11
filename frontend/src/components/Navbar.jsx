@@ -483,9 +483,11 @@ export default function Navbar({ handleLoginClick }) {
       <div className="hidden lg:block w-full bg-green-200 border-b border-gray-200 px-8 py-1.5 text-xs text-gray-600">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex gap-6">
+            <Link to="/shipping">
             <span className="flex items-center text-black gap-1.5 font-bold">
               <span className="text-[#264a2b] front-bold">●</span> Free Shipping All Over India
             </span>
+            </Link>
             <span className="text-gray-500 font-bold">|</span>
             <span className="flex items-center gap-1.5 font-bold text-black">
               <span className="text-[#264A3F] font-bold">●</span> 10 Days No Hassle Returns
