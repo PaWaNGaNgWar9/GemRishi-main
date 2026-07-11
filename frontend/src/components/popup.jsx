@@ -7,7 +7,6 @@ export default function GemstonePopup({ onClose }) {
 				className="absolute right-4 top-4 text-gray-500 text-xl cursor cursor-pointer">
 				✕
 			</button>
-
 			{/* Top Section */}
 			<div className="flex items-center gap-4 p-6 pb-2">
 				<img
@@ -18,7 +17,7 @@ export default function GemstonePopup({ onClose }) {
 
 				<div>
 					<p className="text-lg font-semibold text-gray-800 leading-snug">
-						Find Your Perfect <br /> Gemstone with our
+						<span className="text-orange-600">Still Confuse ?</span><br />Connect with Our
 					</p>
 					<p className="text-xl font-bold text-[#0A5C72]">
 						GIA Certified Experts
