@@ -32,7 +32,7 @@ function ProductDetails({ subcategory }) {
         setShowPopup(true);
         // Set the new timestamp so it waits another hour from now
         localStorage.setItem("gemstonePopupTimestamp", currentTime.toString());
-      }, 1500);
+      }, 2500);
 
       return () => clearTimeout(timer);
     }
