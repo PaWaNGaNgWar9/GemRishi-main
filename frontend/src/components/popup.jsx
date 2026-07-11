@@ -19,7 +19,12 @@ export default function GemstonePopup({ onClose }) {
 				<div>
 					<p className="text-lg font-semibold text-gray-800 leading-snug">
 						<span className="text-orange-600 font-bold">Still Confused?</span><br />
-						<FaPhoneVolume className="text-orange-600 font-bold" /> Call Our
+						<div className="flex flex-row">
+						<FaPhoneVolume className="text-blue-400 font-bold" /> 
+						<p className="text-blue-400 font-bold">
+							Call Our
+						</p>
+						</div>
 					</p>
 					<p className="text-xl font-bold text-[#0A5C72]">
 						GIA Certified Experts
