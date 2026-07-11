@@ -21,7 +21,7 @@ export default function GemstonePopup({ onClose }) {
 						<span className="text-orange-600 font-bold">Still Confused?</span><br />
 						<div className="flex flex-row">
 						<FaPhoneVolume className="text-blue-400 font-bold" /> 
-						<p className="text-blue-400 font-bold">
+						<p className="text-blue-400 font-bold ml-2 ">
 							Call Our
 						</p>
 						</div>
