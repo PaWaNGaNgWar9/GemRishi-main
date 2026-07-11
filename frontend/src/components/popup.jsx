@@ -1,3 +1,4 @@
+import { FaPhoneVolume } from "react-icons/fa6";
 export default function GemstonePopup({ onClose }) {
 	return (
 		<div className="max-w-md mx-auto rounded-2xl bg-gradient-to-b from-[#F8E8EE] via-[#E8E8F8] to-[#E0F6EF] shadow-xl overflow-hidden relative">
@@ -17,7 +18,8 @@ export default function GemstonePopup({ onClose }) {
 
 				<div>
 					<p className="text-lg font-semibold text-gray-800 leading-snug">
-						<span className="text-orange-600 font-bold">Still Confuse?</span><br />Talk to 📞
+						<span className="text-orange-600 font-bold">Still Confused?</span><br />
+						<FaPhoneVolume className="text-orange-600 font-bold" /> Call Our
 					</p>
 					<p className="text-xl font-bold text-[#0A5C72]">
 						GIA Certified Experts
