@@ -486,14 +486,14 @@ export default function Navbar({ handleLoginClick }) {
             <Link to="/shipping"  target="_blank"
                      rel="noopener noreferrer">
             <span className="flex items-center text-black gap-1.5 font-bold">
-              <span className="text-[#264a2b] front-bold">●</span> Free Shipping All Over India
+              <span className="text-blue-500 font-bold text-[20px] animate-pulse -translate-y-0.5">●</span> Free Shipping All Over India
             </span>
             </Link>
-            <span className="text-gray-500 font-bold">|</span>
+            <span className="text-gray-500 font-medium text-[20px]">|</span>
             <Link to="/refund-policy"  target="_blank"
                    rel="noopener noreferrer">
             <span className="flex items-center gap-1.5 font-bold text-black">
-              <span className="text-[#264A3F] font-bold">●</span> 10 Days No Hassle Returns
+              <span className="text-blue-500 font-bold text-[20px] animate-pulse -translate-y-0.5">●</span> 10 Days No Hassle Returns
             </span>
             </Link>
           </div>
@@ -521,7 +521,7 @@ export default function Navbar({ handleLoginClick }) {
           {/* B. DESKTOP NAV */}
           <nav className="hidden lg:flex flex-1 items-center justify-center px-8">
             <ul className="flex items-center gap-6 xl:gap-8">
-              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500 cursor-pointer group py-2" onClick={() => navigate("/")}>
                  HOME
                 <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
@@ -532,7 +532,7 @@ export default function Navbar({ handleLoginClick }) {
                 onMouseEnter={() => setHoveredMenu("gemstones")}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="relative flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400  py-2">
+                <div className="relative flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500  py-2">
                  GEMSTONES{" "}
                   <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform duration-300 ${hoveredMenu === "gemstones" ? "rotate-180" : ""}`} />
                   <span className={`absolute left-0 -bottom-0.5 h-[2px] bg-[#264A3F] transition-all duration-300 ${hoveredMenu === "gemstones" ? "w-full" : "w-0"}`}></span>
@@ -544,7 +544,7 @@ export default function Navbar({ handleLoginClick }) {
                         onHover={() => setHoveredMenu("gemstones")}
                         onMouseLeave={() => setHoveredMenu(null)}
                         setIsGemstonesHovered={() => { }}
-                        closeNavbar={() => { }}
+                        closeNavbar={() => setHoveredMenu(null)}
                       />
                     </PremiumDropdown>
                   )}
@@ -557,7 +557,7 @@ export default function Navbar({ handleLoginClick }) {
                 onMouseEnter={() => setHoveredMenu("jewellery")}
                 onMouseLeave={() => setHoveredMenu(null)}
               >
-                <div className="relative flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 py-2">
+                <div className="relative flex items-center gap-1 text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500 py-2">
              JEWELLERY{" "}
                   <KeyboardArrowDownIcon className={`w-4 h-4 transition-transform duration-300 ${hoveredMenu === "jewellery" ? "rotate-180" : ""}`} />
                   <span className={`absolute left-0 -bottom-0.5 h-[2px] bg-[#264A3F] transition-all duration-300 ${hoveredMenu === "jewellery" ? "w-full" : "w-0"}`}></span>
@@ -568,26 +568,26 @@ export default function Navbar({ handleLoginClick }) {
                       <JewelleryModal
                         onHover={() => setHoveredMenu("jewellery")}
                         onMouseLeave={() => setHoveredMenu(null)}
-                        closeNavbar={() => { }}
+                        closeNavbar={() => setHoveredMenu(null)}
                       />
                     </PremiumDropdown>
                   )}
                 </AnimatePresence>
               </li>
 
-              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => window.open("https://gemrishi.com/blogs")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500 cursor-pointer group py-2" onClick={() => window.open("https://gemrishi.com/blogs")}>
                 BLOGS
                 <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
-              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/suggest")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500 cursor-pointer group py-2" onClick={() => navigate("/suggest")}>
                 SUGGESTION
                 <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
-              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/aboutUs")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500 cursor-pointer group py-2" onClick={() => navigate("/aboutUs")}>
                 ABOUT
                 <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>
-              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-amber-400 cursor-pointer group py-2" onClick={() => navigate("/contactUs")}>
+              <li className="relative text-sm font-bold tracking-wide text-gray-700 transform transition-all duration-800 ease-in-out hover:scale-110 hover:text-sky-500 cursor-pointer group py-2" onClick={() => navigate("/contactUs")}>
                 CONTACT
                 <span className="absolute left-0 -bottom-0.5 w-0 h-[2px] bg-[#264A3F] transition-all duration-300 group-hover:w-full"></span>
               </li>

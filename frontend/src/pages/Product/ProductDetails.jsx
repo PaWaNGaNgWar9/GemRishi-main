@@ -32,12 +32,11 @@ function ProductDetails({ subcategory }) {
         setShowPopup(true);
         // Set the new timestamp so it waits another hour from now
         localStorage.setItem("gemstonePopupTimestamp", currentTime.toString());
-      }, 2500);
+      }, 10000);
 
       return () => clearTimeout(timer);
     }
   }, []);
-
   const renderNoContent = () => (
     <div className="py-10 text-center text-gray-500">
       <h3 className="font-semibold text-gray-700 text-base">
@@ -48,10 +47,8 @@ function ProductDetails({ subcategory }) {
       </p>
     </div>
   );
-
   const renderContent = () => {
     if (!subcategory) return null;
-
     switch (activeTab) {
       case "Why should wear ?":
         if (!subcategory.targetAudience) return renderNoContent();
@@ -106,8 +103,8 @@ function ProductDetails({ subcategory }) {
             </p>
           </div>
         );
-
-      case "FAQ":
+// -------------------------------Fix By Pawan----------------------------------------------
+      case "FAQ": {
         if (!subcategory.faqs?.length) return renderNoContent();
         const validFaqs = subcategory.faqs.filter(
           (f) => f.question && f.question.trim() !== "",
@@ -157,6 +154,7 @@ function ProductDetails({ subcategory }) {
             </div>
           </div>
         );
+      }
 
       default:
         return null;
