@@ -405,7 +405,7 @@ function Header() {
               </button>
             </div>
             {/* TRUST INDICATORS */}
-            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 pl-10 ">
+            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 pl-10 md:pl-5">
               <div className="flex items-center gap-2 text-stone-500">
                 <ShieldCheck size={18} className="text-[#264A3F]" />
                 <span className="text-xs font-semibold uppercase tracking-wide">
