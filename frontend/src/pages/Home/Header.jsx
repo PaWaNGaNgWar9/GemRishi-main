@@ -382,7 +382,7 @@ function Header() {
                 )}
               </div>
               <button
-                className={`w-full mt-3 h-11 sm:h-12 md:h-14 text-base md:text-lg bg-gradient-to-l from-blue-900  via-cyan-400 to-green-700 text-white rounded-xl shadow-xl hover:scale-104 hover:shadow-2xl transition-all duration-300 text-lg flex items-center justify-center gap-2 group ${isSearching ? "opacity-75 cursor-not-allowed" : "active:scale-[0.98]"}`}
+                className={`w-full mt-3 h-11 sm:h-12 md:h-14 text-base md:text-lg bg-gradient-to-l from-blue-900  via-cyan-400 to-green-800 text-white rounded-xl shadow-xl hover:scale-104 hover:shadow-2xl transition-all duration-300 text-lg flex items-center justify-center gap-2 group ${isSearching ? "opacity-75 cursor-not-allowed" : "active:scale-[0.98]"}`}
                 onClick={handleSearch}
                 disabled={isSearching}
               >
