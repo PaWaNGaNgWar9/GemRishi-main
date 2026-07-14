@@ -302,7 +302,7 @@ function Header() {
       <div className="w-full max-w-6xl px-6 lg:px-12 pt-12 pb-24 lg:py-0 relative z-10">
         <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start gap-12 lg:gap-16 relative">
           {/* ================= LEFT SECTION: Filter Card ================= */}
-          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-41 lg:mt-0 z-10 lg:ml-35">
+          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-42 lg:mt-0 z-10 lg:ml-35">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 ml-13 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
               <Sparkles size={16}  className="animate-pulse text-blue-300"/> Authentic Vedic Gems
             </span>
