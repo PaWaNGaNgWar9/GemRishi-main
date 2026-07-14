@@ -289,7 +289,7 @@ function Header() {
       ></div>
       {/* Mobile Background */}
 <div
-  className="absolute inset-0 block md:hidden bg-cover bg-center w-full h-[25vh]"
+  className="absolute inset-0 block md:hidden bg-cover bg-center w-full h-[27vh]"
   style={{ backgroundImage: `url(${MobileGemstoneHero})` }}
 ></div>
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
