@@ -79,6 +79,17 @@ export const initBlaze = () => {
         console.log("INIT RESPONSE:", response);
 
         initialized = true;
+
+        // ===== Add By Pawan =============================================================
+        const eventName = response?.payload?.event;
+        if (eventName) {
+          window.dataLayer = window.dataLayer || [];
+          window.dataLayer.push({
+            event: eventName,
+            requestId: response?.requestId,
+          });
+        }
+        // Add By Pawan ===================================================================
       }
     );
   } catch (err) {
@@ -87,4 +98,3 @@ export const initBlaze = () => {
 };
 
 export default BlazeSDK;
-
