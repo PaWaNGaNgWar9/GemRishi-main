@@ -284,7 +284,7 @@ function Header() {
     <section className="relative w-full min-h-[80vh] bg-[#FDFCF8] flex flex-col justify-center font-sans py-4 z-20">
       {/* ================= BACKGROUND LAYERS ================= */}
       <div
-        className="hidden lg:block absolute inset-0 bg-cover bg-center lg:bg-right w-full h-[82vh] "
+        className="hidden lg:block absolute inset-0 bg-cover bg-center lg:bg-right w-full h-[84vh] "
         style={{ backgroundImage: `url(${GemstoneHero})` }}
       ></div>
       {/* Mobile Background */}
@@ -304,8 +304,8 @@ function Header() {
 
           {/* ================= LEFT SECTION: Filter Card ================= */}
           <div className="w-full lg:w-[45%] max-w-[340px] relative mt-45 lg:mt-0 z-10 lg:ml-35">
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 ml-15 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
-              <Sparkles size={14}  className="animate-pulse text-green-400"/> Authentic Vedic Gems
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 ml-13 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
+              <Sparkles size={16}  className="animate-pulse text-blue-300"/> Authentic Vedic Gems
             </span>
             <div className="relative bg-white/90 backdrop-blur-xl border border-white/60 p-1 px-3 md:px-6 md:p-2 rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all hover:shadow-[0_35px_70px_-15px_rgba(38,74,63,0.15)]">
               <div className="text-center mb-4 p-1">
@@ -405,7 +405,7 @@ function Header() {
               </button>
             </div>
             {/* TRUST INDICATORS */}
-            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 pl-10 md:pl-5">
+            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 pl-10 md:pl-7">
               <div className="flex items-center gap-2 text-stone-500">
                 <ShieldCheck size={18} className="text-[#264A3F]" />
                 <span className="text-xs font-semibold uppercase tracking-wide">
