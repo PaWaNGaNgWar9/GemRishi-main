@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import GemstoneHero from "../../assets/PawanBackground.png"
+import MobileGemstoneHero from "../../assets/MobileGemstoneHero.png"
 import axios from "axios";
 import {
   Search,
@@ -226,56 +228,6 @@ function Header() {
       "Above Rs.50,000": { minPrice: 50000, maxPrice: 1000000 },
     })[opt] || null;
 
-  // const handleSearch = async () => {
-  //   if (isSearching) return;
-
-  //   // --- FORM VALIDATION ---
-  //   if (selectedFilter === "gemstone" && !selectedGemstone) {
-  //     setShowError(true);
-  //     return;
-  //   }
-  //   if (selectedFilter === "purpose" && !selectedPurpose) {
-  //     setShowError(true);
-  //     return;
-  //   }
-
-  //   try {
-  //     setIsSearching(true);
-  //     const searchParams = new URLSearchParams();
-  //     let slug = "search-results";
-
-  //     if (selectedFilter === "gemstone") {
-  //       if (selectedGemstone) {
-  //         searchParams.append("subcategory", selectedGemstone);
-  //         slug = selectedGemstone.toLowerCase().replace(/[^a-z0-9]/g, "-");
-  //       }
-  //       const cRange = getCaratRange(selectedCarat);
-  //       if (cRange) {
-  //         searchParams.append("minCarat", cRange.minCarat);
-  //         searchParams.append("maxCarat", cRange.maxCarat);
-  //       }
-  //       const pRange = getPriceRange(selectedPrice);
-  //       if (pRange) {
-  //         searchParams.append("minPrice", pRange.minPrice);
-  //         searchParams.append("maxPrice", pRange.maxPrice);
-  //       }
-  //     } else if (selectedPurpose && selectedPurpose !== "General") {
-  //       searchParams.append("purpose", selectedPurpose);
-  //       slug = selectedPurpose.toLowerCase().replace(/[^a-z0-9]/g, "-");
-  //     }
-
-  //     const queryString = searchParams.toString();
-  //     navigate(
-  //         queryString
-  //             ? `/gemstone/filter/${slug}?${queryString}`
-  //             : `/gemstone/${slug}`
-  //     );
-  //   } catch (error) {
-  //     console.error("Search error:", error);
-  //   } finally {
-  //     setIsSearching(false);
-  //   }
-  // };
   const handleSearch = async () => {
     if (isSearching) return;
 
@@ -315,7 +267,7 @@ function Header() {
             : `/gemstone/${slug}`
         );
       } else if (selectedPurpose) {
-        // ✅ NEW: Navigate to purpose-specific route
+        // Navigate to purpose-specific route
         const slug = selectedPurpose.toLowerCase().replace(/[^a-z0-9]/g, "-");
         navigate(`/gemstone/purpose/${slug}?purpose=${selectedPurpose}`);
       }
@@ -326,12 +278,20 @@ function Header() {
     }
   };
 
-
   if (loading) return <HeaderSkeleton />;
 
   return (
     <section className="relative w-full min-h-[80vh] bg-[#FDFCF8] flex flex-col justify-center font-sans py-4 z-20">
       {/* ================= BACKGROUND LAYERS ================= */}
+      <div
+        className="hidden lg:block absolute inset-0 bg-cover bg-center lg:bg-right w-full h-[82vh] "
+        style={{ backgroundImage: `url(${GemstoneHero})` }}
+      ></div>
+      {/* Mobile Background */}
+<div
+  className="absolute inset-0 block md:hidden bg-cover bg-center w-full h-[25vh]"
+  style={{ backgroundImage: `url(${MobileGemstoneHero})` }}
+></div>
       <div className="absolute inset-0 overflow-hidden pointer-events-none -z-10">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-[0.03]"></div>
         <div className="absolute top-[-10%] left-[-5%] w-[40%] h-[40%] bg-[#264A3F]/5 rounded-full blur-[100px] animate-pulse"></div>
@@ -339,142 +299,43 @@ function Header() {
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#FDFCF8] via-[#FDFCF8]/80 to-transparent"></div>
       </div>
 
-      <div className="container mx-auto max-w-6xl px-6 lg:px-12 pt-12 pb-24 lg:py-0 relative z-10">
-        <div className="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-16 relative">
+      <div className="w-full max-w-6xl px-6 lg:px-12 pt-12 pb-24 lg:py-0 relative z-10">
+        <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start gap-12 lg:gap-16 relative">
 
-          {/* --- VISUAL BRIDGE: The Arrow --- */}
-          <div className="hidden lg:block absolute left-[45%] top-1/2 -translate-y-1/2 z-0 opacity-20 pointer-events-none">
-            <svg
-              width="200"
-              height="100"
-              viewBox="0 0 200 100"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="text-[#264A3F]"
-            >
-              <path
-                d="M10 50 C 50 10, 150 10, 190 50"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeDasharray="5 5"
-                markerEnd="url(#arrowhead)"
-              />
-              <defs>
-                <marker
-                  id="arrowhead"
-                  markerWidth="10"
-                  markerHeight="7"
-                  refX="0"
-                  refY="3.5"
-                  orient="auto"
-                >
-                  <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" />
-                </marker>
-              </defs>
-            </svg>
-          </div>
-
-          {/* ================= LEFT SECTION (Content) ================= */}
-          <div className="w-full lg:w-[50%] flex flex-col items-center lg:items-start text-center lg:text-left z-10">
-            <div className="space-y-6 mb-10">
-              <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
-                <Sparkles size={14} /> Authentic Vedic Gems
-              </span>
-
-              <h1 className="text-4xl md:text-5xl xl:text-6xl font-serif text-stone-900 leading-[1.1] tracking-tight">
-                A Legacy <br />
-                <span className="text-[#264A3F] italic relative inline-block">
-                  Carved in Stone
-                  <svg
-                    className="absolute -bottom-2 left-0 w-full h-3 text-[#E8C46F]"
-                    viewBox="0 0 100 10"
-                    preserveAspectRatio="none"
-                  >
-                    <path
-                      d="M0 5 Q 50 10 100 5"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      fill="none"
-                      opacity="0.6"
-                    />
-                  </svg>
-                </span>
-              </h1>
-
-              <p className="text-stone-600 text-lg md:text-xl font-light max-w-lg leading-relaxed font-sans">
-                Discover the gem that resonates with your essence. Radiant,
-                powerful, and one-of-a-kind.
-              </p>
-
-              <div className="pt-2 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button
-                  onClick={() => navigate("/gemstone")}
-                  className="px-8 py-4 bg-[#264A3F] text-white rounded-xl shadow-[0_8px_20px_rgba(38,74,63,0.25)]
-                             hover:bg-[#1f3d34] hover:-translate-y-1 transition-all duration-300 text-base font-semibold tracking-wide flex items-center gap-3 justify-center"
-                >
-                  Explore Collection <Diamond size={16} />
-                </button>
-              </div>
-
-              {/* TRUST INDICATORS */}
-              <div className="pt-8 flex items-center justify-center lg:justify-start gap-6 lg:gap-8 border-t border-gray-200/60 mt-4">
-                <div className="flex items-center gap-2 text-stone-500">
-                  <ShieldCheck size={18} className="text-[#264A3F]" />
-                  <span className="text-xs font-semibold uppercase tracking-wide">
-                    100% Certified
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-stone-500">
-                  <Award size={18} className="text-[#264A3F]" />
-                  <span className="text-xs font-semibold uppercase tracking-wide">
-                    Est. 1904
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-stone-500">
-                  <Globe size={18} className="text-[#264A3F]" />
-                  <span className="text-xs font-semibold uppercase tracking-wide">
-                    Shipping Globally
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute top-10 left-[-10%] w-[300px] opacity-10 pointer-events-none lg:block hidden">
-              <img src={GlassStone} className="w-full" alt="decor" />
-            </div>
-          </div>
-
-          {/* ================= RIGHT SECTION: Filter Card ================= */}
-          <div className="w-full lg:w-[45%] max-w-[480px] relative mt-8 lg:mt-0 z-10">
-            <div className="relative bg-white/90 backdrop-blur-xl border border-white/60 p-6 md:p-8 rounded-[2rem] shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all hover:shadow-[0_35px_70px_-15px_rgba(38,74,63,0.15)]">
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-serif text-stone-800">
+          {/* ================= LEFT SECTION: Filter Card ================= */}
+          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-50 lg:mt-0 z-10 lg:ml-35">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 ml-15 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
+              <Sparkles size={14}  className="animate-pulse text-green-400"/> Authentic Vedic Gems
+            </span>
+            <div className="relative bg-white/90 backdrop-blur-xl border border-white/60 p-1 px-3 md:px-6 md:p-2 rounded-xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] transition-all hover:shadow-[0_35px_70px_-15px_rgba(38,74,63,0.15)]">
+              <div className="text-center mb-4 p-1">
+                <h2 className="text-[22px] font-serif text-stone-800">
                   Find Your Gem
                 </h2>
-                <p className="text-stone-500 text-sm mt-1">
+                <p className="text-sky-500 text-[14px] mt-1">
                   Begin your journey here
                 </p>
               </div>
 
-              <div className="flex bg-stone-100 p-1.5 rounded-xl mb-6 relative">
+              <div className="flex bg-stone-100 p-1.3 rounded-xl mb-3 relative">
                 <div
-                  className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-[0.6rem] shadow-sm transition-all duration-300 ease-out ${selectedFilter === "purpose" ? "translate-x-[calc(100%+12px)]" : "translate-x-0"}`}
+                  className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-[0.6rem] shadow-md transition-all duration-300 ease-out ${selectedFilter === "purpose" ? "translate-x-[calc(100%+12px)]" : "translate-x-0"}`}
                 ></div>
                 <button
-                  className={`flex-1 relative z-10 py-2.5 text-sm font-semibold transition-colors duration-300 ${selectedFilter === "gemstone" ? "text-[#264A3F]" : "text-stone-500"}`}
+                  className={`flex-1 relative z-10 py-2 sm:py-3 text-xs sm:text-sm md:text-base font-semibold transition-colors duration-300 ${selectedFilter === "gemstone" ? "text-[#264A3F]" : "text-stone-500"}`}
                   onClick={() => setSelectedFilter("gemstone")}
                 >
                   By Gemstone
                 </button>
                 <button
-                  className={`flex-1 relative z-10 py-2.5 text-sm font-semibold transition-colors duration-300 ${selectedFilter === "purpose" ? "text-[#264A3F]" : "text-stone-500"}`}
+                  className={`flex-1 relative z-10 py-2 sm:py-3 text-xs sm:text-sm md:text-base font-semibold transition-colors duration-300 ${selectedFilter === "purpose" ? "text-[#264A3F]" : "text-stone-500"}`}
                   onClick={() => setSelectedFilter("purpose")}
                 >
                   By Purpose
                 </button>
               </div>
 
-              <div className="space-y-3 relative">
+              <div className="space-y-2 relative">
                 {selectedFilter === "gemstone" ? (
                   <>
                     <CustomSelect
@@ -485,7 +346,7 @@ function Header() {
                       placeholder="Select Gemstone *"
                       hasError={showError && !selectedGemstone}
                     />
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <CustomSelect
                         options={caratWeightOptions}
                         value={selectedCarat}
@@ -501,7 +362,7 @@ function Header() {
                     </div>
                   </>
                 ) : (
-                  <div className="py-8">
+                  <div className="py-6">
                     <CustomSelect
                       options={purposeOptions}
                       value={selectedPurpose}
@@ -512,9 +373,8 @@ function Header() {
                   </div>
                 )}
               </div>
-
               {/* Validation Error Feedback */}
-              <div className="h-6 mt-2 flex items-center justify-center">
+              <div className="h-2 mt-2 flex items-center justify-center">
                 {showError && (
                   <span className="text-red-500 text-xs font-semibold animate-in fade-in slide-in-from-bottom-1">
                     {selectedFilter === "gemstone"
@@ -523,9 +383,8 @@ function Header() {
                   </span>
                 )}
               </div>
-
               <button
-                className={`w-full mt-2 h-[56px] bg-[#264A3F] text-white font-medium rounded-xl shadow-lg hover:bg-[#1f3d34] transition-all duration-300 text-lg flex items-center justify-center gap-2 group ${isSearching ? "opacity-75 cursor-not-allowed" : "active:scale-[0.98]"}`}
+                className={`w-full mt-3 h-11 sm:h-12 md:h-14 text-base md:text-lg bg-[#264A3F] text-white rounded-xl shadow-lg hover:bg-[#1f3d34] transition-all duration-300 text-lg flex items-center justify-center gap-2 group ${isSearching ? "opacity-75 cursor-not-allowed" : "active:scale-[0.98]"}`}
                 onClick={handleSearch}
                 disabled={isSearching}
               >
@@ -544,6 +403,27 @@ function Header() {
                   </>
                 )}
               </button>
+            </div>
+            {/* TRUST INDICATORS */}
+            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 ">
+              <div className="flex items-center gap-2 text-stone-500">
+                <ShieldCheck size={18} className="text-[#264A3F]" />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  100% Certified
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-stone-500">
+                <Award size={18} className="text-[#264A3F]" />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  Est. 1904
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-stone-500">
+                <Globe size={18} className="text-[#264A3F]" />
+                <span className="text-xs font-semibold uppercase tracking-wide">
+                  Shipping Globally
+                </span>
+              </div>
             </div>
           </div>
         </div>
