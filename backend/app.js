@@ -9,12 +9,12 @@ import "./cron/orderCleanup.js";
 import fs from "fs";
 import breezeRoutes from "./routers/breeze.route.js";
 import googleMerchantRoutes from "./routers/googleMerchant.route.js";
-
-
+// Add By Pawan for fixing google Analytics Error ---------------------------------------
+import { Product } from "./models/product.model.js";
+// Add By Pawan for fixing google Analytics Error ---------------------------------------
 
 // Setup
 const app = express();
-
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -45,16 +45,25 @@ const corsOptions = {
 
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
+    // } else {
+    //   console.warn(`❌ CORS blocked request from: ${origin}`);
+    //   // return callback(new Error("Not allowed by CORS"));
+    //   return res.status(200).json({
+    //     success: false,
+    //     message: "Not allowed by CORS",
+    //   });
+    // Add By Pawan for fixing google Analytics Error ---------------------------------------
     } else {
-      console.warn(`❌ CORS blocked request from: ${origin}`);
-      // return callback(new Error("Not allowed by CORS"));
-      return res.status(200).json({
-        success: false,
-        message: "Not allowed by CORS",
-      });
+  console.warn(`❌ CORS blocked request from: ${origin}`);
+  return callback(new Error("Not allowed by CORS"));
+    // Add By Pawan for fixing google Analytics Error ---------------------------------------
     }
   },
+   // Add By Pawan for fixing google Analytics Error ---------------------------------------
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   credentials: true, // allow cookies or auth headers
+   // Add By Pawan for fixing google Analytics Error ---------------------------------------
 };
 
 // Apply CORS globally
@@ -123,9 +132,9 @@ app.use(cookieParser());
 
 app.get("/gemstones/:slug/:id", async (req, res) => {
   console.log("🔥 OG ROUTE HIT");
-
-  const { slug } = req.params;
-
+// ------------------Add by Pawan----------------------------------------------------
+  const { slug ,id } = req.params;
+// ------------------Add by Pawan----------------------------------------------------
   let imageUrl = "https://gemrishi.com/logo.jpg"; // default
 
   try {
