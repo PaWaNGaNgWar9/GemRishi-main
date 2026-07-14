@@ -302,7 +302,7 @@ function Header() {
       <div className="w-full max-w-6xl px-6 lg:px-12 pt-12 pb-24 lg:py-0 relative z-10">
         <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start gap-12 lg:gap-16 relative">
           {/* ================= LEFT SECTION: Filter Card ================= */}
-          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-42 lg:mt-0 z-10 lg:ml-35">
+          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-40 lg:mt-0 z-10 lg:ml-35">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 ml-13 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
               <Sparkles size={16}  className="animate-pulse text-blue-300"/> Authentic Vedic Gems
             </span>
@@ -382,7 +382,7 @@ function Header() {
                 )}
               </div>
               <button
-                className={`w-full mt-3 h-11 sm:h-12 md:h-14 text-base md:text-lg bg-[#264A3F] text-white rounded-xl shadow-lg hover:bg-[#1f3d34] transition-all duration-300 text-lg flex items-center justify-center gap-2 group ${isSearching ? "opacity-75 cursor-not-allowed" : "active:scale-[0.98]"}`}
+                className={`w-full mt-3 h-11 sm:h-12 md:h-14 text-base md:text-lg bg-gradient-to-l from-blue-900  via-cyan-400 to-green-700 text-white rounded-xl shadow-xl hover:scale-104 hover:shadow-2xl transition-all duration-300 text-lg flex items-center justify-center gap-2 group ${isSearching ? "opacity-75 cursor-not-allowed" : "active:scale-[0.98]"}`}
                 onClick={handleSearch}
                 disabled={isSearching}
               >
@@ -403,22 +403,22 @@ function Header() {
               </button>
             </div>
             {/* TRUST INDICATORS */}
-            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 pl-10 md:pl-7">
+            <div className="pt-4 flex flex-row  gap-2 lg:gap-6 pl-10 md:pl-3.5">
               <div className="flex items-center gap-2 text-stone-500">
-                <ShieldCheck size={18} className="text-[#264A3F]" />
-                <span className="text-xs font-semibold uppercase tracking-wide">
+                <ShieldCheck size={22} className="text-[#264A3F]" />
+                <span className="text-xs lg:text-sm font-bold uppercase tracking-wide">
                   100% Certified
                 </span>
               </div>
               <div className="flex items-center gap-2 text-stone-500">
-                <Award size={18} className="text-[#264A3F]" />
-                <span className="text-xs font-semibold uppercase tracking-wide">
+                <Award size={23} className="text-[#264A3F]" />
+                <span className=" text-xs lg:text-sm font-bold uppercase tracking-wide">
                   Est. 1904
                 </span>
               </div>
               <div className="flex items-center gap-2 text-stone-500">
-                <Globe size={18} className="text-[#264A3F]" />
-                <span className="text-xs font-semibold uppercase tracking-wide">
+                <Globe size={22} className="text-[#264A3F]" />
+                <span className="text-xs lg:text-sm font-bold uppercase tracking-wide">
                   Shipping Globally
                 </span>
               </div>
