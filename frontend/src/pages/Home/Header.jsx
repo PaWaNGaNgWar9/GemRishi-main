@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import GemstoneHero from "../../assets/PawanBackground.png"
+import GemstoneHero from "../../assets/PawanBackground.webp"
 import MobileGemstoneHero from "../../assets/MobileGemstoneHero.png"
 import axios from "axios";
 import {
@@ -303,7 +303,7 @@ function Header() {
         <div className="flex flex-col lg:flex-row items-center lg:items-start justify-start gap-12 lg:gap-16 relative">
 
           {/* ================= LEFT SECTION: Filter Card ================= */}
-          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-50 lg:mt-0 z-10 lg:ml-35">
+          <div className="w-full lg:w-[45%] max-w-[340px] relative mt-45 lg:mt-0 z-10 lg:ml-35">
             <span className="inline-flex items-center gap-2 px-4 py-1.5 ml-15 rounded-full bg-[#264A3F]/5 text-[#264A3F] text-xs font-bold tracking-widest uppercase mb-2 border border-[#264A3F]/10">
               <Sparkles size={14}  className="animate-pulse text-green-400"/> Authentic Vedic Gems
             </span>
@@ -405,7 +405,7 @@ function Header() {
               </button>
             </div>
             {/* TRUST INDICATORS */}
-            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 ">
+            <div className="pt-6 flex flex-row  gap-2 lg:gap-6 pl-10 ">
               <div className="flex items-center gap-2 text-stone-500">
                 <ShieldCheck size={18} className="text-[#264A3F]" />
                 <span className="text-xs font-semibold uppercase tracking-wide">
