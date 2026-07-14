@@ -486,14 +486,14 @@ export default function Navbar({ handleLoginClick }) {
             <Link to="/shipping"  target="_blank"
                      rel="noopener noreferrer">
             <span className="flex items-center text-black gap-1.5 font-bold">
-              <span className="text-blue-500 font-bold text-[20px] animate-pulse -translate-y-0.5">●</span> Free Shipping All Over India
+              <span className="text-blue-500 font-bold text-[10px] animate-pulse">●</span> Free Shipping All Over India
             </span>
             </Link>
-            <span className="text-gray-500 font-medium text-[20px]">|</span>
+            <span className="text-gray-500 font-medium text-[15px]">|</span>
             <Link to="/refund-policy"  target="_blank"
                    rel="noopener noreferrer">
             <span className="flex items-center gap-1.5 font-bold text-black">
-              <span className="text-blue-500 font-bold text-[20px] animate-pulse -translate-y-0.5">●</span> 10 Days No Hassle Returns
+              <span className="text-blue-500 font-bold text-[10px] animate-pulse">●</span> 10 Days No Hassle Returns
             </span>
             </Link>
           </div>

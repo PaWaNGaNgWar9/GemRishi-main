@@ -11,6 +11,18 @@ import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
 import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
 // -------Add by Pawan for GA4 Tracking----------------
+
+// -------------Add By Pawan for breeze: test-only logging flag-------
+// Set to true locally when you need verbose Breeze/GA4 debug output.
+// Keep false in production builds so these logs stay silent.
+const FOR_TEST = false;
+const testLog = (...args) => {
+  if (FOR_TEST) {
+    console.log(...args);
+  }
+};
+// -------------Add By Pawan for breeze-------
+
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
   <div className="w-full bg-white rounded-[20px] sm:rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 flex gap-4 sm:gap-6 animate-pulse mb-4 sm:mb-6">
@@ -419,7 +431,7 @@ const [loading, setLoading] = useState(true);
       items: orderItems,
     };
 
-    // console.log("📦 Sending Order Payload:", orderPayload);
+    // testLog("📦 Sending Order Payload:", orderPayload);
 
     try {
       const response = await axios.post(
@@ -491,7 +503,7 @@ const [loading, setLoading] = useState(true);
     //-------------Add By Pawan for breeze-------
 
     try {
-      console.log("BREEZE STARTED");
+      testLog("BREEZE STARTED");
 
       //---Add By Pawan--------------------------------
      window.dataLayer = window.dataLayer || [];
@@ -569,12 +581,12 @@ const [loading, setLoading] = useState(true);
         addressType: "Home",
       };
 
-      console.log("FRONTEND ORDER ID:", order.orderId);
+      testLog("FRONTEND ORDER ID:", order.orderId);
 
       // USE BACKEND TOTAL
       const finalAmount = Number(order.totalAmount);
 
-      console.log("BACKEND FINAL:", finalAmount);
+      testLog("BACKEND FINAL:", finalAmount);
       //---Add By Pawan-----------------------------------------------
       // (Add By Pawan) COMMENTED OUT — BUG: this pushed a "purchase" event right after the
       // window.dataLayer = window.dataLayer || [];
@@ -712,7 +724,7 @@ const [loading, setLoading] = useState(true);
               );
           }
 
-          console.log("BREEZE ITEM", item);
+          testLog("BREEZE ITEM", item);
 
           // DEFINE BASE PRICE
           const unitPrice = Number(item.totalPrice || 0);
@@ -747,12 +759,12 @@ const [loading, setLoading] = useState(true);
 
       };
 
-      console.log(
+      testLog(
         "BREEZE CART:",
         breezeCart
       );
 
-      console.log(
+      testLog(
         "FINAL BREEZE PAYLOAD:",
         JSON.stringify(breezeCart, null, 2)
       );
@@ -767,12 +779,12 @@ const [loading, setLoading] = useState(true);
           }
         );
 
-      console.log(
+      testLog(
         "SIGN RESPONSE:",
         response.data
       );
 
-      console.log(
+      testLog(
         "SENDING SHOP ORDER ID:",
         order.orderId
       );
@@ -859,13 +871,13 @@ const [loading, setLoading] = useState(true);
         // SDK CALLBACK
         (sdkResponse) => {
 
-          console.log(
+          testLog(
             "BLAZE SDK EVENT:",
             sdkResponse
           );
 
           //-------------Add By Pawan for breeze-------
-          console.log(
+          testLog(
             "BREEZE EVENT STREAM NAME:",
             sdkResponse?.payload?.event
           );
@@ -896,7 +908,7 @@ const [loading, setLoading] = useState(true);
           //   });
           //   // Add By Pawan================================================================================
           //
-          //   console.log(
+          //   testLog(
           //     "PAYMENT SUCCESS",
           //     sdkResponse
           //   );
@@ -911,7 +923,7 @@ const [loading, setLoading] = useState(true);
           //     "Payment failed"
           //   );
           //
-          //   console.log(
+          //   testLog(
           //     "PAYMENT FAILED",
           //     sdkResponse
           //   );
@@ -946,9 +958,8 @@ const [loading, setLoading] = useState(true);
               },
             });
 
-            console.log("BREEZE: AddPaymentInfo");
+            testLog("BREEZE: AddPaymentInfo");
           }
-
           if (breezeEvent === "AddedAddress" || breezeEvent === "UpdatedAddress") {
             // User added or changed a shipping address from inside the Breeze sheet.
             window.dataLayer = window.dataLayer || [];
@@ -963,13 +974,13 @@ const [loading, setLoading] = useState(true);
               },
             });
 
-            console.log("BREEZE:", breezeEvent);
+            testLog("BREEZE:", breezeEvent);
           }
 
           if (breezeEvent === "PayNow") {
             // User clicked "Pay Now" inside the Breeze sheet — informational
             // only, no GA4 event mapped to this one.
-            console.log("BREEZE: PayNow clicked");
+            testLog("BREEZE: PayNow clicked");
           }
 
           if (breezeEvent === "OrderComplete") {
@@ -986,7 +997,7 @@ const [loading, setLoading] = useState(true);
               },
             });
 
-            console.log("BREEZE: OrderComplete");
+            testLog("BREEZE: OrderComplete");
           }
 
           if (breezeEvent === "Purchase") {
@@ -1024,7 +1035,7 @@ const [loading, setLoading] = useState(true);
               });
             }
 
-            console.log("PAYMENT SUCCESS", sdkResponse);
+            testLog("PAYMENT SUCCESS", sdkResponse);
 
             // Redirect to order confirmation, matching what PaymentPage.jsx
             // already does for its checkout flow — this page previously
