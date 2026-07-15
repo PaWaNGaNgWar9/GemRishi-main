@@ -116,7 +116,7 @@ const PremiumDropdown = ({ children, wide = false }) => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 8, scale: 0.98 }}
       // Update by Pawan For reduce Loading time (was duration: 0.3)
-      transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.5, ease: [0.6, 0, 1, 1] }}
       className="absolute top-[100%] left-1/2 -translate-x-[30%] pt-4 z-[100]"
     >
       <div className="relative">
@@ -486,14 +486,14 @@ export default function Navbar({ handleLoginClick }) {
             <Link to="/shipping"  target="_blank"
                      rel="noopener noreferrer">
             <span className="flex items-center text-black gap-1.5 font-bold">
-              <span className="text-blue-500 font-bold text-[10px] animate-pulse">●</span> Free Shipping All Over India
+              <span className="text-blue-500 font-bold text-[12px] animate-pulse ">●</span> Free Shipping All Over India
             </span>
             </Link>
-            <span className="text-gray-500 font-medium text-[15px]">|</span>
+            <span className="text-gray-500 font-medium text-[13px]">|</span>
             <Link to="/refund-policy"  target="_blank"
                    rel="noopener noreferrer">
             <span className="flex items-center gap-1.5 font-bold text-black">
-              <span className="text-blue-500 font-bold text-[10px] animate-pulse">●</span> 10 Days No Hassle Returns
+              <span className="text-blue-500 font-bold text-[12px] animate-pulse ">●</span> 10 Days No Hassle Returns
             </span>
             </Link>
           </div>
