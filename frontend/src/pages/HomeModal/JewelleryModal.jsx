@@ -2,20 +2,16 @@ import { useNavigate } from "react-router-dom";
 import Bracelets from "../../assets/Jwellery/Bracelets.svg";
 import { useGetJewelryCategoryQuery } from "../../features/api/apiSlice";
 import { appendRandomString } from "../../utils/randomString";
-
 const JewelleryModal = ({ closeNavbar }) => {
   const navigate = useNavigate();
-
-  // Fetch data
+  //----------------------------------Fetch data----------------------------------------------
   const {
     data: jewelleryData,
     isLoading,
     error,
   } = useGetJewelryCategoryQuery();
-
   const categories = jewelleryData?.jewelryCategories;
-
-  // --- Premium Loading Skeleton (Responsive) ---
+  // ---------------------- Premium Loading Skeleton (Responsive) ----------------------------
   const LoadingSkeleton = () => (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 p-4 lg:p-6 w-full lg:min-w-[300px]">
       {[...Array(3)].map((_, i) => (
@@ -33,26 +29,21 @@ const JewelleryModal = ({ closeNavbar }) => {
       ))}
     </div>
   );
-
-  // --- Navigation Handler ---
+  //-- Navigation Handler --
   const handleItemClick = (slug) => {
     navigate(appendRandomString(`/jewelry/${slug}`));
     if (closeNavbar) closeNavbar();
   };
-
-  // --- Loading State ---
+  //-- Loading State --
   if (isLoading) return <LoadingSkeleton />;
-
-  // --- Error State ---
+  // -- Error State --
   if (error || !categories) {
     return <div className="p-6 text-xs text-gray-400">Unavailable</div>;
   }
-
   // Filter Logic
   const visibleCategories = categories.filter(
     (category) => category?.jewelrySubCategories?.length > 0,
   );
-
   if (visibleCategories.length === 0) {
     return (
       <div className="p-6 text-xs text-gray-400 italic">
@@ -60,16 +51,15 @@ const JewelleryModal = ({ closeNavbar }) => {
       </div>
     );
   }
-
-  // --- Dynamic Layout Logic ---
+  // --------------------- Fix By Pawan Dynamic Layout Logic ----------------------------------
   const isSingleCategory = visibleCategories.length === 1;
   return (
     <div
       className={`
-        bg-white text-left transition-all duration-300 w-full
+         bg-white text-left transition-all duration-300 w-full
         ${isSingleCategory
-          ? "p-4 lg:p-6 lg:min-w-[260px]"
-          : "flex flex-col lg:flex-row p-4 lg:p-8 gap-6 lg:gap-10 divide-y lg:divide-y-0 lg:divide-x divide-gray-100"
+           ? "p-1 lg:p-2 lg:min-w-[120px]"
+  : "flex flex-col lg:flex-row p-1.5 lg:p-3 gap-4 divide-y lg:divide-y-0"
         }
       `}
     >
@@ -77,16 +67,19 @@ const JewelleryModal = ({ closeNavbar }) => {
         <div
           key={categoryIndex}
           className={`
-            flex flex-col space-y-4
-            ${categoryIndex > 0 ? "pt-6 lg:pt-0 lg:pl-10" : ""}
-            w-full lg:w-auto
+              flex flex-col space-y-2 w-full lg:w-auto
+  ${
+    categoryIndex > 0
+      ? "pt-3 lg:pt-0 lg:pl-3 lg:ml-3 lg:border-l lg:border-gray-200"
+      : ""
+  }
           `}
         >
+{/* --------------------- Fix By Pawan Dynamic Layout Logic ---------------------------------- */}
           {/* Header: Consistent Premium Style */}
           <h3 className="font-serif text-[#264A3F] text-[11px] font-bold tracking-[0.25em] uppercase border-b border-[#264A3F]/20 pb-2 mb-1">
-            {category.name}
+            {category.name} 
           </h3>
-
           {/* Subcategories List */}
           <ul className="space-y-2.5">
             {category?.jewelrySubCategories?.map((item, itemIndex) => (
