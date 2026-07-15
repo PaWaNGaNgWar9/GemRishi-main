@@ -11,6 +11,7 @@ import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
 import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
 // -------Add by Pawan for GA4 Tracking----------------
+
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
   <div className="w-full bg-white rounded-[20px] sm:rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 flex gap-4 sm:gap-6 animate-pulse mb-4 sm:mb-6">
@@ -68,17 +69,16 @@ function UpSellingProducts({ products = [], loading = false }) {
     </div>
   );
 }
-
 // --- Main Cart Component ---
 function ShoppingCart() {
   const [cartData, setCartData] = useState([]);
-
   const [userProfile, setUserProfile] = useState(null);
   const [promoCode, setPromoCode] = useState("");
-// -----------------Add By Pawan --------------------------------------------------------------
-const hasTrackedViewCart = useRef(false);
-// -------------------------------------------------------------------------------------------------
-const [loading, setLoading] = useState(true);
+  // -----------------Add By Pawan --------------------------------------------------------------
+  const hasTrackedViewCart = useRef(false);
+  const lastFiredPaymentMethod = useRef(null);
+  // -------------------------------------------------------------------------------------------------
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const URL = import.meta.env.VITE_URL;
@@ -94,7 +94,6 @@ const [loading, setLoading] = useState(true);
       maximumFractionDigits: 2,
     });
   };
-
   // --- UPSELL LOGIC ---
   useEffect(() => {
     let mounted = true;
@@ -102,7 +101,6 @@ const [loading, setLoading] = useState(true);
       if (!Array.isArray(cart) || cart.length === 0) return [];
       return { id: cart[0].item?._id };
     };
-
     const fetchUpsellForSkus = async (skus) => {
       if (!mounted) return;
       if (!skus || skus.length === 0) {
@@ -231,19 +229,17 @@ const [loading, setLoading] = useState(true);
       setLoading(false);
     }
   };
-
   // --- REMOVE ITEM ---
   const handleRemoveItem = async (cartItemId) => {
     const userInfoString = localStorage.getItem("userInfo");
     let userToken = null;
-
     if (userInfoString) {
       try {
         userToken = JSON.parse(userInfoString).token;
       } catch (e) { }
     }
 
-     //Add by pawan----------------------------------------------------------------
+    //Add by pawan----------------------------------------------------------------
     const removedItem = cartData.find((ci) => ci._id === cartItemId);
     //Add by pawan----------------------------------------------------------------
     setLoading(true);
@@ -256,8 +252,7 @@ const [loading, setLoading] = useState(true);
         `${URL}/cart/remove_item_from_cart?cartItemId=${cartItemId}`,
         { headers, withCredentials: true }
       );
-
-//Add by pawan-------------------------------------------------------------------------------
+      //Add by pawan-------------------------------------------------------------------------------
       if (removedItem) {
         const isJewelry = removedItem.itemType === "Jewelry";
         const hasJewelryCustomization = !!removedItem.customization?.jewelryId;
@@ -267,7 +262,7 @@ const [loading, setLoading] = useState(true);
           ? removedItem.customization.jewelryId?.jewelryName
           : removedItem.item?.name;
         const qty = Number(removedItem.quantity) || 1;
- 
+
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({ ecommerce: null });
         window.dataLayer.push({
@@ -317,65 +312,11 @@ const [loading, setLoading] = useState(true);
     }
   };
 
-
   const handleCreateOrder = async (selectedPaymentMethod) => {
-
     if (cartData.length === 0) {
       alert("Your cart is empty.");
       return null;
     }
-
-    // const userInfo = JSON.parse(userInfoString);
-    // const shippingDetails = storedShippingDetails ? JSON.parse(storedShippingDetails) : null;
-
-    // Get address from shippingDetails or userProfile
-    // const addressData = shippingDetails?.address || userProfile?.address;
-
-    // if (!addressData) {
-    //   alert("Please complete shipping details first.");
-    //   navigate("/shipping/address");
-    //   return null;
-    // }
-
-    // let address = {};
-    // if (Array.isArray(addressData)) {
-    //   // Assume first address if array
-    //   const addr = addressData[0] || {};
-    //   address = {
-    //     fullName: normalizeAddressField(addr.fullName || userInfo.name || ""),
-    //     email: normalizeAddressField(addr.email || userInfo.email || ""),
-    //     mobileNo: normalizeAddressField(addr.mobileNo || userInfo.mobileNo || ""),
-    //     addressLine1: normalizeAddressField(addr.addressLine1 || ""),
-    //     addressLine2: normalizeAddressField(addr.addressLine2 || ""),
-    //     landmark: normalizeAddressField(addr.landmark || ""),
-    //     city: normalizeAddressField(addr.city || ""),
-    //     district: normalizeAddressField(addr.district || ""),
-    //     state: normalizeAddressField(addr.state || ""),
-    //     pinCode: normalizeAddressField(addr.pinCode || ""),
-    //     country: normalizeAddressField(addr.country || "India"),
-    //     addressType: normalizeAddressField(addr.addressType || "Home"),
-    //     note: normalizeAddressField(addr.note || ""),
-    //   };
-    // } else {
-    //   address = {
-    //     fullName: normalizeAddressField(addressData.fullName || userInfo.name || ""),
-    //     email: normalizeAddressField(addressData.email || userInfo.email || ""),
-    //     mobileNo: normalizeAddressField(addressData.mobileNo || userInfo.mobileNo || ""),
-    //     addressLine1: normalizeAddressField(addressData.addressLine1 || ""),
-    //     addressLine2: normalizeAddressField(addressData.addressLine2 || ""),
-    //     landmark: normalizeAddressField(addressData.landmark || ""),
-    //     city: normalizeAddressField(addressData.city || ""),
-    //     district: normalizeAddressField(addressData.district || ""),
-    //     state: normalizeAddressField(addressData.state || ""),
-    //     pinCode: normalizeAddressField(addressData.pinCode || ""),
-    //     country: normalizeAddressField(addressData.country || "India"),
-    //     addressType: normalizeAddressField(addressData.addressType || "Home"),
-    //     note: normalizeAddressField(addressData.note || ""),
-    //   };
-    // }
-
-    // console.log("✅ Final Address Payload:", address);
-    // console.log("✅ Cart Data for Order:", cartData);
 
     // ✅ Build order items
     const orderItems = cartData.map((item) => {
@@ -403,21 +344,11 @@ const [loading, setLoading] = useState(true);
       };
     });
 
-    // const orderPayload = {
-    //   address,
-    //   paymentMethod: paymentMethod === "online" ? "razorpay" : "cod",
-    //   promoCode: promoCode || null,
-    //   items: orderItems,
-    // };
-
     const orderPayload = {
-      // address,
       paymentMethod: selectedPaymentMethod,
       promoCode: promoCode || null,
       items: orderItems,
     };
-
-    // console.log("📦 Sending Order Payload:", orderPayload);
 
     try {
       const response = await axios.post(
@@ -427,7 +358,6 @@ const [loading, setLoading] = useState(true);
           withCredentials: true,
           headers: {
             "Content-Type": "application/json",
-            // Authorization: `Bearer ${userInfo.token}`,
           },
         }
       );
@@ -442,6 +372,7 @@ const [loading, setLoading] = useState(true);
           response.data.msg ||
           "Failed to create order. Please try again."
         );
+        return null;
       }
     } catch (error) {
       toast.error(
@@ -464,23 +395,25 @@ const [loading, setLoading] = useState(true);
     return String(value).trim();
   };
 
-
   const handleBreezeProceed = async () => {
     try {
       console.log("BREEZE STARTED");
 
       //---Add By Pawan--------------------------------
-     window.dataLayer = window.dataLayer || [];
-    window.dataLayer.push({ ecommerce: null });
-    window.dataLayer.push({
-      event: "begin_checkout",
-      ecommerce: {
-        currency: "INR",
-        value: totalAmount,
-        items: buildItemsFromRawCart(cartData),
-      },
-    });
-    window.dataLayer.push({ ecommerce: null });
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({ ecommerce: null });
+      window.dataLayer.push({
+        event: "begin_checkout",
+        ecommerce: {
+          currency: "INR",
+          value: totalAmount,
+          items: buildItemsFromRawCart(cartData),
+        },
+      });
+      window.dataLayer.push({ ecommerce: null });
+
+      // Reset payment-method dedupe guard for this checkout session
+      lastFiredPaymentMethod.current = null;
 
       // CREATE ORDER FIRST
       const orderResult = await handleCreateOrder("breeze");
@@ -489,9 +422,7 @@ const [loading, setLoading] = useState(true);
 
       const { order } = orderResult;
 
-      const userInfo = JSON.parse(
-        localStorage.getItem("userInfo") || "{}"
-      );
+      const userInfo = JSON.parse(localStorage.getItem("userInfo") || "{}");
 
       const address = {
         fullName: userInfo?.name || "Customer",
@@ -513,7 +444,7 @@ const [loading, setLoading] = useState(true);
       const finalAmount = Number(order.totalAmount);
 
       console.log("BACKEND FINAL:", finalAmount);
-     
+
       // ===== Add By Pawan =============================================================
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({ ecommerce: null });
@@ -526,264 +457,121 @@ const [loading, setLoading] = useState(true);
           items: buildItemsFromRawCart(cartData),
         },
       });
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_payment_info",
-        ecommerce: {
-          currency: "INR",
-          value: finalAmount,
-          payment_type: "breeze",
-          items: buildItemsFromRawCart(cartData),
-        },
-      });
-      window.dataLayer.push({ ecommerce: null });
       // Add By Pawan =====================================================================
 
-
-      if (!BlazeSDK?.process)
-      {
-
-        console.error(
-          "BlazeSDK missing"
-        );
-
-        toast.error(
-          "Payment SDK not loaded"
-        );
-
+      if (!BlazeSDK?.process) {
+        console.error("BlazeSDK missing");
+        toast.error("Payment SDK not loaded");
         return;
       }
 
-      // SHIPPING DETAILS
-
-      // const shippingDetails =
-      //   JSON.parse(
-      //     localStorage.getItem(
-      //       "shippingDetails"
-      //     )
-      //   );
-
-      // if (!shippingDetails?.address) {
-
-      //   toast.error(
-      //     "Shipping details missing"
-      //   );
-
-      //   return;
-      // }
-
-      const cartId =
-        // "cart_" + Date.now();
-        order.orderId;
-
       const breezeCart = {
-
-        id:
-          order.orderId,
-
-        currency:
-          "INR",
-
-        itemCount:
-          cartData.reduce(
-            (sum, item) =>
-              sum +
-              Number(item.quantity || 1),
-            0
-          ),
-
+        id: order.orderId,
+        currency: "INR",
+        itemCount: cartData.reduce(
+          (sum, item) => sum + Number(item.quantity || 1),
+          0
+        ),
         initialPrice: Math.round(finalAmount * 100),
-
         totalPrice: Math.round(finalAmount * 100),
-
         totalDiscount: 0,
-
         items: cartData.map((item) => {
-
           let customizationTotal = 0;
 
           if (item.customization) {
-
             if (item.customization.goldKarat?.price)
-              customizationTotal += Number(
-                item.customization.goldKarat.price
-              );
-
+              customizationTotal += Number(item.customization.goldKarat.price);
             if (item.customization.certificate?.price)
-              customizationTotal += Number(
-                item.customization.certificate.price
-              );
-
+              customizationTotal += Number(item.customization.certificate.price);
             if (item.customization.gemstoneWeight?.price)
-              customizationTotal += Number(
-                item.customization.gemstoneWeight.price
-              );
-
+              customizationTotal += Number(item.customization.gemstoneWeight.price);
             if (item.customization.quality?.price)
-              customizationTotal += Number(
-                item.customization.quality.price
-              );
-
+              customizationTotal += Number(item.customization.quality.price);
             if (item.customization.diamondSubstitute?.price)
-              customizationTotal += Number(
-                item.customization.diamondSubstitute.price
-              );
+              customizationTotal += Number(item.customization.diamondSubstitute.price);
           }
 
           console.log("BREEZE ITEM", item);
 
-          // DEFINE BASE PRICE
           const unitPrice = Number(item.totalPrice || 0);
 
-          // DEFINE FINAL PRICE
-          // const finalUnitPrice =
-          //   unitPrice + customizationTotal;
-
           return {
-
             id: String(item.item?._id),
-
-            title:
-              item.item?.jewelryName ||
-              item.item?.name ||
-              "Product",
-
-            quantity:
-              Number(item.quantity || 1),
-
+            title: item.item?.jewelryName || item.item?.name || "Product",
+            quantity: Number(item.quantity || 1),
             image: item.item?.images?.[0]?.url,
-
-            initialPrice:
-              Math.round(unitPrice * 100),
-
-            finalPrice:
-              Math.round(unitPrice * 100),
-
+            initialPrice: Math.round(unitPrice * 100),
+            finalPrice: Math.round(unitPrice * 100),
             discount: 0,
-
           };
         }),
-
       };
 
-      console.log(
-        "BREEZE CART:",
-        breezeCart
-      );
-
-      console.log(
-        "FINAL BREEZE PAYLOAD:",
-        JSON.stringify(breezeCart, null, 2)
-      );
+      console.log("BREEZE CART:", breezeCart);
+      console.log("FINAL BREEZE PAYLOAD:", JSON.stringify(breezeCart, null, 2));
 
       // SIGN CART
-
-      const response =
-        await axios.post(
-          `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
-          {
-            cart: breezeCart,
-          }
-        );
-
-      console.log(
-        "SIGN RESPONSE:",
-        response.data
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/breeze/sign-cart`,
+        { cart: breezeCart }
       );
 
-      console.log(
-        "SENDING SHOP ORDER ID:",
-        order.orderId
-      );
+      console.log("SIGN RESPONSE:", response.data);
+      console.log("SENDING SHOP ORDER ID:", order.orderId);
 
-      // PROCESS CHECKOUT
+      // PROCESS CHECKOUT — single BlazeSDK.process call
       BlazeSDK.process(
-
         {
           requestId: crypto.randomUUID(),
-
           service: "in.breeze.onecco",
-
           payload: {
             action: "startCheckout",
-
             shopOrderId: order.orderId,
-
             cart: response.data.cart,
-
             signature: response.data.signature,
-
             keyId: "BHqOsoFaflqL65A4M0lcT",
-
             customer: {
               countryCode: "91",
-
-              phoneNumber: String(
-                address.mobileNo
-              ).replace(/\D/g, ""),
-
+              phoneNumber: String(address.mobileNo).replace(/\D/g, ""),
               email: address.email,
-
               name: address.fullName,
             },
-
             shippingAddress: {
               postalCode: address.pinCode,
-
               country: address.country,
-
               state: address.state,
-
               district: address.district,
-
               city: address.city,
-
               type: address.addressType,
-
               line1: address.addressLine1,
-
               name: address.fullName,
-
               nickname: "Home",
-
               phoneNumber: address.mobileNo,
-
               landmark: address.landmark,
-
               countryPhoneCode: "+91",
-
               isDefault: true,
             },
-
             disableAddressSelection: false,
-
             hideAddress: false,
-
             hideOffersSection: false,
-
             hideUserProfile: false,
             amountMeta: [
-      {
-        "label": "Convenience Fee",
-        "value": "₹25"
-      }
-    ],
-     hideTaxes: false,
+              {
+                label: "Convenience Fee",
+                value: "₹25",
+              },
+            ],
+            hideTaxes: false,
             hideOffers: false,
           },
         },
-        // SDK CALLBACK
+        // SDK CALLBACK — single callback handles every Breeze event
         (sdkResponse) => {
+          console.log("BLAZE SDK EVENT:", sdkResponse);
 
-          console.log(
-            "BLAZE SDK EVENT:",
-            sdkResponse
-          );
+          const event = sdkResponse?.payload?.event;
 
-          const event =
-            sdkResponse?.payload?.event;
-
-          // ===== Add By Pawan ============================================================
+          // Push raw SDK event to dataLayer for general tracking
           if (event) {
             window.dataLayer = window.dataLayer || [];
             window.dataLayer.push({
@@ -791,81 +579,64 @@ const [loading, setLoading] = useState(true);
               requestId: sdkResponse?.requestId,
             });
           }
-          // Add By Pawan ===================================================================
-          // SUCCESS
-          if (
-            event === "OrderComplete" ||
-            event === "Purchase" ||
-            event === "CheckoutCompleted"
-          ) {
-            toast.success(
-              "Payment successful"
-            );
-             // =======Add By Pawan=======================================================================
-            // trackPurchaseEvent({
-            //   orderId: order.orderId,
-            //   subtotal: order.totalAmount,
-            //   coupon: promoCode || "",
-            //   items: buildItemsFromCartData(cartData),
-            // });
-            // (Add By Pawan) FIX
+
+          // ---- AddPaymentInfo: fires when user selects/changes a payment method (COD/UPI/CARD/NETBANKING) ----
+          if (event === "AddPaymentInfo") {
+            const selectedMethod =
+              sdkResponse?.payload?.paymentMethod ||
+              sdkResponse?.payload?.method ||
+              sdkResponse?.payload?.selectedMethod ||
+              sdkResponse?.payload?.paymentType;
+
+//---fixed by Pawan Only fire if a method is present AND different from the last one fired,
+            if (selectedMethod && selectedMethod !== lastFiredPaymentMethod.current) {
+              lastFiredPaymentMethod.current = selectedMethod;
+
+              window.dataLayer = window.dataLayer || [];
+              window.dataLayer.push({ ecommerce: null });
+              window.dataLayer.push({
+                event: "add_payment_info",
+                ecommerce: {
+                  currency: "INR",
+                  value: finalAmount,
+                  payment_type: selectedMethod, // e.g. "COD", "UPI", "CARD", "NETBANKING"
+                  items: buildItemsFromRawCart(cartData),
+                },
+              });
+            }
+          }
+
+          // ---- OrderComplete / Purchase: flow finished successfully ----
+          if (event === "OrderComplete" || event === "Purchase") {
+            toast.success("Payment successful");
+
             trackPurchaseEvent({
               orderId: order.orderId,
               subtotal: order.totalAmount,
               coupon: promoCode || "",
               items: buildItemsFromRawCart(cartData),
             });
-            // Add By Pawan================================================================================
-            console.log(
-              "PAYMENT SUCCESS",
-              sdkResponse
-            );
+
+            console.log("PAYMENT SUCCESS", sdkResponse);
           }
-          // FAILURE
-          if (
-            event === "CheckoutFailed"
-          ) {
 
-            toast.error(
-              "Payment failed"
-            );
-
-            console.log(
-              "PAYMENT FAILED",
-              sdkResponse
-            );
+          // ---- FAILURE ----
+          if (event === "CheckoutFailed") {
+            toast.error("Payment failed");
+            console.log("PAYMENT FAILED", sdkResponse);
           }
         }
-
       );
+    } catch (err) {
+      console.error("BREEZE CHECKOUT ERROR:", err);
+      console.error("BREEZE ERROR RESPONSE:", err?.response?.data);
+      console.error("BREEZE ERROR MESSAGE:", err?.message);
 
+      toast.error(
+        err?.response?.data?.message || err?.message || "Checkout failed"
+      );
     }
-    catch (err) 
-    {
-
-        console.error(
-          "BREEZE CHECKOUT ERROR:",
-          err
-        );
-
-        console.error(
-          "BREEZE ERROR RESPONSE:",
-          err?.response?.data
-        );
-
-        console.error(
-          "BREEZE ERROR MESSAGE:",
-          err?.message
-        );
-
-        toast.error(
-          err?.response?.data?.message ||
-          err?.message ||
-          "Checkout failed"
-        );
-    }
-  };  
-
+  };
 
   useEffect(() => {
     fetchCartItems();
@@ -1044,7 +815,6 @@ const [loading, setLoading] = useState(true);
                 </div>
 
                 <button
-                  // onClick={handleProceedToCheckout}
                   onClick={handleBreezeProceed}
                   className="w-full h-[50px] sm:h-[60px] bg-[#264A3F] rounded-full text-[12px] sm:text-[13px] uppercase tracking-[0.15em] text-white font-bold hover:bg-[#1a3329] hover:shadow-lg transition-all duration-300"
                 >
