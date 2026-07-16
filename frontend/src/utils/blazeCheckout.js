@@ -89,15 +89,29 @@ const handleBreezeEvent = (response) => {
       break;
     }
 
+    // case "InitiateCheckout": {
+    //   const data = response.payload.data;
+    //   pushDL("begin_checkout", {
+    //     currency: data?.currency || "INR",
+    //     value: data?.totalPrice || ctx?.finalAmount || 0,
+    //     items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
+    //   });
+    //   break;
+    // }
     case "InitiateCheckout": {
-      const data = response.payload.data;
-      pushDL("begin_checkout", {
-        currency: data?.currency || "INR",
-        value: data?.totalPrice || ctx?.finalAmount || 0,
-        items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-      });
-      break;
-    }
+  console.log('[Breeze] case hit, ctx:', ctx);  // ← add this
+  const data = response.payload.data;
+  try {
+    pushDL("begin_checkout", {
+      currency: data?.currency || "INR",
+      value: data?.totalPrice || ctx?.finalAmount || 0,
+      items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
+    });
+  } catch(e) {
+    console.error('[Breeze] InitiateCheckout error:', e);  // ← and this
+  }
+  break;
+}
 
     case "AddPaymentInfo": {
       const method = response.payload.data?.paymentMethodType;
