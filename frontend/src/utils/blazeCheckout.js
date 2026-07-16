@@ -125,7 +125,8 @@ export const initBlaze = () => {
         initialized = true;
 
         try {
-          handleBreezeEvent(response);
+        const parsed = typeof response === "string" ? JSON.parse(response) : response;
+          handleBreezeEvent(parsed);
         } catch (e) {
           console.error("[Breeze] handleBreezeEvent threw:", e);
         }
