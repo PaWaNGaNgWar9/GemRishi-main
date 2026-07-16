@@ -63,9 +63,8 @@ import {
 import { trackPurchaseEvent, buildItemsFromRawCart } from "./purchaseTracking";
 
 let initialized = false;
-
 const pushDL = (event, ecommerce) => {
-  window.dataLayer = window.dataLayer || [];
+  window.top.dataLayer = window.top.dataLayer || [];
   window.top.dataLayer.push({ ecommerce: null }); // clear previous ecommerce object first (GA4 best practice)
   window.top.dataLayer.push({ event, ecommerce });
 };

@@ -1,5 +1,3 @@
-// Shared context so init.js (where Breeze SDK events actually arrive)
-// can access order/cart data set by ShoppingCart.jsx at checkout time.
 
 let checkoutContext = null;
 let firedPaymentMethod = null;

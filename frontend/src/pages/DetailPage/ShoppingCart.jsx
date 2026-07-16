@@ -397,13 +397,6 @@ function ShoppingCart() {
   };
 
   // --- BREEZE CHECKOUT ---
-  // NOTE: BlazeSDK is a singleton. The live Breeze event stream
-  // (ProcessStarted, InitiateCheckout, AddPaymentInfo, PayNow,
-  // OrderComplete/Purchase, CheckoutFailed) is delivered to the callback
-  // registered once in BlazeSDK.initiate() inside init.js — NOT to the
-  // callback passed into BlazeSDK.process() below. All GA4 dataLayer
-  // pushes for those events now live in init.js, driven by the context
-  // set here via setBreezeCheckoutContext().
   const handleBreezeProceed = async () => {
     try {
       console.log("BREEZE STARTED");
@@ -435,16 +428,11 @@ function ShoppingCart() {
       };
 
       console.log("FRONTEND ORDER ID:", order.orderId);
-
-      // USE BACKEND TOTAL
       const finalAmount = Number(order.totalAmount);
 
       console.log("BACKEND FINAL:", finalAmount);
 
       // ===== Add By Pawan =============================================================
-      // Give init.js everything it needs to build GA4 payloads once real
-      // Breeze events (InitiateCheckout, AddPaymentInfo, PayNow,
-      // OrderComplete/Purchase, CheckoutFailed) start arriving.
       setBreezeCheckoutContext({
         order,
         finalAmount,
@@ -559,8 +547,6 @@ function ShoppingCart() {
             hideOffers: false,
           },
         },
-        // Fallback / debug logger only — the live event stream is handled
-        // in init.js via the BlazeSDK.initiate() callback, not here.
         (sdkResponse) => {
           console.log("BLAZE SDK EVENT (process callback, fallback only):", sdkResponse);
         }
