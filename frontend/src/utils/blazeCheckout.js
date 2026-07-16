@@ -63,12 +63,19 @@ import {
 import { trackPurchaseEvent, buildItemsFromRawCart } from "./purchaseTracking";
 
 let initialized = false;
+// ==============================================================================
 const pushDL = (event, ecommerce) => {
-  window.top.dataLayer = window.top.dataLayer || [];
-  window.top.dataLayer.push({ ecommerce: null }); // clear previous ecommerce object first (GA4 best practice)
-  window.top.dataLayer.push({ event, ecommerce });
+  try {
+    console.log('[Breeze] pushDL called:', event);
+    window.top.dataLayer = window.top.dataLayer || []; // ← also fix initialization
+    window.top.dataLayer.push({ ecommerce: null });
+    window.top.dataLayer.push({ event, ecommerce });
+    console.log('[Breeze] pushDL success, length:', window.top.dataLayer.length);
+  } catch (err) {
+    console.error('[Breeze] pushDL error:', err); // ← this will reveal the actual problem
+  }
 };
-
+// ==============================================================================
 const handleBreezeEvent = (response) => {
   const eventName = response?.payload?.event;
   if (!eventName) return;
