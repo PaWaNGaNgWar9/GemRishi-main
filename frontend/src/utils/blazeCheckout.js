@@ -23,7 +23,7 @@ const pushDL = (event, ecommerce) => {
 };
 
 const handleBreezeEvent = (response) => {
-  console.log("[Breeze] ENTRY:", response?.payload?.event);
+ console.log('[Breeze] ENTRY response:', JSON.stringify(response));
 
   const eventName = response?.payload?.event;
   if (!eventName) return;
