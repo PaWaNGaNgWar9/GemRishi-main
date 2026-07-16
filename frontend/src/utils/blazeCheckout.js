@@ -66,8 +66,8 @@ let initialized = false;
 
 const pushDL = (event, ecommerce) => {
   window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({ ecommerce: null }); // clear previous ecommerce object first (GA4 best practice)
-  window.dataLayer.push({ event, ecommerce });
+  window.top.dataLayer.push({ ecommerce: null }); // clear previous ecommerce object first (GA4 best practice)
+  window.top.dataLayer.push({ event, ecommerce });
 };
 
 const handleBreezeEvent = (response) => {
