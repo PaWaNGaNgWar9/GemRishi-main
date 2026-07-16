@@ -10,6 +10,7 @@ import { appendRandomString } from "../../utils/randomString";
 import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
 import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
+import { setBreezeCheckoutContext } from "../../utils/breezeContext";
 // -------Add by Pawan for GA4 Tracking----------------
 
 // --- Premium Skeleton Loader (Mobile Optimized) ---
@@ -395,22 +396,17 @@ function ShoppingCart() {
     return String(value).trim();
   };
 
+  // --- BREEZE CHECKOUT ---
+  // NOTE: BlazeSDK is a singleton. The live Breeze event stream
+  // (ProcessStarted, InitiateCheckout, AddPaymentInfo, PayNow,
+  // OrderComplete/Purchase, CheckoutFailed) is delivered to the callback
+  // registered once in BlazeSDK.initiate() inside init.js — NOT to the
+  // callback passed into BlazeSDK.process() below. All GA4 dataLayer
+  // pushes for those events now live in init.js, driven by the context
+  // set here via setBreezeCheckoutContext().
   const handleBreezeProceed = async () => {
     try {
       console.log("BREEZE STARTED");
-
-      //---Add By Pawan--------------------------------
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "begin_checkout",
-        ecommerce: {
-          currency: "INR",
-          value: totalAmount,
-          items: buildItemsFromRawCart(cartData),
-        },
-      });
-      window.dataLayer.push({ ecommerce: null });
 
       // Reset payment-method dedupe guard for this checkout session
       lastFiredPaymentMethod.current = null;
@@ -446,16 +442,14 @@ function ShoppingCart() {
       console.log("BACKEND FINAL:", finalAmount);
 
       // ===== Add By Pawan =============================================================
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({ ecommerce: null });
-      window.dataLayer.push({
-        event: "add_shipping_info",
-        ecommerce: {
-          currency: "INR",
-          value: finalAmount,
-          shipping_tier: "Standard",
-          items: buildItemsFromRawCart(cartData),
-        },
+      // Give init.js everything it needs to build GA4 payloads once real
+      // Breeze events (InitiateCheckout, AddPaymentInfo, PayNow,
+      // OrderComplete/Purchase, CheckoutFailed) start arriving.
+      setBreezeCheckoutContext({
+        order,
+        finalAmount,
+        cartData,
+        promoCode,
       });
       // Add By Pawan =====================================================================
 
@@ -519,7 +513,7 @@ function ShoppingCart() {
       console.log("SIGN RESPONSE:", response.data);
       console.log("SENDING SHOP ORDER ID:", order.orderId);
 
-      // PROCESS CHECKOUT — single BlazeSDK.process call
+      // PROCESS CHECKOUT
       BlazeSDK.process(
         {
           requestId: crypto.randomUUID(),
@@ -565,66 +559,10 @@ function ShoppingCart() {
             hideOffers: false,
           },
         },
-        // SDK CALLBACK — single callback handles every Breeze event
+        // Fallback / debug logger only — the live event stream is handled
+        // in init.js via the BlazeSDK.initiate() callback, not here.
         (sdkResponse) => {
-          console.log("BLAZE SDK EVENT:", sdkResponse);
-
-          const event = sdkResponse?.payload?.event;
-
-          // Push raw SDK event to dataLayer for general tracking
-          if (event) {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({
-              event: event,
-              requestId: sdkResponse?.requestId,
-            });
-          }
-
-          // ---- AddPaymentInfo: fires when user selects/changes a payment method (COD/UPI/CARD/NETBANKING) ----
-          if (event === "AddPaymentInfo") {
-            const selectedMethod =
-              sdkResponse?.payload?.paymentMethod ||
-              sdkResponse?.payload?.method ||
-              sdkResponse?.payload?.selectedMethod ||
-              sdkResponse?.payload?.paymentType;
-
-//---fixed by Pawan Only fire if a method is present AND different from the last one fired,
-            if (selectedMethod && selectedMethod !== lastFiredPaymentMethod.current) {
-              lastFiredPaymentMethod.current = selectedMethod;
-
-              window.dataLayer = window.dataLayer || [];
-              window.dataLayer.push({ ecommerce: null });
-              window.dataLayer.push({
-                event: "add_payment_info",
-                ecommerce: {
-                  currency: "INR",
-                  value: finalAmount,
-                  payment_type: selectedMethod, // e.g. "COD", "UPI", "CARD", "NETBANKING"
-                  items: buildItemsFromRawCart(cartData),
-                },
-              });
-            }
-          }
-
-          // ---- OrderComplete / Purchase: flow finished successfully ----
-          if (event === "OrderComplete" || event === "Purchase") {
-            toast.success("Payment successful");
-
-            trackPurchaseEvent({
-              orderId: order.orderId,
-              subtotal: order.totalAmount,
-              coupon: promoCode || "",
-              items: buildItemsFromRawCart(cartData),
-            });
-
-            console.log("PAYMENT SUCCESS", sdkResponse);
-          }
-
-          // ---- FAILURE ----
-          if (event === "CheckoutFailed") {
-            toast.error("Payment failed");
-            console.log("PAYMENT FAILED", sdkResponse);
-          }
+          console.log("BLAZE SDK EVENT (process callback, fallback only):", sdkResponse);
         }
       );
     } catch (err) {
