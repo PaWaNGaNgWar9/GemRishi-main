@@ -1,57 +1,3 @@
-// Working
-// let initialized = false;
-
-// export const initBlaze = () => {
-
-//   if (
-//     !window.BlazeSDKWeb
-//   ) {
-
-//     console.error(
-//       "SDK unavailable"
-//     );
-
-//     return;
-//   }
-
-//   window.BlazeSDKWeb.initiate(
-//     {
-//       requestId:
-//         crypto.randomUUID(),
-
-//       service:
-//         "in.breeze.onecco",
-
-//       payload: {
-//         // action:
-//         //   "initiate",
-
-//         merchantId:
-//           "gemrishi",
-
-//         environment:
-//           "smbRelease",
-
-//         // integrationType:
-//         //   "redirection",
-
-//         shopUrl:
-//         "https://gemrishi.com",
-//       },
-//     },
-
-//     (response) => {
-
-//       console.log(
-//         "INIT RESPONSE:",
-//         response
-//       );
-//     }
-//   );
-// };
-
-
-
 import BlazeSDK from "@juspay/blaze-sdk-web";
 import {
   getBreezeCheckoutContext,
@@ -63,21 +9,22 @@ import {
 import { trackPurchaseEvent, buildItemsFromRawCart } from "./purchaseTracking";
 
 let initialized = false;
-// ==============================================================================
 
 const pushDL = (event, ecommerce) => {
   try {
-    console.log('[Breeze] pushDL called:', event);
-    window.top.dataLayer = window.top.dataLayer || []; // ← also fix initialization
+    console.log("[Breeze] pushDL called:", event);
+    window.top.dataLayer = window.top.dataLayer || [];
     window.top.dataLayer.push({ ecommerce: null });
     window.top.dataLayer.push({ event, ecommerce });
-    console.log('[Breeze] pushDL success, length:', window.top.dataLayer.length);
+    console.log("[Breeze] pushDL success, length:", window.top.dataLayer.length);
   } catch (err) {
-    console.error('[Breeze] pushDL error:', err); // ← this will reveal the actual problem
+    console.error("[Breeze] pushDL error:", err);
   }
 };
-// ==============================================================================
+
 const handleBreezeEvent = (response) => {
+  console.log("[Breeze] ENTRY:", response?.payload?.event);
+
   const eventName = response?.payload?.event;
   if (!eventName) return;
 
@@ -85,38 +32,33 @@ const handleBreezeEvent = (response) => {
 
   switch (eventName) {
     case "ProcessStarted": {
-      // Internal SDK lifecycle event, no GA4 equivalent.
       break;
     }
 
-    // case "InitiateCheckout": {
-    //   const data = response.payload.data;
-    //   pushDL("begin_checkout", {
-    //     currency: data?.currency || "INR",
-    //     value: data?.totalPrice || ctx?.finalAmount || 0,
-    //     items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-    //   });
-    //   break;
-    // }
     case "InitiateCheckout": {
-  console.log('[Breeze] case hit, ctx:', ctx);  // ← add this
-  const data = response.payload.data;
-  try {
-    pushDL("begin_checkout", {
-      currency: data?.currency || "INR",
-      value: data?.totalPrice || ctx?.finalAmount || 0,
-      items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-    });
-  } catch(e) {
-    console.error('[Breeze] InitiateCheckout error:', e);  // ← and this
-  }
-  break;
-}
+      console.log("[Breeze] case hit, ctx:", ctx);
+
+      const data = response.payload.data;
+
+      try {
+        pushDL("begin_checkout", {
+          currency: data?.currency || "INR",
+          value: data?.totalPrice || ctx?.finalAmount || 0,
+          items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
+        });
+      } catch (e) {
+        console.error("[Breeze] InitiateCheckout error:", e);
+      }
+
+      break;
+    }
 
     case "AddPaymentInfo": {
       const method = response.payload.data?.paymentMethodType;
+
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
+
         pushDL("add_payment_info", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
@@ -124,13 +66,16 @@ const handleBreezeEvent = (response) => {
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
       }
+
       break;
     }
 
     case "PayNow": {
       const method = response.payload.paymentMethodType;
+
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
+
         pushDL("add_payment_info", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
@@ -138,6 +83,7 @@ const handleBreezeEvent = (response) => {
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
       }
+
       break;
     }
 
@@ -145,6 +91,7 @@ const handleBreezeEvent = (response) => {
     case "Purchase": {
       if (!getFiredPurchase() && ctx) {
         setFiredPurchase(true);
+
         trackPurchaseEvent({
           orderId: ctx.order.orderId,
           subtotal: ctx.order.totalAmount,
@@ -152,20 +99,8 @@ const handleBreezeEvent = (response) => {
           items: buildItemsFromRawCart(ctx.cartData),
         });
       }
-      break;
-    }
 
-    case "CheckoutFailed": {
-      pushDL("checkout_failed", {
-        currency: "INR",
-        value: ctx?.finalAmount || 0,
-        items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-      });
       break;
-    }
-
-    default: {
-      console.log("Unhandled Breeze event:", eventName, response);
     }
   }
 };
@@ -177,26 +112,23 @@ export const initBlaze = () => {
     BlazeSDK.initiate(
       {
         requestId: crypto.randomUUID(),
-
         service: "in.breeze.onecco",
-
         payload: {
           merchantId: "gemrishi",
-
           environment: "smbRelease",
-
           shopUrl: "https://gemrishi.com",
         },
       },
-
       (response) => {
         console.log("INIT RESPONSE:", response);
 
         initialized = true;
 
-        // ===== Add By Pawan =============================================================
-        handleBreezeEvent(response);
-        // Add By Pawan ===================================================================
+        try {
+          handleBreezeEvent(response);
+        } catch (e) {
+          console.error("[Breeze] handleBreezeEvent threw:", e);
+        }
       }
     );
   } catch (err) {
