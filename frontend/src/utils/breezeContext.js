@@ -8,13 +8,12 @@ export const setBreezeCheckoutContext = (ctx) => {
   firedPaymentMethod = null;
   firedPurchase = false;
 };
-
 export const clearBreezeCheckoutContext = () => {
   checkoutContext = null;
   firedPaymentMethod = null;
   firedPurchase = false;
 };
-
+// ========================================
 export const getBreezeCheckoutContext = () => checkoutContext;
 
 export const getFiredPaymentMethod = () => firedPaymentMethod;
