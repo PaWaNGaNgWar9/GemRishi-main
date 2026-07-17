@@ -59,12 +59,15 @@ const handleBreezeEvent = (response) => {
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
 
-        pushDL("AddPaymentInfo", {
+       try{ pushDL("AddPaymentInfo", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
           payment_type: method,
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
+      }catch (e) {
+        console.error("[Breeze] InitiateCheckout error:", e);
+      }
       }
 
       break;
@@ -76,12 +79,16 @@ const handleBreezeEvent = (response) => {
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
 
-        pushDL("PayNow", {
+       try{ pushDL("add_payment_info", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
           payment_type: method,
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
+      }
+      catch (e) {
+        console.error("[Breeze] InitiateCheckout error:", e);
+      }
       }
 
       break;
