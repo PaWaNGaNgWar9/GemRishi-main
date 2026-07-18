@@ -73,7 +73,6 @@ const handleBreezeEvent = (response) => {
           pushDL("add_shipping_info", {
             currency: data?.currency || "INR",
             value: data?.totalPrice || ctx?.finalAmount || 0,
-            // adjust these field names once you confirm actual payload shape
             shipping_tier: data?.shippingMethod || data?.deliveryType || "",
             address: {
               city: data?.address?.city || data?.city || "",
