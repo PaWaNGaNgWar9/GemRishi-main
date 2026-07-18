@@ -26,7 +26,7 @@ export function trackPurchaseEvent({
   window.dataLayer.push({ ecommerce: null });
 
   window.dataLayer.push({
-    event: "purchase",
+    event: "Purchase",
     ecommerce: {
       transaction_id: String(orderId),
       value: Number(subtotal) || 0,

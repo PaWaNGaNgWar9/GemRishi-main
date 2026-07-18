@@ -76,7 +76,7 @@ const handleBreezeEvent = (response) => {
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
 
-        pushDL("add_payment_info", {
+        pushDL("PayNow", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
           payment_type: method,
