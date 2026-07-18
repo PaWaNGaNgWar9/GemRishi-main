@@ -123,6 +123,7 @@ const handleBreezeEvent = (response) => {
         console.warn("[Breeze] PayNow fired but no paymentMethodType found in payload");
         break;
       }
+
       if (method !== getFiredPayNowMethod()) {
         setFiredPayNowMethod(method);
 
