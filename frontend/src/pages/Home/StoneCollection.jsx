@@ -14,6 +14,7 @@ import Pearl from "../../assets/Stone/Pearl.svg";
 import Diamond from "../../assets/Stone/Diamond.svg";
 import Emerald from "../../assets/Stone/Emerald.svg";
 import catsEye from "../../assets/Stone/catsEye.svg";
+// ----------------add By Pawan-----------------------";
 
 // Utils
 import { appendRandomString } from "../../utils/randomString";
@@ -190,7 +191,14 @@ function StoneCollection() {
           ))}
         </div>
       </div>
-
+      <div className=" mb-8 flex justify-center ">
+         <button
+         onClick={() => navigate("/gemstone")}
+        className="mt-2  px-5 py-3 inline-flex items-center rounded-3xl border-1 border-green-800 gap-2 text-black font-semibold hover:bg-green-950 hover:text-white transition-colors duration-300"
+         >
+       <span>Explore  All Collection</span>
+         </button>
+      </div>
       {/* 2. PEACE OF MIND SECTION (Premium Band) */}
       <div className="w-full bg-white border-t border-gray-100 py-10">
         <div className="container mx-auto px-6">
