@@ -432,14 +432,14 @@ function ShoppingCart() {
 
       console.log("BACKEND FINAL:", finalAmount);
 
-      // ===== Add By Pawan =============================================================
+      // ===== Add By Pawan =========================================================
       setBreezeCheckoutContext({
         order,
         finalAmount,
         cartData,
         promoCode,
       });
-      // Add By Pawan =====================================================================
+      // Add By Pawan ===============================================================
 
       if (!BlazeSDK?.process) {
         console.error("BlazeSDK missing");
@@ -559,9 +559,7 @@ function ShoppingCart() {
 
             if (eventName === "AddedAddress" && !getFiredAddress()) {
               setFiredAddress(true);
-
               const data = parsed?.payload?.data ?? parsed?.payload ?? {};
-
               window.top.dataLayer = window.top.dataLayer || [];
               window.top.dataLayer.push({ ecommerce: null });
               window.top.dataLayer.push({
