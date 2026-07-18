@@ -41,27 +41,13 @@ const handleBreezeEvent = (response) => {
       const data = response.payload.data;
 
       try {
-        pushDL("InitiateCheckout", {
+        pushDL("begin_checkout", {
           currency: data?.currency || "INR",
           value: data?.totalPrice || ctx?.finalAmount || 0,
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
       } catch (e) {
         console.error("[Breeze] InitiateCheckout error:", e);
-      }
-
-      break;
-    }
-     //  NEW Shipping event, fires when a new address is saved
-    case "AddedAddress": {
-      try {
-        pushDL("AddedAddress", {
-          currency: "INR",
-          value: ctx?.finalAmount || 0,
-          items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-        });
-      } catch (e) {
-        console.error("[Breeze] AddedAddress error:", e);
       }
 
       break;
@@ -73,7 +59,7 @@ const handleBreezeEvent = (response) => {
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
 
-        pushDL("AddPaymentInfo", {
+        pushDL("add_payment_info", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
           payment_type: method,
@@ -90,7 +76,7 @@ const handleBreezeEvent = (response) => {
       if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
 
-        pushDL("PayNow", {
+        pushDL("add_payment_info", {
           currency: "INR",
           value: ctx?.finalAmount || 0,
           payment_type: method,
@@ -100,6 +86,7 @@ const handleBreezeEvent = (response) => {
 
       break;
     }
+
     case "OrderComplete":
     case "Purchase": {
       if (!getFiredPurchase() && ctx) {
@@ -111,7 +98,6 @@ const handleBreezeEvent = (response) => {
           coupon: ctx.promoCode || "",
           items: buildItemsFromRawCart(ctx.cartData),
         });
-        console.log("[Breeze] dataLayer after purchase:", window.top.dataLayer);
       }
       break;
     }
