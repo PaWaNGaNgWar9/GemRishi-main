@@ -6,7 +6,7 @@ import {
   getFiredPurchase,
   setFiredPurchase,
   getFiredAddress,
-   setFiredAddress,  
+   setFiredAddress,
 } from "./breezeContext";
 import { trackPurchaseEvent, buildItemsFromRawCart } from "./purchaseTracking";
 
@@ -56,56 +56,35 @@ const handleBreezeEvent = (response) => {
     }
 
 
-    case "AddedAddress": {
-      console.log("[Breeze] AddedAddress event received:", response.payload);
+ case "AddPaymentInfo": {
+  const data = response.payload.data;
+  const userDetails = data?.userDetails;
+  if (userDetails?.address && !getFiredAddress()) {
+    setFiredAddress(true);
+    console.log("[Breeze] Address available in AddPaymentInfo -> firing add_shipping_info", userDetails);
+    pushDL("add_shipping_info", {
+      currency: "INR",
+      value: ctx?.finalAmount || 0,
+      items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
+      address: {
+        city: userDetails.city || "",
+        state: userDetails.state || "",
+        pinCode: userDetails.postalCode || "",
+        country: "India",
+      },
+    });
+  }
 
-      const addressData = response.payload?.data;
-      const addressKey = JSON.stringify(addressData);
+  console.log("[Breeze] AddPaymentInfo -> firing add_payment_info (page shown)");
+  pushDL("add_payment_info", {
+    currency: "INR",
+    value: ctx?.finalAmount || 0,
+    payment_type: "unknown",
+    items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
+  });
 
-      if (addressData && addressKey !== getFiredAddress()) {
-        setFiredAddress(addressKey);
-
-        try {
-          pushDL("add_shipping_info", {
-            currency: "INR",
-            value: ctx?.finalAmount || 0,
-            items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-            address: {
-              city: addressData?.city || "",
-              state: addressData?.state || "",
-              pinCode: addressData?.pinCode || "",
-              country: addressData?.country || "",
-            },
-          });
-
-          console.log("[Breeze] AddedAddress -> add_shipping_info pushed to dataLayer");
-        } catch (e) {
-          console.error("[Breeze] AddedAddress error:", e);
-        }
-      } else {
-        console.log("[Breeze] AddedAddress skipped (duplicate or empty):", addressData);
-      }
-
-      break;
-    }
-
-
-    case "AddPaymentInfo": {
-      const method = response.payload.data?.paymentMethodType;
-
-      if (method && method !== getFiredPaymentMethod()) {
-        setFiredPaymentMethod(method);
-
-        pushDL("add_payment_info", {
-          currency: "INR",
-          value: ctx?.finalAmount || 0,
-          payment_type: method,
-          items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
-        });
-      }
-
-      break;
-    }
+  break;
+}
 
     case "PayNow": {
       const method = response.payload.paymentMethodType;
