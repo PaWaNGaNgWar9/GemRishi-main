@@ -389,11 +389,13 @@ const GemRecommendationModal = () => {
 									className={`border rounded-md p-2 w-full ${
 										errors.dob ? "border-red-500" : "border-gray-300"
 									}`}>
+										{/* -----------add by pawan------------------ */}
 									<option value="">Year</option>
 									{[...Array(100)].map((_, i) => (
-										<option key={1980 + i}>{1980 + i}</option>
+										<option key={1940 + i}>{1940 + i}</option>
 									))}
 								</select>
+								{/* -----------add by pawan------------------ */}
 							</div>
 							{errors.dob && (
 								<p className="text-red-500 text-sm mt-1">{errors.dob}</p>

@@ -61,7 +61,7 @@ const handleBreezeEvent = (response) => {
   const userDetails = data?.userDetails;
   if (userDetails?.address && !getFiredAddress()) {
     setFiredAddress(true);
-    console.log("[Breeze] Address available in AddPaymentInfo -> firing add_shipping_info", userDetails);
+    console.log("[Breeze] Address available in AddPaymentInfo", userDetails);
     pushDL("add_shipping_info", {
       currency: "INR",
       value: ctx?.finalAmount || 0,
@@ -76,7 +76,7 @@ const handleBreezeEvent = (response) => {
   }
 
   console.log("[Breeze] AddPaymentInfo -> firing add_payment_info (page shown)");
-  pushDL("add_payment_info", {
+  pushDL("AddPaymentInfo", {
     currency: "INR",
     value: ctx?.finalAmount || 0,
     payment_type: "unknown",

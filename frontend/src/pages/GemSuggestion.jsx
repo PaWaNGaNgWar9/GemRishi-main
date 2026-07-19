@@ -322,17 +322,17 @@ const GemRecommendationModal = () => {
 
 					{/* DOB & TOB Grid */}
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
-						{/* DOB */}
+			{/* ----------------------fix by pawan DOB---------------------------------- */}
 						<div className="flex flex-col">
 							<label className="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Date of Birth *</label>
 							<div className="grid grid-cols-3 gap-2">
 								<select value={formData.dob.day} onChange={(e) => setFormData({ ...formData, dob: { ...formData.dob, day: e.target.value }})} className={inputClass(errors.dob)}><option value="" disabled>DD</option>{[...Array(31)].map((_, i) => (<option key={i + 1}>{i + 1}</option>))}</select>
 								<select value={formData.dob.month} onChange={(e) => setFormData({ ...formData, dob: { ...formData.dob, month: e.target.value }})} className={inputClass(errors.dob)}><option value="" disabled>MM</option>{[...Array(12)].map((_, i) => (<option key={i + 1}>{i + 1}</option>))}</select>
-								<select value={formData.dob.year} onChange={(e) => setFormData({ ...formData, dob: { ...formData.dob, year: e.target.value }})} className={inputClass(errors.dob)}><option value="" disabled>YYYY</option>{[...Array(100)].map((_, i) => (<option key={1980 + i}>{1980 + i}</option>))}</select>
+								<select value={formData.dob.year} onChange={(e) => setFormData({ ...formData, dob: { ...formData.dob, year: e.target.value }})} className={inputClass(errors.dob)}><option value="" disabled>YYYY</option>{[...Array(100)].map((_, i) => (<option key={1940 + i}>{1940 + i}</option>))}</select>
 							</div>
 							{errors.dob && <p className="text-red-500 text-xs mt-1.5 ml-1">{errors.dob}</p>}
 						</div>
-
+            {/* ----------------------fix by pawan DOB---------------------------------- */}
 						{/* TOB */}
 						<div className="flex flex-col">
 							<label className="block mb-2 text-xs font-bold text-gray-500 uppercase tracking-wider">Time of Birth *</label>
