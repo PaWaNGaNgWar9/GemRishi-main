@@ -1,14 +1,12 @@
 import BlazeSDK from "@juspay/blaze-sdk-web";
 import {
   getBreezeCheckoutContext,
-  getFiredPaymentMethod,      // still used for AddPaymentInfo
+  getFiredPaymentMethod,
   setFiredPaymentMethod,
-  getFiredPayNowMethod,       // NEW - separate flag for PayNow
-  setFiredPayNowMethod,       // NEW
   getFiredPurchase,
   setFiredPurchase,
-  getFiredAddress,            // NEW - dedupe for AddedAddress
-  setFiredAddress,            // NEW
+  getFiredAddress,
+   setFiredAddress,  
 } from "./breezeContext";
 import { trackPurchaseEvent, buildItemsFromRawCart } from "./purchaseTracking";
 
@@ -16,7 +14,7 @@ let initialized = false;
 
 const pushDL = (event, ecommerce) => {
   try {
-    console.log("[Breeze] pushDL called:", event, ecommerce);
+    console.log("[Breeze] pushDL called:", event);
     window.top.dataLayer = window.top.dataLayer || [];
     window.top.dataLayer.push({ ecommerce: null });
     window.top.dataLayer.push({ event, ecommerce });
@@ -26,21 +24,13 @@ const pushDL = (event, ecommerce) => {
   }
 };
 
-// helper: pull paymentMethodType regardless of whether it's nested under .data or not
-const extractPaymentMethod = (payload) =>
-  payload?.data?.paymentMethodType ?? payload?.paymentMethodType ?? null;
-
 const handleBreezeEvent = (response) => {
-  console.log("[Breeze] ENTRY response:", JSON.stringify(response));
+ console.log('[Breeze] ENTRY response:', JSON.stringify(response));
 
   const eventName = response?.payload?.event;
-  if (!eventName) {
-    console.warn("[Breeze] No event name found on response, skipping");
-    return;
-  }
+  if (!eventName) return;
 
   const ctx = getBreezeCheckoutContext();
-  console.log("[Breeze] eventName:", eventName, "ctx present:", !!ctx);
 
   switch (eventName) {
     case "ProcessStarted": {
@@ -48,7 +38,10 @@ const handleBreezeEvent = (response) => {
     }
 
     case "InitiateCheckout": {
+      console.log("[Breeze] case hit, ctx:", ctx);
+
       const data = response.payload.data;
+
       try {
         pushDL("begin_checkout", {
           currency: data?.currency || "INR",
@@ -58,48 +51,49 @@ const handleBreezeEvent = (response) => {
       } catch (e) {
         console.error("[Breeze] InitiateCheckout error:", e);
       }
+
       break;
     }
 
-    // NEW: AddedAddress
+
     case "AddedAddress": {
-      try {
-        const data = response.payload.data ?? response.payload;
-        console.log("[Breeze] AddedAddress data:", data);
+      console.log("[Breeze] AddedAddress event received:", response.payload);
 
-        if (!getFiredAddress()) {
-          setFiredAddress(true);
+      const addressData = response.payload?.data;
+      const addressKey = JSON.stringify(addressData);
 
+      if (addressData && addressKey !== getFiredAddress()) {
+        setFiredAddress(addressKey);
+
+        try {
           pushDL("add_shipping_info", {
-            currency: data?.currency || "INR",
-            value: data?.totalPrice || ctx?.finalAmount || 0,
-            shipping_tier: data?.shippingMethod || data?.deliveryType || "",
-            address: {
-              city: data?.address?.city || data?.city || "",
-              state: data?.address?.state || data?.state || "",
-              pincode: data?.address?.pincode || data?.pincode || "",
-            },
+            currency: "INR",
+            value: ctx?.finalAmount || 0,
             items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
+            address: {
+              city: addressData?.city || "",
+              state: addressData?.state || "",
+              pinCode: addressData?.pinCode || "",
+              country: addressData?.country || "",
+            },
           });
-        } else {
-          console.log("[Breeze] AddedAddress skipped, already fired");
+
+          console.log("[Breeze] AddedAddress -> add_shipping_info pushed to dataLayer");
+        } catch (e) {
+          console.error("[Breeze] AddedAddress error:", e);
         }
-      } catch (e) {
-        console.error("[Breeze] AddedAddress error:", e);
+      } else {
+        console.log("[Breeze] AddedAddress skipped (duplicate or empty):", addressData);
       }
+
       break;
     }
+
 
     case "AddPaymentInfo": {
-      const method = extractPaymentMethod(response.payload);
-      console.log("[Breeze] AddPaymentInfo method:", method, "already fired:", getFiredPaymentMethod());
+      const method = response.payload.data?.paymentMethodType;
 
-      if (!method) {
-        console.warn("[Breeze] AddPaymentInfo fired but no paymentMethodType found in payload");
-        break;
-      }
-
-      if (method !== getFiredPaymentMethod()) {
+      if (method && method !== getFiredPaymentMethod()) {
         setFiredPaymentMethod(method);
 
         pushDL("add_payment_info", {
@@ -108,23 +102,16 @@ const handleBreezeEvent = (response) => {
           payment_type: method,
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
-      } else {
-        console.log("[Breeze] AddPaymentInfo skipped, method already fired:", method);
       }
+
       break;
     }
 
     case "PayNow": {
-      const method = extractPaymentMethod(response.payload);
-      console.log("[Breeze] PayNow method:", method);
+      const method = response.payload.paymentMethodType;
 
-      if (!method) {
-        console.warn("[Breeze] PayNow fired but no paymentMethodType found in payload");
-        break;
-      }
-
-      if (method !== getFiredPayNowMethod()) {
-        setFiredPayNowMethod(method);
+      if (method && method !== getFiredPaymentMethod()) {
+        setFiredPaymentMethod(method);
 
         pushDL("PayNow", {
           currency: "INR",
@@ -132,35 +119,24 @@ const handleBreezeEvent = (response) => {
           payment_type: method,
           items: ctx ? buildItemsFromRawCart(ctx.cartData) : [],
         });
-      } else {
-        console.log("[Breeze] PayNow skipped, method already fired:", method);
       }
+
       break;
     }
 
     case "OrderComplete":
     case "Purchase": {
-      if (getFiredPurchase()) {
-        console.log("[Breeze] Purchase skipped, already fired");
-        break;
-      }
-      if (!ctx) {
-        console.warn("[Breeze] Purchase skipped, ctx missing at fire time");
-        break;
-      }
+      if (!getFiredPurchase() && ctx) {
+        setFiredPurchase(true);
 
-      setFiredPurchase(true);
-      trackPurchaseEvent({
-        orderId: ctx.order.orderId,
-        subtotal: ctx.order.totalAmount,
-        coupon: ctx.promoCode || "",
-        items: buildItemsFromRawCart(ctx.cartData),
-      });
+        trackPurchaseEvent({
+          orderId: ctx.order.orderId,
+          subtotal: ctx.order.totalAmount,
+          coupon: ctx.promoCode || "",
+          items: buildItemsFromRawCart(ctx.cartData),
+        });
+      }
       break;
-    }
-
-    default: {
-      console.log("[Breeze] Unhandled event:", eventName, response.payload);
     }
   }
 };
@@ -181,10 +157,11 @@ export const initBlaze = () => {
       },
       (response) => {
         console.log("INIT RESPONSE:", response);
+
         initialized = true;
 
         try {
-          const parsed = typeof response === "string" ? JSON.parse(response) : response;
+        const parsed = typeof response === "string" ? JSON.parse(response) : response;
           handleBreezeEvent(parsed);
         } catch (e) {
           console.error("[Breeze] handleBreezeEvent threw:", e);
@@ -195,5 +172,4 @@ export const initBlaze = () => {
     console.error("Blaze Init Error:", err);
   }
 };
-
 export default BlazeSDK;

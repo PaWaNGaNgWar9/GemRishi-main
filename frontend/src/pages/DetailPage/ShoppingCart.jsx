@@ -10,7 +10,7 @@ import { appendRandomString } from "../../utils/randomString";
 import BlazeSDK from "@juspay/blaze-sdk-web";
 // ----------Add by Pawan for GA4 Tracking----------------
 import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
-import { setBreezeCheckoutContext, getFiredAddress, setFiredAddress } from "../../utils/breezeContext";
+import { setBreezeCheckoutContext } from "../../utils/breezeContext";
 // -------Add by Pawan for GA4 Tracking----------------
 
 // --- Premium Skeleton Loader (Mobile Optimized) ---
@@ -432,14 +432,14 @@ function ShoppingCart() {
 
       console.log("BACKEND FINAL:", finalAmount);
 
-      // ===== Add By Pawan =========================================================
+      // ===== Add By Pawan =============================================================
       setBreezeCheckoutContext({
         order,
         finalAmount,
         cartData,
         promoCode,
       });
-      // Add By Pawan ===============================================================
+      // Add By Pawan =====================================================================
 
       if (!BlazeSDK?.process) {
         console.error("BlazeSDK missing");
@@ -548,40 +548,7 @@ function ShoppingCart() {
           },
         },
         (sdkResponse) => {
-          console.log("BLAZE SDK EVENT (process callback):", sdkResponse);
-
-          try {
-            const parsed =
-              typeof sdkResponse === "string" ? JSON.parse(sdkResponse) : sdkResponse;
-
-            const eventName = parsed?.payload?.event;
-            console.log("[Breeze] process() eventName:", eventName, parsed?.payload);
-
-            if (eventName === "AddedAddress" && !getFiredAddress()) {
-              setFiredAddress(true);
-              const data = parsed?.payload?.data ?? parsed?.payload ?? {};
-              window.top.dataLayer = window.top.dataLayer || [];
-              window.top.dataLayer.push({ ecommerce: null });
-              window.top.dataLayer.push({
-                event: "add_shipping_info",
-                ecommerce: {
-                  currency: data?.currency || "INR",
-                  value: data?.totalPrice || finalAmount || 0,
-                  shipping_tier: data?.shippingMethod || data?.deliveryType || "",
-                  address: {
-                    city: data?.address?.city || data?.city || "",
-                    state: data?.address?.state || data?.state || "",
-                    pincode: data?.address?.pincode || data?.pincode || "",
-                  },
-                  items: buildItemsFromRawCart(cartData),
-                },
-              });
-
-              console.log("[Breeze] add_shipping_info pushed");
-            }
-          } catch (e) {
-            console.error("[Breeze] process() callback parse error:", e);
-          }
+          console.log("BLAZE SDK EVENT (process callback, fallback only):", sdkResponse);
         }
       );
     } catch (err) {
