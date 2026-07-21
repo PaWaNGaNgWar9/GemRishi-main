@@ -47,7 +47,7 @@ const ProductPage = () => {
 
 		return {
 			page: currentPage,
-			limit: 20,
+			limit: 200,
 			subCategory: productSubCategoryId,
 			metal: selectedFilters.metal || undefined,
 			gender: selectedFilters.gender || undefined,

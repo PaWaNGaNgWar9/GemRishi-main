@@ -4,7 +4,7 @@ import axios from "axios";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const ProductCards = ({ category, products }) => {
-	const itemsPerPage = 8;
+	const itemsPerPage = 24;
 	const [currentPage, setCurrentPage] = useState(1);
 	const baseUrl = import.meta.env.VITE_URL;
 	const [metalRates, setMetalRates] = useState(null);
