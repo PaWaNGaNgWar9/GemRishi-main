@@ -62,11 +62,10 @@ function PurposeCollection() {
 
     // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
     const getVisiblePages = () => {
-        // How many page numbers to show around the current page (not counting first/last)
         const siblingCount = 1;
         if (totalPages <= 1) return [];
 
-        const totalNumbersToShow = siblingCount * 2 + 5; // first + last + current + 2 siblings + 2 ellipses
+        const totalNumbersToShow = siblingCount * 2 + 5;
         if (totalPages <= totalNumbersToShow) {
             return Array.from({ length: totalPages }, (_, i) => i + 1);
         }
@@ -288,7 +287,7 @@ function PurposeCollection() {
                                     key={`${page}-${idx}`}
                                     className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none"
                                 >
-                                    ...
+                                    ........
                                 </span>
                             ) : (
                                 <button

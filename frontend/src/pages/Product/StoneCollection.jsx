@@ -55,9 +55,12 @@ function StoneCollection() {
   const [showModal, setShowModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
-  const itemsPerPage = 12;
+    const itemsPerPage = 24;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+//----------------- Add By Pawan for total product----------------------------
+const [totalProducts, setTotalProducts] = useState(0);
+//----------------- Add By Pawan for total product----------------------------
 
   const [selectedColor, setSelectedColor] = useState("Select Color");
 
@@ -99,11 +102,17 @@ function StoneCollection() {
         data.name || data.subcategory?.name || "Stone Collection"
       );
       setTotalPages(data.totalPages || 1);
+//------------------Add by Pawan  for total products------------------------------
+      setTotalProducts(data.totalProducts || 0);
+//------------------Add by Pawan  for total products------------------------------
 
     } catch (err) {
       setError("Failed to load products");
       setProducts([]);
       setTotalPages(1);
+// ------------Add by Pawan  for total products------------------------------
+      setTotalProducts(0);
+// ------------Add by Pawan  for total products------------------------------
     } finally {
       if (firstLoadRef.current) {
         setLoading(false);
@@ -123,7 +132,6 @@ function StoneCollection() {
 
   // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
   const getVisiblePages = () => {
-    // How many page numbers to show around the current page (not counting first/last)
     const siblingCount = 1;
     if (totalPages <= 1) return [];
 
@@ -135,13 +143,13 @@ function StoneCollection() {
     const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
     const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
 
-    const showLeftEllipsis = leftSiblingIndex > 2;
+    const showLeftEllipsis = leftSiblingIndex > 3;
     const showRightEllipsis = rightSiblingIndex < totalPages - 1;
 
     const pages = [1];
 
     if (showLeftEllipsis) pages.push("ellipsis-left");
-    for (let i = leftSiblingIndex === 1 ? 2 : leftSiblingIndex; i <= (rightSiblingIndex === totalPages ? totalPages - 1 : rightSiblingIndex); i++) {
+    for (let i = leftSiblingIndex === 1 ? 3 : leftSiblingIndex; i <= (rightSiblingIndex === totalPages ? totalPages - 1 : rightSiblingIndex); i++) {
       pages.push(i);
     }
     if (showRightEllipsis) pages.push("ellipsis-right");
@@ -198,6 +206,11 @@ function StoneCollection() {
         <p className="text-xs sm:text-sm text-gray-600 mt-1 mb-4">
           Explore our stunning online collection!
         </p>
+         {/* -------------------------Add By Pawan total Products----------------------------- */}
+        <p className="text-lg  text-black  border border-dotted border-gray-300 p-4 rounded-md font-semibold">
+         Total Products : {totalProducts}
+       </p>
+        {/* -------------------------Add By Pawan total Products--------------------------- */}
       </div>
 
       {/* MOBILE FILTER ACCORDION */}
