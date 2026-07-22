@@ -60,14 +60,36 @@ function PurposeCollection() {
         fetchProducts();
     }, [purpose, currentPage]);
 
+    // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
     const getVisiblePages = () => {
-        const MaxPages = 5;
+        // How many page numbers to show around the current page (not counting first/last)
+        const siblingCount = 1;
         if (totalPages <= 1) return [];
-        let start = Math.max(currentPage - 2, 1);
-        let end = Math.min(totalPages, start + MaxPages - 1);
-        if (end - start < MaxPages - 1) start = Math.max(end - MaxPages + 1, 1);
-        return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+        const totalNumbersToShow = siblingCount * 2 + 5; // first + last + current + 2 siblings + 2 ellipses
+        if (totalPages <= totalNumbersToShow) {
+            return Array.from({ length: totalPages }, (_, i) => i + 1);
+        }
+
+        const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+        const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+        const showLeftEllipsis = leftSiblingIndex > 2;
+        const showRightEllipsis = rightSiblingIndex < totalPages - 1;
+
+        const pages = [1];
+
+        if (showLeftEllipsis) pages.push("ellipsis-left");
+        for (let i = leftSiblingIndex === 1 ? 2 : leftSiblingIndex; i <= (rightSiblingIndex === totalPages ? totalPages - 1 : rightSiblingIndex); i++) {
+            pages.push(i);
+        }
+        if (showRightEllipsis) pages.push("ellipsis-right");
+
+        pages.push(totalPages);
+
+        return pages;
     };
+    // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
 
     const handleProductClick = (productSlug, e) => {
         if (e.target.closest("button")) return;
@@ -258,24 +280,35 @@ function PurposeCollection() {
                         Previous
                     </button>
 
+                    {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
                     <div className="flex gap-1.5 mx-2">
-                        {getVisiblePages().map((page) => (
-                            <button
-                                key={page}
-                                onClick={() => {
-                                    setCurrentPage(page);
-                                    window.scrollTo({ top: 300, behavior: "smooth" });
-                                }}
-                                className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all
-                                    ${currentPage === page
-                                        ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
-                                        : "text-stone-500 hover:bg-stone-100"
-                                    }`}
-                            >
-                                {page}
-                            </button>
-                        ))}
+                        {getVisiblePages().map((page, idx) =>
+                            typeof page !== "number" ? (
+                                <span
+                                    key={`${page}-${idx}`}
+                                    className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none"
+                                >
+                                    ...
+                                </span>
+                            ) : (
+                                <button
+                                    key={page}
+                                    onClick={() => {
+                                        setCurrentPage(page);
+                                        window.scrollTo({ top: 300, behavior: "smooth" });
+                                    }}
+                                    className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all
+                                        ${currentPage === page
+                                            ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
+                                            : "text-stone-500 hover:bg-stone-100"
+                                        }`}
+                                >
+                                    {page}
+                                </button>
+                            )
+                        )}
                     </div>
+                    {/* ---------------------------- End Add By Pawan for 1,2,3,....last page ---------------------------- */}
 
                     <button
                         onClick={() => {

@@ -55,12 +55,9 @@ function StoneCollection() {
   const [showModal, setShowModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
-  const itemsPerPage = 24;
+  const itemsPerPage = 12;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-//----------------- Add By Pawan for total product----------------------------
-const [totalProducts, setTotalProducts] = useState(0);
-//----------------- Add By Pawan for total product----------------------------
 
   const [selectedColor, setSelectedColor] = useState("Select Color");
 
@@ -102,18 +99,11 @@ const [totalProducts, setTotalProducts] = useState(0);
         data.name || data.subcategory?.name || "Stone Collection"
       );
       setTotalPages(data.totalPages || 1);
-// ------------Add by Pawan  for total products------------------------------
-      setTotalProducts(data.totalProducts || 0);
-// ------------Add by Pawan  for total products------------------------------
 
     } catch (err) {
       setError("Failed to load products");
       setProducts([]);
       setTotalPages(1);
-// ------------Add by Pawan  for total products------------------------------
-        setTotalProducts(0);
-// ------------Add by Pawan  for total products------------------------------
-
     } finally {
       if (firstLoadRef.current) {
         setLoading(false);
@@ -131,18 +121,36 @@ const [totalProducts, setTotalProducts] = useState(0);
     }));
   };
 
+  // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
   const getVisiblePages = () => {
-    const MaxPages = 5;
+    // How many page numbers to show around the current page (not counting first/last)
+    const siblingCount = 1;
     if (totalPages <= 1) return [];
 
-    let start = Math.max(currentPage - 2, 1);
-    let end = Math.min(totalPages, start + MaxPages - 1);
-
-    if (end - start < MaxPages - 1) {
-      start = Math.max(end - MaxPages + 1, 1);
+    const totalNumbersToShow = siblingCount * 2 + 5; // first + last + current + 2 siblings + 2 ellipses
+    if (totalPages <= totalNumbersToShow) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
     }
-    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+    const showLeftEllipsis = leftSiblingIndex > 2;
+    const showRightEllipsis = rightSiblingIndex < totalPages - 1;
+
+    const pages = [1];
+
+    if (showLeftEllipsis) pages.push("ellipsis-left");
+    for (let i = leftSiblingIndex === 1 ? 2 : leftSiblingIndex; i <= (rightSiblingIndex === totalPages ? totalPages - 1 : rightSiblingIndex); i++) {
+      pages.push(i);
+    }
+    if (showRightEllipsis) pages.push("ellipsis-right");
+
+    pages.push(totalPages);
+
+    return pages;
   }
+  // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
 
   useEffect(() => {
     fetchProducts();
@@ -162,12 +170,14 @@ const [totalProducts, setTotalProducts] = useState(0);
 // -------------------------Fixed By Pawan------------------------------------------------------
   const handleProductClick = (productSlug, e) => {
     if (e.target.closest("button")) return;
+      navigate(appendRandomString(`/gemstones/${productSlug}`));
     // -----------Commment By Pawan-----------------------------------------------------------------
-     window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
-     // -----------Commment By Pawan-----------------------------------------------------------------
+    // window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
+        // -----------Commment By Pawan-----------------------------------------------------------------
   };
 
   const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
+
   if (loading)
     return (
       <div className="flex flex-col px-4 sm:px-10 py-10 w-full">
@@ -177,6 +187,7 @@ const [totalProducts, setTotalProducts] = useState(0);
         </div>
       </div>
     );
+
   return (
     <div className="flex flex-col px-3 sm:px-6 md:px-10 py-6 w-full">
       {/* HEADER SECTION */}
@@ -187,18 +198,15 @@ const [totalProducts, setTotalProducts] = useState(0);
         <p className="text-xs sm:text-sm text-gray-600 mt-1 mb-4">
           Explore our stunning online collection!
         </p>
-        {/* -------------------------Add By Pawan total Products----------------------------- */}
-        <p className="text-lg  text-black  border border-dotted border-gray-300 p-4 rounded-md font-semibold">
-         Total Products : {totalProducts}
-       </p>
-        {/* -------------------------Add By Pawan total Products--------------------------- */}
       </div>
+
       {/* MOBILE FILTER ACCORDION */}
       <div className="lg:hidden mb-4">
         <details className="border rounded-lg">
           <summary className="cursor-pointer px-4 py-3 font-semibold bg-gray-50 rounded-lg">
             Filters & Sorting
           </summary>
+
           <div className="p-4 flex flex-col gap-3">
             {/** Sort */}
             <select
@@ -216,6 +224,7 @@ const [totalProducts, setTotalProducts] = useState(0);
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
             </select>
+
             {/** Carat */}
             <select
               className="border px-3 py-2 rounded"
@@ -576,12 +585,12 @@ const [totalProducts, setTotalProducts] = useState(0);
      setSelectedFilters((prev) => ({ ...prev, minPrice: val[0], maxPrice: val[1] }));
        }}
             >
-        <option value="">Quality</option>
-         <option value="50-20000">Good (₹0-₹20K)</option>
-          <option value="20001-100000">Premium (₹20K-₹1.0L)</option>
-           <option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
-            <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
-             </select>
+<option value="">Quality</option>
+<option value="50-20000">Good (₹0-₹20K)</option>
+<option value="20001-100000">Premium (₹20K-₹1.0L)</option>
+<option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
+<option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
+            </select>
         <button
           className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition text-sm font-medium"
           onClick={() => {
@@ -669,23 +678,34 @@ const [totalProducts, setTotalProducts] = useState(0);
             Previous
           </button>
 
+          {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
           <div className="flex gap-1 sm:gap-2 mx-2">
-            {getVisiblePages().map((page) => (
-              <button
-                key={page}
-                onClick={() => {
-                  setCurrentPage(page)
-                  window.scrollTo({ top: 300, behavior: "smooth" });
-                }}
-                className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all ${currentPage === page
-                  ? "bg-[#264A3F] text-white shadow-md"
-                  : "text-gray-600 hover:bg-gray-100"
-                  }`}
-              >
-                {page}
-              </button>
-            ))}
+            {getVisiblePages().map((page, idx) =>
+              typeof page !== "number" ? (
+                <span
+                  key={`${page}-${idx}`}
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-gray-400 select-none"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => {
+                    setCurrentPage(page)
+                    window.scrollTo({ top: 300, behavior: "smooth" });
+                  }}
+                  className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all ${currentPage === page
+                    ? "bg-[#264A3F] text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
           </div>
+          {/* ---------------------------- End Add By Pawan for 1,2,3,....last page ---------------------------- */}
 
           <button
             onClick={() => {
