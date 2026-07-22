@@ -58,6 +58,9 @@ function StoneCollection() {
   const itemsPerPage = 24;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+//----------------- Add By Pawan for total product----------------------------
+const [totalProducts, setTotalProducts] = useState(0);
+//----------------- Add By Pawan for total product----------------------------
 
   const [selectedColor, setSelectedColor] = useState("Select Color");
 
@@ -99,11 +102,17 @@ function StoneCollection() {
         data.name || data.subcategory?.name || "Stone Collection"
       );
       setTotalPages(data.totalPages || 1);
+// ------------Add by Pawan  for total products------------------------------
+      setTotalProducts(data.totalProducts || 0);
+// ------------Add by Pawan  for total products------------------------------
 
     } catch (err) {
       setError("Failed to load products");
       setProducts([]);
       setTotalPages(1);
+// ------------Add by Pawan  for total products------------------------------
+      setTotalProducts(0);
+// ------------Add by Pawan  for total products------------------------------
     } finally {
       if (firstLoadRef.current) {
         setLoading(false);
@@ -122,7 +131,7 @@ function StoneCollection() {
   };
 
   const getVisiblePages = () => {
-    const MaxPages = 5;
+    const MaxPages = 6;
     if (totalPages <= 1) return [];
 
     let start = Math.max(currentPage - 2, 1);
@@ -152,10 +161,10 @@ function StoneCollection() {
 // -------------------------Fixed By Pawan------------------------------------------------------
   const handleProductClick = (productSlug, e) => {
     if (e.target.closest("button")) return;
-      // navigate(appendRandomString(`/gemstones/${productSlug}`));
+      navigate(appendRandomString(`/gemstones/${productSlug}`));
     // -----------Commment By Pawan-----------------------------------------------------------------
-     window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
-     // -----------Commment By Pawan-----------------------------------------------------------------
+    // window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
+        // -----------Commment By Pawan-----------------------------------------------------------------
   };
 
   const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
@@ -180,6 +189,11 @@ function StoneCollection() {
         <p className="text-xs sm:text-sm text-gray-600 mt-1 mb-4">
           Explore our stunning online collection!
         </p>
+        {/* ----------------Add By Pawan total Products------------------- */}
+        <p className="text-2xl  text-cyan-500  font-bold">
+         Total Products  {totalProducts}
+       </p>
+        {/* ----------------Add By Pawan total Products------------------- */}
       </div>
 
       {/* MOBILE FILTER ACCORDION */}
@@ -310,8 +324,7 @@ function StoneCollection() {
               <option value="Brown">Brown (All Shades)</option>
               <option value="Golden">Golden (All Shades)</option>
             </select>
-
-            {/** Cut */}
+            {/**------------------------Cut-------------------------- */}
             <select
               className="border px-3 py-2 rounded"
               value={selectedFilters.cut}
