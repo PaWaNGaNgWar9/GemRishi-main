@@ -188,8 +188,8 @@ const [totalProducts, setTotalProducts] = useState(0);
           Explore our stunning online collection!
         </p>
         {/* -------------------------Add By Pawan total Products----------------------------- */}
-        <p className="text-2xl  text-cyan-500  font-bold">
-         Total Products  {totalProducts}
+        <p className="text-lg  text-black  border border-dotted border-gray-300 p-4 rounded-md font-semibold">
+         Total Products : {totalProducts}
        </p>
         {/* -------------------------Add By Pawan total Products--------------------------- */}
       </div>
