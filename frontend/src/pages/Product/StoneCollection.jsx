@@ -162,14 +162,12 @@ const [totalProducts, setTotalProducts] = useState(0);
 // -------------------------Fixed By Pawan------------------------------------------------------
   const handleProductClick = (productSlug, e) => {
     if (e.target.closest("button")) return;
-      // navigate(appendRandomString(`/gemstones/${productSlug}`));
     // -----------Commment By Pawan-----------------------------------------------------------------
      window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
      // -----------Commment By Pawan-----------------------------------------------------------------
   };
 
   const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
-
   if (loading)
     return (
       <div className="flex flex-col px-4 sm:px-10 py-10 w-full">
@@ -179,7 +177,6 @@ const [totalProducts, setTotalProducts] = useState(0);
         </div>
       </div>
     );
-
   return (
     <div className="flex flex-col px-3 sm:px-6 md:px-10 py-6 w-full">
       {/* HEADER SECTION */}
@@ -190,20 +187,18 @@ const [totalProducts, setTotalProducts] = useState(0);
         <p className="text-xs sm:text-sm text-gray-600 mt-1 mb-4">
           Explore our stunning online collection!
         </p>
-        {/* ----------------Add By Pawan total Products------------------- */}
+        {/* -------------------------Add By Pawan total Products----------------------------- */}
         <p className="text-2xl  text-cyan-500  font-bold">
          Total Products  {totalProducts}
        </p>
-        {/* ----------------Add By Pawan total Products------------------- */}
+        {/* -------------------------Add By Pawan total Products--------------------------- */}
       </div>
-
       {/* MOBILE FILTER ACCORDION */}
       <div className="lg:hidden mb-4">
         <details className="border rounded-lg">
           <summary className="cursor-pointer px-4 py-3 font-semibold bg-gray-50 rounded-lg">
             Filters & Sorting
           </summary>
-
           <div className="p-4 flex flex-col gap-3">
             {/** Sort */}
             <select
@@ -221,7 +216,6 @@ const [totalProducts, setTotalProducts] = useState(0);
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
             </select>
-
             {/** Carat */}
             <select
               className="border px-3 py-2 rounded"
@@ -582,12 +576,12 @@ const [totalProducts, setTotalProducts] = useState(0);
      setSelectedFilters((prev) => ({ ...prev, minPrice: val[0], maxPrice: val[1] }));
        }}
             >
-<option value="">Quality</option>
-<option value="50-20000">Good (₹0-₹20K)</option>
-<option value="20001-100000">Premium (₹20K-₹1.0L)</option>
-<option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
-<option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
-            </select>
+        <option value="">Quality</option>
+         <option value="50-20000">Good (₹0-₹20K)</option>
+          <option value="20001-100000">Premium (₹20K-₹1.0L)</option>
+           <option value="100001-500000">Luxury (₹1.0L-₹5.0L)</option>
+            <option value="500001-1500000">Exclusive(Above ₹5.0L)</option>
+             </select>
         <button
           className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition text-sm font-medium"
           onClick={() => {
