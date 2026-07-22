@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import FilteredCard from "./FilteredCard";
-import { Pages } from "@mui/icons-material";
 
 const GemstoneCard = ({ color, products }) => {
 	const itemsPerPage = 8;
@@ -31,6 +30,7 @@ const GemstoneCard = ({ color, products }) => {
 			setCurrentPage(page);
 		}
 	};
+
 	return (
 		<div>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -64,7 +64,7 @@ const GemstoneCard = ({ color, products }) => {
 						<ChevronLeft className="w-4 h-4" />
 					</button>
 
-					{/* {[...Array(totalPages)].map((_, i) => (
+					{[...Array(totalPages)].map((_, i) => (
 						<button
 							key={i + 1}
 							onClick={() => goToPage(i + 1)}
@@ -75,79 +75,7 @@ const GemstoneCard = ({ color, products }) => {
 						>
 							{i + 1}
 						</button>
-					))} */}
-{/* ----------------- Add By Pawan for (1,2,3....last page) ---------------------- */}
-{(() => {
-  const pages = [];
-  pages.push(
-    <button
-      key={1}
-      onClick={() => goToPage(1)}
-      className={`px-3 py-1 rounded ${
-        currentPage === 1
-          ? "text-blue-600 font-semibold"
-          : "text-gray-500 hover:text-blue-600"
-      }`}
-    >
-      1
-    </button>
-  );
-  if (currentPage > 3) {
-    pages.push(
-      <span key="leftDots" className="px-2">
-        ...
-      </span>
-    );
-  }
-  for (
-    let i = Math.max(2, currentPage - 1);
-    i <= Math.min(totalPages - 1, currentPage + 1);
-    i++
-  ) {
-    pages.push(
-      <button
-        key={i}
-        onClick={() => goToPage(i)}
-        className={`px-3 py-1 rounded ${
-          currentPage === i
-            ? "text-blue-600 font-semibold"
-            : "text-gray-500 hover:text-blue-600"
-        }`}
-      >
-        {i}
-      </button>
-    );
-  }
-
-  // Right dots
-  if (currentPage < totalPages - 2) {
-    pages.push(
-      <span key="rightDots" className="px-2">
-        ...
-      </span>
-    );
-  }
-
-  // Last page
-  if (totalPages > 1) {
-    pages.push(
-      <button
-        key={totalPages}
-        onClick={() => goToPage(totalPages)}
-        className={`px-3 py-1 rounded ${
-          currentPage === totalPages
-            ? "text-blue-600 font-semibold"
-            : "text-gray-500 hover:text-blue-600"
-        }`}
-      >
-        {totalPages}
-      </button>
-    );
-  }
-
-  return pages;
-})()}
-{/* ------------------------------------------------------------------------------ */}
+					))}
 
 					<button
 						onClick={() => goToPage(currentPage + 1)}
