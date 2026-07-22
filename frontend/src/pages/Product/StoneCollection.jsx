@@ -58,6 +58,9 @@ function StoneCollection() {
   const itemsPerPage = 24;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+//----------------- Add By Pawan for total product----------------------------
+const [totalProducts, setTotalProducts] = useState(0);
+//----------------- Add By Pawan for total product----------------------------
 
   const [selectedColor, setSelectedColor] = useState("Select Color");
 
@@ -99,11 +102,18 @@ function StoneCollection() {
         data.name || data.subcategory?.name || "Stone Collection"
       );
       setTotalPages(data.totalPages || 1);
+// ------------Add by Pawan  for total products------------------------------
+      setTotalProducts(data.totalProducts || 0);
+// ------------Add by Pawan  for total products------------------------------
 
     } catch (err) {
       setError("Failed to load products");
       setProducts([]);
       setTotalPages(1);
+// ------------Add by Pawan  for total products------------------------------
+        setTotalProducts(0);
+// ------------Add by Pawan  for total products------------------------------
+
     } finally {
       if (firstLoadRef.current) {
         setLoading(false);
@@ -180,6 +190,11 @@ function StoneCollection() {
         <p className="text-xs sm:text-sm text-gray-600 mt-1 mb-4">
           Explore our stunning online collection!
         </p>
+        {/* ----------------Add By Pawan total Products------------------- */}
+        <p className="text-2xl  text-cyan-500  font-bold">
+         Total Products  {totalProducts}
+       </p>
+        {/* ----------------Add By Pawan total Products------------------- */}
       </div>
 
       {/* MOBILE FILTER ACCORDION */}
