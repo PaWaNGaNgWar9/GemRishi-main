@@ -62,30 +62,28 @@ function PurposeCollection() {
 
     // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
     const getVisiblePages = () => {
-        const siblingCount = 1;
         if (totalPages <= 1) return [];
-
-        const totalNumbersToShow = siblingCount * 2 + 5;
-        if (totalPages <= totalNumbersToShow) {
-            return Array.from({ length: totalPages }, (_, i) => i + 1);
-        }
-
-        const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-        const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
-        const showLeftEllipsis = leftSiblingIndex > 2;
-        const showRightEllipsis = rightSiblingIndex < totalPages - 1;
-
-        const pages = [1];
-
-        if (showLeftEllipsis) pages.push("ellipsis-left");
-        for (let i = leftSiblingIndex === 1 ? 2 : leftSiblingIndex; i <= (rightSiblingIndex === totalPages ? totalPages - 1 : rightSiblingIndex); i++) {
-            pages.push(i);
-        }
-        if (showRightEllipsis) pages.push("ellipsis-right");
-
-        pages.push(totalPages);
-
+ 
+        const firstCount = 4;   // always show pages 1,2,3,4
+        const siblingCount = 1; // show one neighbor on each side of the current page
+ 
+        const shown = new Set();
+        for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
+        for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
+        shown.add(totalPages); // always show the last page
+ 
+        const sorted = Array.from(shown).sort((a, b) => a - b);
+ 
+        const pages = [];
+        let prev = 0;
+        sorted.forEach((page) => {
+            if (prev && page - prev > 1) {
+                pages.push(`ellipsis-${prev}`);
+            }
+            pages.push(page);
+            prev = page;
+        });
+ 
         return pages;
     };
     // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
@@ -280,14 +278,14 @@ function PurposeCollection() {
                     </button>
 
                     {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-                    <div className="flex gap-1.5 mx-2">
+                     <div className="flex gap-1.5 mx-2">
                         {getVisiblePages().map((page, idx) =>
                             typeof page !== "number" ? (
                                 <span
                                     key={`${page}-${idx}`}
                                     className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none"
                                 >
-                                    ........
+                                    ...
                                 </span>
                             ) : (
                                 <button
