@@ -720,13 +720,26 @@ function HeaderDetailPage({ onSendId }) {
                 Available Design
               </h4>
 
+              {/* ==================== fix by pawan alignment of jewellery ==================== */}
+              {/*
+                Root cause: the heading above is "text-center lg:text-left" but the
+                card list used to be a flex row with "justify-center". On desktop that
+                centers the ROW AS A GROUP, so with only 1-2 results the cards clump
+                toward the middle instead of starting under the left-aligned heading —
+                producing the big empty gap on the right seen in the screenshots.
+
+                Fix: use a CSS grid instead of flex-wrap + justify-center. Grid items
+                naturally flow left-to-right / top-to-bottom and stay aligned under the
+                heading no matter how many cards come back from the API, while still
+                centering on mobile to match the "text-center" heading there.
+              */}
               {jewelryLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#264A3F] mx-auto"></div>
                   <p className="text-gray-500 mt-4">Loading designs...</p>
                 </div>
               ) : jewelryData?.jeweleries?.length > 0 ? (
-                <div className="flex flex-row flex-wrap justify-center gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center lg:justify-items-start">
                   {jewelryData.jeweleries.map((item, index) => (
                     <div
                       key={item._id}
@@ -746,7 +759,7 @@ function HeaderDetailPage({ onSendId }) {
 
                         setTotalPrice(totalJewelryPrice);
                       }}
-                      className={`w-full sm:w-[260px] p-4 border-2 rounded-xl bg-white flex flex-col items-center text-center cursor-pointer transition-all duration-200 ${selectedProduct?.index === index
+                      className={`w-full max-w-[260px] p-4 border-2 rounded-xl bg-white flex flex-col items-center text-center cursor-pointer transition-all duration-200 ${selectedProduct?.index === index
                         ? "border-[#20A079] bg-green-50 shadow-lg scale-105"
                         : "border-gray-200 hover:shadow-lg hover:-translate-y-[2px]"
                         }`}
@@ -811,6 +824,7 @@ function HeaderDetailPage({ onSendId }) {
                   </p>
                 </div>
               )}
+              {/* ================== end fix by pawan alignment of jewellery ================== */}
             </div>
           )}
 
