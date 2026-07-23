@@ -17,7 +17,6 @@ function StoneCollection() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const URL = import.meta.env.VITE_URL;
-
   const INITIAL_FILTERS = {
     gemname: "",
     minWeight: "",
@@ -61,9 +60,7 @@ function StoneCollection() {
 //----------------- Add By Pawan for total product----------------------------
 const [totalProducts, setTotalProducts] = useState(0);
 //----------------- Add By Pawan for total product----------------------------
-
   const [selectedColor, setSelectedColor] = useState("Select Color");
-
   useEffect(() => {
     setCurrentPage(1);
   }, [selectedFilters]);
@@ -134,13 +131,13 @@ const [totalProducts, setTotalProducts] = useState(0);
   const getVisiblePages = () => {
     if (totalPages <= 1) return [];
 
-    const firstCount = 4;   // always show pages 1,2,3,4
-    const siblingCount = 1; // show one neighbor on each side of the current page
+    const firstCount = 4;  
+    const siblingCount = 1; 
 
     const shown = new Set();
     for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
     for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
-    shown.add(totalPages); // always show the last page
+    shown.add(totalPages); 
 
     const sorted = Array.from(shown).sort((a, b) => a - b);
 
@@ -172,14 +169,16 @@ const [totalProducts, setTotalProducts] = useState(0);
       ...prev,
       [key]: value,
     }));
-  }
-// -------------------------Fixed By Pawan------------------------------------------------------
+  };
+
   const handleProductClick = (productSlug, e) => {
     if (e.target.closest("button")) return;
-      navigate(appendRandomString(`/gemstones/${productSlug}`));
-    // -----------Commment By Pawan-----------------------------------------------------------------
-    // window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
-        // -----------Commment By Pawan-----------------------------------------------------------------
+
+    window.open(
+      appendRandomString(`/gemstones/${productSlug}`),
+      "_blank",
+      "noopener,noreferrer"
+    );
   };
 
   const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
@@ -738,4 +737,4 @@ const [totalProducts, setTotalProducts] = useState(0);
   );
 }
 
-export default StoneCollection;
+export default StoneCollection;   
