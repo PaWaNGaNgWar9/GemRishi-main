@@ -7,7 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { addItemToCart } from "../../redux/cartSlice";
 import { motion, AnimatePresence } from "framer-motion"; // ✅ Added for Modal Animation
-
 // Import all assets
 import BlueSapphire from "../../assets/Stone/BlueSapphire.svg";
 import Energized from "../../assets/DetailPage/Energized.svg";
@@ -62,10 +61,8 @@ function HeaderDetailPage({ onSendId }) {
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-
   // ✅ Mini Cart Modal State
   const [showCartModal, setShowCartModal] = useState(false);
-
   // Jewelry Customization States
   const [isInterestedInJewelry, setIsInterestedInJewelry] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState("Ring");
@@ -596,7 +593,6 @@ function HeaderDetailPage({ onSendId }) {
     Quality: [
       { label: "Gold 18K", value: "gold18k", base: "gold" },
       { label: "Gold 22K", value: "gold22k", base: "gold" },
-      { label: "Gold 24K", value: "gold24k", base: "gold" },
       { label: "Silver", value: "silver", base: "silver" },
       { label: "Platinum", value: "platinum", base: "platinum" },
       { label: "Panchadhatu", value: "panchadhatu", base: "panchadhatu" },
@@ -652,7 +648,7 @@ function HeaderDetailPage({ onSendId }) {
 
   // -----------------Fix By Pawan disbale why gemrishi option------------------------------
   const renderJewelryCustomizationSection = () => (
-    <div className="w-full mb-6 space-y-8">
+    <div className="w-full max-w-5xl mx-auto mb-6 space-y-8 mt-8">
       {/* Title */}
       <div className="flex items-center flex-col mb-4 text-center">
         <h3 className="text-2xl font-semibold text-[#264A3F]">
@@ -663,9 +659,9 @@ function HeaderDetailPage({ onSendId }) {
         </p>
       </div>
 
-      {/* Main Layout — now a single column: category row on top, content below */}
-      <div className="flex flex-col gap-8 w-full">
-        <div className="flex flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full">
+      {/*-----fix By Pawan------------Main Layout — now a single column: category row on top, content below */}
+      <div className="flex flex-col items-center gap-3 w-full">
+          <div className="flex flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full">
           {sidebarFilters.map((item) => (
             <div
               key={item.label}
@@ -678,9 +674,9 @@ function HeaderDetailPage({ onSendId }) {
               <img
                 src={item.icon}
                 alt={item.label}
-                className="w-8 h-8 object-contain mb-3"
+                className="w-9 h-9 object-contain mb-3"
               />
-              <p className="text-[14px] font-medium text-gray-800 text-center">
+              <p className="text-[16px] font-medium text-gray-800 text-center">
                 {item.label}
               </p>
             </div>
@@ -688,7 +684,7 @@ function HeaderDetailPage({ onSendId }) {
         </div>
 
         {/* MAIN CONTENT */}
-        <div className="flex-1 max-w-4xl mx-auto w-full space-y-8">
+        <div className="w-full max-w-5xl mx-auto px-4 space-y-10">
           {/* Metal Selector */}
           <div className="flex flex-row flex-wrap justify-center items-center gap-4 p-6 rounded-xl">
             <div className="flex flex-row items-center gap-4 w-full sm:w-auto">
@@ -701,7 +697,7 @@ function HeaderDetailPage({ onSendId }) {
                   setSelectedMetal(e.target.value);
                   setSelectedProduct(null);
                 }}
-                className="w-full sm:w-[300px] lg:w-[400px] h-[50px] border-2 rounded-lg border-gray-300 px-4 text-gray-700 focus:ring-2 focus:ring-[#264A3F] outline-none text-base"
+                className="w-full sm:w-[300px] max-w-full h-[50px] border-2 rounded-lg border-gray-300 px-4 text-gray-700 focus:ring-2 focus:ring-[#264A3F] outline-none text-base"
               >
                 <option value="">Select Metal</option>
                 {sizeOptions.Quality.map((metal) => (
@@ -720,27 +716,14 @@ function HeaderDetailPage({ onSendId }) {
                 Available Design
               </h4>
 
-              {/* ==================== fix by pawan alignment of jewellery ==================== */}
-              {/*
-                Root cause: the heading above is "text-center lg:text-left" but the
-                card list used to be a flex row with "justify-center". On desktop that
-                centers the ROW AS A GROUP, so with only 1-2 results the cards clump
-                toward the middle instead of starting under the left-aligned heading —
-                producing the big empty gap on the right seen in the screenshots.
-
-                Fix: use a CSS grid instead of flex-wrap + justify-center. Grid items
-                naturally flow left-to-right / top-to-bottom and stay aligned under the
-                heading no matter how many cards come back from the API, while still
-                centering on mobile to match the "text-center" heading there.
-              */}
               {jewelryLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#264A3F] mx-auto"></div>
-                  <p className="text-gray-500 mt-4">Loading designs...</p>
-                </div>
-              ) : jewelryData?.jeweleries?.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center lg:justify-items-start">
-                  {jewelryData.jeweleries.map((item, index) => (
+                    <p className="text-gray-500 mt-4">Loading designs...</p>
+                  </div>
+                       ) : jewelryData?.jeweleries?.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+                   {jewelryData.jeweleries.map((item, index) => (
                     <div
                       key={item._id}
                       onClick={() => {
@@ -758,17 +741,18 @@ function HeaderDetailPage({ onSendId }) {
                           certificatePrice;
 
                         setTotalPrice(totalJewelryPrice);
-                      }}
-                      className={`w-full max-w-[260px] p-4 border-2 rounded-xl bg-white flex flex-col items-center text-center cursor-pointer transition-all duration-200 ${selectedProduct?.index === index
-                        ? "border-[#20A079] bg-green-50 shadow-lg scale-105"
-                        : "border-gray-200 hover:shadow-lg hover:-translate-y-[2px]"
-                        }`}
-                    >
-                      <img
-                        src={item.images?.[0]?.url || "/placeholder.svg"}
-                        alt={item.jewelryName}
-                        className="w-24 h-24 object-contain mb-4"
-                      />
+                           }}
+                            className={`w-full p-4 border-2 rounded-xl bg-white flex flex-col items-center text-center cursor-pointer transition-all duration-200 ${
+                            selectedProduct?.index === index
+                            ? "border-[#20A079] bg-green-50 shadow-lg scale-105"
+                            : "border-gray-200 hover:shadow-lg hover:-translate-y-[2px]"
+                             }`}
+                             >
+                           <img
+                           src={item.images?.[0]?.url || "/placeholder.svg"}
+                           alt={item.jewelryName}
+                           className="w-24 h-24 object-contain mb-4"
+                           />
 
                       <p className="text-base font-semibold text-gray-800 mb-2">
                         {item.jewelryName || "Unnamed"}
@@ -824,7 +808,6 @@ function HeaderDetailPage({ onSendId }) {
                   </p>
                 </div>
               )}
-              {/* ================== end fix by pawan alignment of jewellery ================== */}
             </div>
           )}
 
@@ -937,7 +920,7 @@ function HeaderDetailPage({ onSendId }) {
                 <button
                   onClick={handleAddToCart}
                   disabled={isAddingToCart || !selectedProduct?._id}
-                  className={`w-full h-[50px] lg:w-[580px] sm:h-[60px] rounded-[12px] text-white text-base sm:text-base lg:text-[18px] font-bold transition-colors duration-200 mx-auto ${!selectedProduct
+                  className={`w-full max-w-[580px] h-[50px] sm:h-[60px] rounded-[12px] text-white text-base sm:text-base lg:text-[18px] font-bold transition-colors duration-200 mx-auto block ${!selectedProduct
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-[#264A3F] hover:bg-[#1a3a2a] disabled:opacity-50 disabled:cursor-not-allowed"
                     }`}
@@ -1044,10 +1027,10 @@ function HeaderDetailPage({ onSendId }) {
           </span>
         </div>
 
-        {/* Main Content */}
-        <div className="w-full min-h-[830px] flex flex-col lg:flex-row px-4 sm:px-6 md:px-8 lg:px-20 gap-6 lg:gap-0">
+{/* ------------------------Main Content---------------fix by pawan-------------------*/}
+        <div className="w-full  flex flex-col lg:flex-row px-4 sm:px-6 md:px-8 lg:px-20 gap-6 lg:gap-0">
           {/* Left Column - Images */}
-          <div className="w-full lg:w-[45%] flex flex-col items-center lg:items-start pt-4 lg:pt-8">
+          <div className="w-full lg:w-[45%] flex flex-col items-center lg:items-start pt-4 lg:pt-6">
             <div className="w-full max-w-[500px] flex flex-col items-center">
               {/* Stock Status Badge */}
               <div className="flex items-center gap-2 mb-4">
@@ -1190,7 +1173,7 @@ function HeaderDetailPage({ onSendId }) {
           </div>
 
           {/* Right Column - Details */}
-          <div className="w-full lg:w-[55%] pt-4 lg:pt-8">
+          <div className="w-full lg:w-[50%] pt-4 lg:pt-6">
             <div className="w-full">
               {/* Title and Actions */}
               <div className="w-full flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
@@ -1304,34 +1287,27 @@ function HeaderDetailPage({ onSendId }) {
                 </div>
               </div>
 
-              {/* ✅ Jewelry customization: rendered immediately after the toggle,
-                   */}
-              {isInterestedInJewelry && (
-                <div className="flex justify-center items-center">
-                  {renderJewelryCustomizationSection()}
-                </div>
-              )}
  {/* --------------fix by pawan Why Gemrishi — only shown when NOT customizing jewelry--------------------- */}
               {!isInterestedInJewelry && (
                 <div className="w-full mb-6">
                   <p className="text-base sm:text-base lg:text-[18px] mb-4">
                     Why Gemrishi ?
                   </p>
-                 <div className="flex flex-row gap-2 sm:gap-4 lg:gap-6">
-               <div className="w-[160px] h-[90px] lg:w-[200px] lg:h-[100px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
-             <img src={Energized} alt="Energized" className="w-10 h-10" />
+                 <div className="flex flex-row gap-2 sm:gap-4 lg:gap-5">
+               <div className="w-[160px] h-[70px] lg:w-[200px] lg:h-[80px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
+             <img src={Energized} alt="Energized" className="w-8 h-8" />
              <p className="text-[12px] font-bold leading-tight">
                 Effectively <br /> Energized
               </p>
               </div>
-              <div className="w-[160px] h-[90px] lg:w-[200px] lg:h-[100px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
-             <img src={Original} alt="Original" className="w-10 h-10" />
+              <div className="w-[160px] h-[70px] lg:w-[200px] lg:h-[80px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
+             <img src={Original} alt="Original" className="w-8 h-8" />
             <p className="text-[12px] font-bold leading-tight">
              100% Original <br /> and Authentic
             </p>
             </div>
-        <div className="w-[160px] h-[90px] lg:w-[200px] lg:h-[100px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
-          <img src={Shipping} alt="Shipping" className="w-10 h-10" />
+        <div className="w-[160px] h-[70px] lg:w-[200px] lg:h-[80px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
+          <img src={Shipping} alt="Shipping" className="w-8 h-8" />
              <p className="text-[12px] font-bold leading-tight">
                Free Shipping <br /> Available
              </p>
@@ -1379,6 +1355,13 @@ function HeaderDetailPage({ onSendId }) {
             </div>
           </div>
         </div>
+
+        {/* ------------------------Add By Pawan for fixing  alignment----------------------*/}
+        {isInterestedInJewelry && (
+          <div className="w-full flex justify-center px-4 sm:px-6 md:px-8 lg:px-10">
+            {renderJewelryCustomizationSection()}
+          </div>
+        )}
       </div>
     </>
   );
