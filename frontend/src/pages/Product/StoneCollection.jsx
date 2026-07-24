@@ -54,7 +54,7 @@ function StoneCollection() {
   const [showModal, setShowModal] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState(null);
 
-    const itemsPerPage = 24;
+    const itemsPerPage = 16;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 //----------------- Add By Pawan for total product----------------------------
