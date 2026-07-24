@@ -712,7 +712,7 @@ function HeaderDetailPage({ onSendId }) {
           {/* Product Grid */}
           {selectedMetal && (
             <div className="space-y-6">
-              <h4 className="text-xl font-semibold text-[#264A3F] text-center lg:text-left">
+              <h4 className="text-xl font-semibold text-[#264A3F] text-center lg:text-center">
                 Available Design
               </h4>
 
