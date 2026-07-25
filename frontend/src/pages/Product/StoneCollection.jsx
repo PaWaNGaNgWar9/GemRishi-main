@@ -57,7 +57,7 @@ function StoneCollection() {
     const itemsPerPage = 16;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-//----------------- Add By Pawan for total product----------------------------
+//-------------------- Add By Pawan for total product-------------------------------
 const [totalProducts, setTotalProducts] = useState(0);
 //----------------- Add By Pawan for total product----------------------------
   const [selectedColor, setSelectedColor] = useState("Select Color");
