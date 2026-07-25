@@ -1271,7 +1271,7 @@ function HeaderDetailPage({ onSendId }) {
               <div className="w-full mb-6">
                 <div className="flex items-center gap-4">
                   <span className="text-md text-gray-700 font-medium">
-                    Select Ring/Pandent
+                    Select Ring/Pendant
                   </span>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
