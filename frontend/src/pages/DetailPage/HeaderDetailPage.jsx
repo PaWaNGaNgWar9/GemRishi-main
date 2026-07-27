@@ -1027,7 +1027,7 @@ function HeaderDetailPage({ onSendId }) {
           </span>
         </div>
 
-{/* ------------------------Main Content---------------fix by pawan-------------------*/}
+{/* ------------------------Main Content-------------------fix by pawan-------------------*/}
         <div className="w-full  flex flex-col lg:flex-row px-4 sm:px-6 md:px-8 lg:px-20 gap-6 lg:gap-0">
           {/* Left Column - Images */}
           <div className="w-full lg:w-[45%] flex flex-col items-center lg:items-start pt-4 lg:pt-6">
