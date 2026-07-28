@@ -15,10 +15,10 @@ import ReactImageMagnify from "react-image-magnify";
 // -----------------------------add by pawan--------------------------------------------------
 import { appendRandomString } from "../utils/randomString";
 // -----------------------------add by pawan--------------------------------------------------
-
-
-
-
+// ---------------Add By Pawan--------------------------------
+import { useSelector } from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../utils/currency";
+// ---------------Add By Pawan--------------------------------
 
 function HeaderDetailPage({ product = {}, metalRates = {} }) {
 	const getUserToken = () => {
@@ -50,6 +50,12 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 		product?.jewelryPrice || 0
 	);
 	const [isAddingToCart, setIsAddingToCart] = useState(false);
+// -------------Add by Pawan for Currency------------------------------------------------------
+	const { currency, rates } = useSelector((s) => s.currency);
+
+// -----------------------------Fix Mobile By Pawan--------------------------------------------------
+	const [isMobile, setIsMobile] = useState(false);
+// -----------------------------Fix Mobile By Pawan--------------------------------------------------
 
 	const images = product?.images?.map((img) => img.url);
 	const videos = product?.videos || [];
@@ -67,7 +73,14 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 // -----------------Add By Pawan --------------------------------------------------------
 	const shareUrl = appendRandomString(`/gemstones/${product?.slug}`);
 // -----------------Add By Pawan --------------------------------------------------------
-
+// -----------------------------Fix Mobile By Pawan--------------------------------------------------
+	useEffect(() => {
+		const checkMobile = () => setIsMobile(window.innerWidth < 1024); // lg breakpoint
+		checkMobile();
+		window.addEventListener("resize", checkMobile);
+		return () => window.removeEventListener("resize", checkMobile);
+	}, []);
+// -----------------------------Fix Mobile By Pawan--------------------------------------------------
 	useEffect(() => {
 		if (product && metalRates) {
 			calculateTotalPrice();
@@ -429,27 +442,37 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 					<div className="relative w-full max-w-[400px] mb-4 overflow-visible">
 
 						{mediaList[selected].type === "image" ? (
-							<ReactImageMagnify
-								{...{
-									smallImage: {
-										alt: product.jewelryName,
-										isFluidWidth: true,
-										src: mediaList[selected].url,
-									},
-									largeImage: {
-										src: mediaList[selected].url,
-										width: 1000,
-										height: 1000,
-									},
-									enlargedImagePosition: "beside",
-									enlargedImageContainerDimensions: {
-										width: 900,
-										height: 700,
-									},
-									enlargedImageContainerClassName:
-										"z-50 bg-white shadow-xl border rounded-lg overflow-hidden",
-								}}
-							/>
+// -----------------------------Fix Mobile By Pawan--------------------------------------------------
+							isMobile ? (
+								<img
+									src={mediaList[selected].url}
+									alt={product.jewelryName}
+									className="w-full h-[400px] object-contain rounded-lg"
+								/>
+							) : (
+								<ReactImageMagnify
+									{...{
+										smallImage: {
+											alt: product.jewelryName,
+											isFluidWidth: true,
+											src: mediaList[selected].url,
+										},
+										largeImage: {
+											src: mediaList[selected].url,
+											width: 1000,
+											height: 1000,
+										},
+										enlargedImagePosition: "beside",
+										enlargedImageContainerDimensions: {
+											width: 900,
+											height: 700,
+										},
+										enlargedImageContainerClassName:
+											"z-50 bg-white shadow-xl border rounded-lg overflow-hidden",
+									}}
+								/>
+							)
+// -----------------------------Fix Mobile By Pawan--------------------------------------------------
 						) : (
 							<video
 								src={mediaList[selected].url}
@@ -459,8 +482,6 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 						)}
 
 					</div>
-
-
 					<div className="grid grid-cols-5 gap-2 w-full max-w-[400px]">
 						{mediaList.map((item, idx) => (
 							<button
@@ -511,13 +532,11 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 								<span>SKU</span> : {product.sku}
 							</p>
 							<div className="flex gap-4">
+{/* --------------------Add by pawan for currency------------------------------------ */}
 								<h2 className="font-bold text-2xl sm:text-3xl lg:text-[28px] text-gray-800">
-									₹{" "}
-									{calculatedPrice.toLocaleString("en-IN", {
-										minimumFractionDigits: 2,
-										maximumFractionDigits: 2,
-									})}
-								</h2>
+                           {formatCurrency(ConvertFromINR(calculatedPrice, rates, currency), currency)}
+                                </h2>
+{/* --------------------Add by pawan for currency------------------------------------ */}
 							</div>
 						</div>
 
@@ -535,14 +554,16 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 										className="w-full sm:w-[88%] border border-gray-300 p-2 rounded bg-white text-sm sm:text-base">
 										<option value="">Select Weight</option>
 										{product.gemstoneWeight.map((w) => (
-											<option
+						//-------------------Add By Pawan For currency--------------------------------
+										<option
 												key={w._id}
 												value={JSON.stringify({
 													weight: w.weight,
 													price: w.price,
 												})}>
-												{w.weight} Carat - ₹{w.price}
+												{w.weight} Carat - {formatCurrency(ConvertFromINR(w.price, rates, currency), currency)}
 											</option>
+						//-------------------Add By Pawan For currency--------------------------------
 										))}
 									</select>
 								</div>

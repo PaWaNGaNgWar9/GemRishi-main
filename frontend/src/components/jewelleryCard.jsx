@@ -1,5 +1,7 @@
 import React from "react";
-
+// -----------Add By Pawan for currency---------------------
+import Price from "./Price";
+// -----------Add By Pawan for currency---------------------
 const JewelleryCard = ({ image, title, sku, origin, price }) => {
 	return (
 		<div className="bg-white cursor cursor-pointer rounded-lg shadow-md p-4 w-60 hover:shadow-lg transition-shadow duration-300 ease-in-out hover:scale-105 transition-all delay-300">
@@ -20,7 +22,9 @@ const JewelleryCard = ({ image, title, sku, origin, price }) => {
 				<p className="text-sm text-gray-500">Origin: {origin}</p>
 
 				{/* Price */}
-				<p className="mt-2 text-lg font-semibold text-gray-900">Rs.{price}</p>
+				<p className="mt-2 text-lg font-semibold text-gray-900">
+					<Price amount={price} />
+				</p>
 			</div>
 		</div>
 	);

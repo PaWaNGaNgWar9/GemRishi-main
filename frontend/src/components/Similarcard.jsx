@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { Heart, Play } from "lucide-react";
 import WishlistButton from "../components/wishlistButton";
 import VideoModal from "./models/VideoModal";
+// --------add by pawan for currency---------------------------
+import Price from "./Price";
+// --------add by pawan for currency---------------------------
 import { useState } from "react";
 
 const SimilarCard = ({
@@ -55,12 +58,11 @@ const SimilarCard = ({
 					{/* Type */}
 					{Type && <p className="text-sm text-gray-500 mb-2">Type: {Type}</p>}
 
-					{/* Price */}
-					<p className="text-md font-semibold text-gray-900">
-						{price
-							? `₹${price.toLocaleString("en-IN")}`
-							: "Price not available"}
-					</p>
+					{/* --------------add by pawan for currency------------ */}
+					   <p className="text-md font-semibold text-gray-900">
+                        {price ? <Price amount={price} /> : "Price not available"}
+                       </p>
+					{/* --------------add by pawan for currency------------ */}
 				</div>
 			</Link>
 

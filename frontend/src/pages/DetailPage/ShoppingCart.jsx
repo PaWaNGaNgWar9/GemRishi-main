@@ -12,7 +12,9 @@ import BlazeSDK from "@juspay/blaze-sdk-web";
 import { trackPurchaseEvent, buildItemsFromCartData, buildItemsFromRawCart } from "../../utils/purchaseTracking";
 import { setBreezeCheckoutContext } from "../../utils/breezeContext";
 // -------Add by Pawan for GA4 Tracking----------------
-
+// ----------Add By Pawan for the currency-------------------------------
+import { ConvertFromINR, formatCurrency } from "../../utils/currency";
+// ----------Add By Pawan for the currency-------------------------------
 // --- Premium Skeleton Loader (Mobile Optimized) ---
 const CartItemSkeleton = () => (
   <div className="w-full bg-white rounded-[20px] sm:rounded-[24px] border border-gray-200 shadow-sm p-4 sm:p-6 flex gap-4 sm:gap-6 animate-pulse mb-4 sm:mb-6">
@@ -30,7 +32,6 @@ const CartItemSkeleton = () => (
     </div>
   </div>
 );
-
 // --- UpSelling Component (Mobile Optimized) ---
 function UpSellingProducts({ products = [], loading = false }) {
   const navigate = useNavigate();
@@ -38,7 +39,6 @@ function UpSellingProducts({ products = [], loading = false }) {
   if (loading) return <div className="mt-8 text-gray-400 text-center animate-pulse text-sm">Curating suggestions...</div>;
 
   if (!products.length) return null;
-
   return (
     <div className="mt-12 sm:mt-16 mb-20">
       <h3 className="text-xl sm:text-2xl font-serif text-gray-900 mb-6 border-b border-gray-200 pb-3">You may also desire</h3>
@@ -48,7 +48,6 @@ function UpSellingProducts({ products = [], loading = false }) {
           const name = isJewelry ? p.slug : p.name;
           const slug = p.slug;
           const route = !isJewelry ? appendRandomString(`/details/product/${slug}`) : appendRandomString(`/gemstones/${slug}`);
-
           return (
             <div
               key={p._id}
@@ -88,13 +87,11 @@ function ShoppingCart() {
   const [products, setProducts] = useState([]);
   const [upsellLoading, setUpsellLoading] = useState(true);
   const userInfo = useSelector((state) => state.auth.userInfo);
-  // Formatting helper
-  const formatPrice = (price) => {
-    return Number(price || 0).toLocaleString("en-IN", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  };
+//-------------------Add By Pawan for currency----------------------------------
+ const { currency, rates } = useSelector((s) => s.currency);
+const formatPrice = (price) =>
+  formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
+  //-------------------Add By Pawan for currency----------------------------------
   // --- UPSELL LOGIC ---
   useEffect(() => {
     let mounted = true;
@@ -708,7 +705,7 @@ function ShoppingCart() {
                       {/* Price (Pushed to bottom) */}
                       <div className="mt-auto pt-3 sm:pt-4">
                         <p className="text-[16px] sm:text-[22px] font-medium text-gray-900 tracking-tight">
-                          Rs. {formatPrice(cartItem.totalPrice)}
+                         {formatPrice(cartItem.totalPrice)}
                         </p>
                       </div>
                     </div>
@@ -726,7 +723,7 @@ function ShoppingCart() {
 
                 <div className="flex justify-between items-center text-gray-600 mb-3 sm:mb-4 text-[14px] sm:text-[15px]">
                   <span>Subtotal</span>
-                  <span>Rs. {formatPrice(totalAmount)}</span>
+                  <span>{formatPrice(totalAmount)}</span>
                 </div>
                 <div className="flex justify-between items-center text-gray-600 mb-5 sm:mb-6 text-[14px] sm:text-[15px]">
                   <span>Shipping</span>
@@ -735,9 +732,8 @@ function ShoppingCart() {
 
                 <div className="flex justify-between items-center border-t border-gray-100 pt-4 sm:pt-6 mb-6 sm:mb-8">
                   <span className="text-base sm:text-lg text-gray-900 font-medium">Estimated Total</span>
-                  <span className="text-xl sm:text-2xl font-serif text-[#264A3F]">Rs. {formatPrice(totalAmount)}</span>
+                  <span className="text-xl sm:text-2xl font-serif text-[#264A3F]"> {formatPrice(totalAmount)}</span>
                 </div>
-
                 <button
                   onClick={handleBreezeProceed}
                   className="w-full h-[50px] sm:h-[60px] bg-[#264A3F] rounded-full text-[12px] sm:text-[13px] uppercase tracking-[0.15em] text-white font-bold hover:bg-[#1a3329] hover:shadow-lg transition-all duration-300"

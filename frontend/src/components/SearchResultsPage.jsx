@@ -2,7 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { appendRandomString } from "../utils/randomString";
-
+// ---------------Add By Pawan--------------------------------
+import { useSelector } from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../utils/currency";
+// ---------------Add By Pawan--------------------------------
 // Custom hook to parse query parameters from the URL
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -88,10 +91,12 @@ export default function SearchResultsPage() {
   useEffect(() => {
     fetchResults();
   }, [keyword, URL]); // Now calls fetchResults directly
-
+//  -------------add by pawan for currency---------------------
+  const { currency, rates } = useSelector((s) => s.currency);
   const formatPrice = (price) => {
-    return `₹${price?.toLocaleString("en-IN") || "0"}`; // Using en-IN for Indian Rupees format
-  };
+  return formatCurrency(ConvertFromINR(price || 0, rates, currency), currency);
+};
+  //  -------------add by pawan for currency---------------------------------
   const handleProductClick = (product) => {
     const isJewelry = !!product.jewelryName;
 

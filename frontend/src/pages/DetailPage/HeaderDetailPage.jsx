@@ -26,7 +26,10 @@ import { getLatestMetalRates } from "../../api/metalRates";
 import ReactImageMagnify from "react-image-magnify";
 import GemstonePopup from "../../components/popup";
 import { XMarkIcon } from "@heroicons/react/24/outline"; // ✅ Icon for closing modal
-
+// ------------------------add for currency by pawan-------------------------------
+import { useSelector } from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../../utils/currency";
+// ------------------------add for currency by pawan-------------------------------
 // Helper function to extract user token
 const getUserToken = () => {
   const userInfoString = localStorage.getItem("userInfo");
@@ -78,6 +81,8 @@ function HeaderDetailPage({ onSendId }) {
   const [totalPrice, setTotalPrice] = useState(null);
   const [expanded, setExpanded] = useState(false);
   const MAX_LENGTH = 90;
+  // ---------------add by pawan for currency-----------------
+  const { currency, rates } = useSelector((s) => s.currency);
 
   // Fetch metal rates
   const fetchMetalRates = async () => {
@@ -224,10 +229,11 @@ function HeaderDetailPage({ onSendId }) {
       prev === mediaItems.length - 1 ? 0 : prev + 1,
     );
   };
-  const formatPrice = (price) => {
-    return `₹ ${price.toLocaleString() || 0}`;
-  };
-
+  //-------------------Add By Pawan for currency----------------------------
+ const formatPrice = (price) => {
+  return formatCurrency(ConvertFromINR(price || 0, rates, currency), currency);
+};
+  //-------------------Add By Pawan for currency----------------------------
   const getMetalRate = (metalType) => {
     if (!metalRates || !metalType) return 0;
     const metalKey = metalType?.toLowerCase();
@@ -268,16 +274,13 @@ function HeaderDetailPage({ onSendId }) {
       });
       return;
     }
-
     if (!isInStock) {
       toast.error("This item is currently out of stock.", {
         position: "top-center",
       });
       return;
     }
-
     const userToken = getUserToken();
-
     try {
       setIsAddingToCart(true);
 
@@ -659,14 +662,15 @@ function HeaderDetailPage({ onSendId }) {
         </p>
       </div>
 
-      {/*-----fix By Pawan------------Main Layout — now a single column: category row on top, content below */}
+{/*----------fix By Pawan------------Main Layout — now a single column: category row on top, content below */}
       <div className="flex flex-col items-center gap-3 w-full">
           <div className="flex flex-row flex-wrap justify-center gap-3 sm:gap-4 w-full">
           {sidebarFilters.map((item) => (
             <div
               key={item.label}
               onClick={() => setSelectedCategory(item.label)}
-              className={`flex-1 min-w-[90px] max-w-[150px] h-[100px] sm:h-[120px] border-2 rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all duration-200 ${selectedCategory === item.label
+              className={`flex-1 min-w-[110px] max-w-[150px] h-[100px] sm:h-[120px] border-2 rounded-2xl 
+                flex flex-col items-center justify-center cursor-pointer transition-all duration-200 ${selectedCategory === item.label
                 ? "border-[#20A079] bg-green-50 shadow-lg scale-105"
                 : "border-gray-200 hover:shadow-md hover:-translate-y-[2px]"
                 }`}
@@ -715,7 +719,6 @@ function HeaderDetailPage({ onSendId }) {
               <h4 className="text-xl font-semibold text-[#264A3F] text-center lg:text-center">
                 Available Design
               </h4>
-
               {jewelryLoading ? (
                 <div className="text-center py-8">
                   <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#264A3F] mx-auto"></div>
@@ -728,18 +731,15 @@ function HeaderDetailPage({ onSendId }) {
                       key={item._id}
                       onClick={() => {
                         setSelectedProduct({ ...item, index });
-
                         const gemstoneWeight = productData.weight;
                         const metalPrice =
                           getMetalRate(selectedMetal) * gemstoneWeight;
                         const gemstonePrice = productData.price;
-
                         const totalJewelryPrice =
                           item.jewelryPrice +
                           metalPrice +
                           gemstonePrice +
                           certificatePrice;
-
                         setTotalPrice(totalJewelryPrice);
                            }}
                             className={`w-full p-4 border-2 rounded-xl bg-white flex flex-col items-center text-center cursor-pointer transition-all duration-200 ${
@@ -753,33 +753,33 @@ function HeaderDetailPage({ onSendId }) {
                            alt={item.jewelryName}
                            className="w-24 h-24 object-contain mb-4"
                            />
-
                       <p className="text-base font-semibold text-gray-800 mb-2">
                         {item.jewelryName || "Unnamed"}
                       </p>
-
                       <p className="text-sm text-gray-600 mb-2 capitalize">
                         {item.jewelryType} • {item.metal}
                       </p>
-
                       {item.origin && (
                         <p className="text-xs text-gray-500 mb-2">
                           Origin: {item.origin}
                         </p>
                       )}
-
                       {/* Price */}
                       <div className="text-center">
+{/* ------------------------ADD BY PAWAN FOR CURRENCY----------------------------------- */}
                         <p className="text-base font-bold text-[#264A3F] mb-1">
-                          ₹
-                          {(
-                            item.jewelryPrice +
-                            getMetalRate(selectedMetal) *
-                            item.jewelryMetalWeight +
-                            productData.price
-                          ).toLocaleString("en-IN")}
-                        </p>
-
+                          {formatCurrency(
+                           ConvertFromINR(
+                           item.jewelryPrice +
+                           getMetalRate(selectedMetal) * item.jewelryMetalWeight +
+                           productData.price,
+                           rates,
+                          currency
+                           ),
+                          currency
+                             )}
+                           </p>
+{/* ------------------------ADD BY PAWAN FOR CURRENCY----------------------------------- */}
                         {/* Clean Description (NO word cut, max 2 lines) */}
                         <p className="text-sm text-gray-700 line-clamp-2">
                           {item.jewelryDesc}
@@ -1027,7 +1027,7 @@ function HeaderDetailPage({ onSendId }) {
           </span>
         </div>
 
-{/* ------------------------Main Content-------------------fix by pawan-------------------*/}
+{/* ------------------------Main Content---------------fix by pawan-------------------*/}
         <div className="w-full  flex flex-col lg:flex-row px-4 sm:px-6 md:px-8 lg:px-20 gap-6 lg:gap-0">
           {/* Left Column - Images */}
           <div className="w-full lg:w-[45%] flex flex-col items-center lg:items-start pt-4 lg:pt-6">
@@ -1101,13 +1101,13 @@ function HeaderDetailPage({ onSendId }) {
                         },
                         largeImage: {
                           src: currentMedia?.url || "/placeholder.svg",
-                          width: 1000,
-                          height: 1000,
+                          width: 900,
+                          height: 600,
                         },
                         enlargedImagePosition: "beside",
                         enlargedImageContainerDimensions: {
-                          width: 900,
-                          height: 700,
+                          width: 680,
+                          height:400,
                         },
                         enlargedImageContainerClassName:
                           "zoom-right-fix z-50 bg-white shadow-xl border rounded-lg overflow-hidden",
@@ -1290,14 +1290,14 @@ function HeaderDetailPage({ onSendId }) {
  {/* --------------fix by pawan Why Gemrishi — only shown when NOT customizing jewelry--------------------- */}
               {!isInterestedInJewelry && (
                 <div className="w-full mb-6">
-                  <p className="text-base sm:text-base lg:text-[18px] mb-4">
-                    Why Gemrishi ?
+                  <p className="text-base sm:text-base lg:text-[15px] mb-4">
+                    Why GemRishi ?
                   </p>
                  <div className="flex flex-row gap-2 sm:gap-4 lg:gap-5">
                <div className="w-[160px] h-[70px] lg:w-[200px] lg:h-[80px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">
              <img src={Energized} alt="Energized" className="w-8 h-8" />
              <p className="text-[12px] font-bold leading-tight">
-                Effectively <br /> Energized
+                Effectively <br/>Energized
               </p>
               </div>
               <div className="w-[160px] h-[70px] lg:w-[200px] lg:h-[80px] bg-gray-200 flex items-center justify-center gap-3 rounded-lg px-4">

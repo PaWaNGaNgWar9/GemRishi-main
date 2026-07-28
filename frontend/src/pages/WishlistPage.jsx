@@ -11,6 +11,9 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { appendRandomString } from "../utils/randomString";
+// --------add by pawan for currency---------------------------
+import Price from "../components/Price";
+// --------add by pawan for currency---------------------------
 
 // ✅ Skeleton Loader
 const WishlistItemSkeleton = () => (
@@ -218,9 +221,11 @@ const WishlistPage = () => {
 											<h2 className="text-lg font-semibold truncate mb-1">
 												{item.name || item.jewelryName}
 											</h2>
+							{/*----------------Add by Pawan for currency------------ */}
 											<p className="text-gray-600 font-medium">
-												Price: ₹ {price}
+												Price: <Price amount={price} />
 											</p>
+							 {/*----------------Add by Pawan for currency------------ */}
 											<p
 												className={`mt-1 text-sm font-medium ${item.isAvailable ? "text-green-600" : "text-red-500"
 													}`}>

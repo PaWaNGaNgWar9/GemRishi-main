@@ -4,6 +4,9 @@ import VideoModal from "./models/VideoModal";
 import { useState } from "react";
 import WishlistButton from "./wishlistButton";
 import { appendRandomString } from "../utils/randomString";
+// --------add by pawan for currency---------------------------
+import Price from "./Price";
+// --------add by pawan for currency---------------------------
 
 const FilteredCard = ({ image, title, origin, price, slug, videos, id }) => {
 	const [showModal, setShowModal] = useState(false);
@@ -44,11 +47,11 @@ const FilteredCard = ({ image, title, origin, price, slug, videos, id }) => {
 					<p className="text-gray-600 text-sm text-center mt-1">
 						Origin: {origin}
 					</p>
+			{/* -------------add by pawan for currency------------- */}
 					<p className="text-center text-lg font-semibold text-gray-900">
-						{price != null
-							? `₹${price.toLocaleString()}`
-							: "Price not available"}
-					</p>
+                    {price != null ? <Price amount={price} /> : "Price not available"}
+                    </p>
+		    {/* --------------add by pawan for currency------------ */}
 				</div>
 			</Link>
 

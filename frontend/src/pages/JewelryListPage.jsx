@@ -180,6 +180,7 @@ const JewelryListPage = () => {
             {/* Products Grid */}
             {!loading && !error && products.length > 0 && (
                 <div className="flex flex-wrap gap-6 justify-center mt-10 px-6 sm:px-10 md:px-20 lg:px-32">
+{/* // -------------------Add for currency by pawan----------------------------------- */}
                     {products.map((product, index) => (
                         <Card
                             key={product?._id || index}
@@ -187,11 +188,12 @@ const JewelryListPage = () => {
                             slug={product?.slug || "#"}
                             image={product?.images?.[0]?.url || "/ring.png"}
                             title={product?.jewelryName || "Untitled Jewelry"}
-                            jewelryPrice={product?.jewelryPrice ? `₹ ${product.jewelryPrice.toLocaleString()}` : "Price on request"}
+                           jewelryPrice={product?.jewelryPrice ?? null}
                             videos={product?.videos}
                             itemType="Jewelry"
                         />
                     ))}
+{/* // ------------------------Add for currency by pawan------------------------------- */}
                 </div>
             )}
 

@@ -5,7 +5,9 @@ import axios from "axios";
 // सुनिश्चित करें कि BlueSapphire.svg पाथ सही है, यह सिर्फ एक उदाहरण है
 import BlueSapphire from "../../assets/Stone/BlueSapphire.svg";
 import { appendRandomString } from "../../utils/randomString";
-
+// --------add by pawan for currency---------------------------
+import Price from "../../components/Price"
+// --------add by pawan for currency---------------------------
 const URL = import.meta.env.VITE_URL || "http://localhost:7700/api/v1";
 
 // =========================================================
@@ -63,17 +65,16 @@ const ProductCard = ({ product }) => {
                 </h3>
 
                 <div className="flex justify-between items-center mb-1">
-
+{/* -----------------add by pawan for currency--------------------------- */}
                     <span className="text-xl font-bold text-[#264A3F]">
-                        ₹{product.price?.toLocaleString("en-IN") || "N/A"}
+                      {product.price != null ? <Price amount={product.price} /> : "N/A"}
                     </span>
-
                     {product.originalPrice && product.originalPrice > product.price && (
                         <span className="text-xs text-gray-500 line-through">
-                            ₹{product.originalPrice.toLocaleString("en-IN")}
+                           <Price amount={product.originalPrice} />
                         </span>
                     )}
-
+{/* ---------------------add by pawan for currency--------------------------- */}
                 </div>
 
                 <div className="flex flex-wrap gap-1 text-xs text-gray-600">

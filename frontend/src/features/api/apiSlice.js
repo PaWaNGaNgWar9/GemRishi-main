@@ -20,6 +20,7 @@ export const apiSlice = createApi({
     "RevenueByMonthYear",
     "Profile",
     "CountryMap", // Added new tag for the country map list
+     "CurrencyRates" , //----------(Added by Pawan currency)------------- 
   ],
 
   endpoints: (builder) => ({
@@ -480,9 +481,17 @@ export const apiSlice = createApi({
       }),
       providesTags: ["CountryMap"],
     }),
+    //-----------------Add By Pawan for Currency------------------
+    getCurrencyRates:builder.query({
+     query:()=>({
+       url:"/currency/rates",
+       
+     }),
+     providesTags:["CurrencyRates"],
+    }),
+   //-----------------Add By Pawan for Currency------------------
   }),
 });
-
 export const {
   //auth
   useLoginMutation,
@@ -545,7 +554,9 @@ export const {
   // offer endpoints
   useApplyOfferMutation,
   useGetUpsellingProductListQuery,
-
+  //-----------------Add By Pawan for Currency--------------------
+   useGetCurrencyRatesQuery,
+  //-----------------Add By Pawan for Currency------------------- 
   // country map endpoints
   useGetOriginCountryListQuery,
 } = apiSlice;

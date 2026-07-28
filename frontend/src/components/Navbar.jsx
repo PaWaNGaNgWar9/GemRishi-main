@@ -25,9 +25,11 @@ import CategoryModal from "../pages/HomeModal/CategoryModal";
 import JewelleryModal from "../pages/HomeModal/JewelleryModal";
 import { useGetWish } from "../hooks/usegetwish";
 import { appendRandomString } from "../utils/randomString";
-// ===== Update by Pawan For reduce Loading time ===============================================
+// ===== Update by Pawan For currency ===============================================
 import { useGetCategoryQuery, useGetJewelryCategoryQuery } from "../features/api/apiSlice";
-// ====== Update by Pawan For reduce Loading time ===============================================
+import CurrencySelector from "./CurrencySelector";
+import { ConvertFromINR, formatCurrency } from "../utils/currency";
+// ====== Update by Pawan For currency ===============================================
 
 // ==============================================================================
 // 1. Skeleton Loader
@@ -310,10 +312,11 @@ export default function Navbar({ handleLoginClick }) {
 
     return () => clearTimeout(delayDebounceFn);
   }, [searchQuery, URL, isSearchBarVisible]);
-
+  // -------------------------add by Pawan---------------------------------
+   const { currency, rates } = useSelector((s) => s.currency);
   const formatPrice = (price) =>
-    `₹${Number(price)?.toLocaleString("en-IN") || "0"}`;
-
+  formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
+  // -------------------------add by Pawan--------------------------------
   // 👑 Premium Desktop Search Results Mapping
   const renderPremiumDesktopResults = () => {
     const trimmedQuery = searchQuery.trim();
@@ -486,14 +489,14 @@ export default function Navbar({ handleLoginClick }) {
             <Link to="/shipping"  target="_blank"
                      rel="noopener noreferrer">
             <span className="flex items-center text-black gap-1.5 font-bold">
-              <span className="text-blue-500 font-bold text-[12px] animate-pulse ">●</span> Free Shipping All Over India
+              <span className="text-cyan-700 font-bold text-[12px] animate-pulse ">●</span> Free Shipping All Over India
             </span>
             </Link>
             <span className="text-gray-500 font-medium text-[13px]">|</span>
             <Link to="/refund-policy"  target="_blank"
                    rel="noopener noreferrer">
             <span className="flex items-center gap-1.5 font-bold text-black">
-              <span className="text-blue-500 font-bold text-[12px] animate-pulse ">●</span> 10 Days No Hassle Returns
+              <span className="text-cyan-700 font-bold text-[12px] animate-pulse ">●</span> 10 Days No Hassle Returns
             </span>
             </Link>
           </div>
@@ -503,6 +506,12 @@ export default function Navbar({ handleLoginClick }) {
               <span>Need Help?</span>
               <span className="text-[#264A3F]">+91 98179 75978</span>
             </div>
+{/* -------------------------Add for currency by pawan--------------------------------*/}
+ <div className="flex items-center sm:gap-4 relative z-50 border-none">
+             <span className="text-gray-500 font-medium text-[13px]">|</span>
+                <CurrencySelector/>
+                </div>
+{/* --------------------Add for currency by pawan--------------------------------------*/}
           </div>
         </div>
       </div>
@@ -795,6 +804,11 @@ export default function Navbar({ handleLoginClick }) {
               <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-white z-[100] shadow-2xl overflow-y-auto lg:hidden">
                 <div className="flex items-center justify-between p-5 border-b border-gray-100">
                   <img src="/GemRishi.svg" alt="Logo" className="h-[35px] w-auto" />
+{/* ---------------------Add By Pawan For Currency for mobile------------------------------- */}
+                                <div className="">
+                                  <CurrencySelector/>
+                                </div>
+{/* ---------------------Add By Pawan For Currency for mobile------------------------------- */}
                   <button onClick={() => setIsNavOpen(false)} className="text-gray-500 hover:text-red-500 transition-colors p-1.5 rounded-full hover:bg-gray-50 active:scale-90"><CloseIcon /></button>
                 </div>
                 <div className="p-4 flex flex-col h-[calc(100%-80px)] justify-between">

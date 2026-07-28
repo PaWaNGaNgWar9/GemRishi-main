@@ -3,6 +3,7 @@ import { Heart, Play } from "lucide-react";
 import WishlistButton from "../components/wishlistButton";
 import VideoModal from "./models/VideoModal";
 import { useState } from "react";
+import Price from "../components/Price"
 
 const Card = ({
 	image,
@@ -78,7 +79,7 @@ const Card = ({
 
 						{/* Price */}
 						<p className="text-sm sm:text-base text-[#264A3F] mt-3 font-bold text-center">
-							₹ {jewelryPrice}
+							{jewelryPrice != null ? <Price amount={jewelryPrice} /> : "Price on request"}
 						</p>
 					</div>
 				</div>
@@ -94,4 +95,4 @@ const Card = ({
 
 export default Card;
 
-//text-center text-lg font-bold text-gray-900 mt-2
+//text-center text-lg font-bold text-gray-900 mt-2 

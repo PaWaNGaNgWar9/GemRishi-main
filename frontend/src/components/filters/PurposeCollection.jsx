@@ -8,7 +8,10 @@ import WishlistButton from "../../components/wishlistButton";
 import VideoModal from "../../components/models/VideoModal";
 import { Play, Sparkles, ShieldCheck, Award, Globe } from "lucide-react";
 import { appendRandomString } from "../../utils/randomString";
-
+// -----=---------Add By Pawan for currency---------------------------------------
+import {useSelector} from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../../utils/currency";
+// -----=---------Add By Pawan for currency---------------------------------------
 function PurposeCollection() {
     const { slug } = useParams();
     const [searchParams] = useSearchParams();
@@ -92,8 +95,11 @@ function PurposeCollection() {
         if (e.target.closest("button")) return;
         window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
     };
-
-    const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
+// -----=---------Add By Pawan for currency---------------------------------------
+   const { currency, rates } = useSelector((s) => s.currency);
+const formatPrice = (price) =>
+  formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
+// -----=---------Add By Pawan for currency---------------------------------------
 
     if (loading)
         return (

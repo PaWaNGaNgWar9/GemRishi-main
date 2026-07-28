@@ -12,7 +12,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import countries from "../../JSON/countries.json";
 import { appendRandomString } from "../../utils/randomString";
-
+// ----------- Add By Pawan For the currency--------------------------------
+import { useSelector } from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../../utils/currency";
+// ----------- Add By Pawan For the currency--------------------------------
 function StoneCollection() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -57,7 +60,7 @@ function StoneCollection() {
     const itemsPerPage = 16;
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-//-------------------- Add By Pawan for total product-------------------------------
+//----------------- Add By Pawan for total product----------------------------
 const [totalProducts, setTotalProducts] = useState(0);
 //----------------- Add By Pawan for total product----------------------------
   const [selectedColor, setSelectedColor] = useState("Select Color");
@@ -180,8 +183,11 @@ const [totalProducts, setTotalProducts] = useState(0);
       "noopener,noreferrer"
     );
   };
-
-  const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
+// ----------- Add By Pawan For the currency--------------------------------
+ const { currency, rates } = useSelector((s) => s.currency);
+const formatPrice = (price) =>
+  formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
+// ----------- Add By Pawan For the currency--------------------------------
 
   if (loading)
     return (

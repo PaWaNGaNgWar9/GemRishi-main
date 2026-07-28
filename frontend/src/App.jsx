@@ -11,6 +11,9 @@ import { Provider, useDispatch } from "react-redux";
 import { store } from "./app/store";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+// ---------Add Currency Converter---------------------
+import useCurrencyInit  from "./hooks/useCurrency"
+// ---------Add Currency Converter---------------------
 import LoginModal from "./components/LoginModal";
 import SignupModal from "./components/SignupModal";
 import Email from "./components/ForgetPassword/Email";
@@ -65,6 +68,8 @@ import FloatingWhatsApp from "./components/FloatingWhatsApp";
 import { initBlaze } from "./utils/blazeCheckout";
 // -------------------Add By Pawan--------------------------------------
 import SlideImage from "./pages/Home/SlideImage"; // Import the SlideImage component Add By Pawan
+import ExclusiveJewellery from "./pages/Home/ExclusiveJewellery"
+import CurrencySelector from "./components/CurrencySelector";
 // -------------------Add By Pawan--------------------------------------
 
 const BASE_URL = import.meta.env.BASE_URL;
@@ -77,9 +82,9 @@ const ScrollToTop = () => {
     window.scrollTo(0, 0);
 
     // ✅ additional improvement from tejas
-    if (window.fbq) {
-      window.fbq('track', 'PageView');
-    }
+    // if (window.fbq) {
+    //   window.fbq('track', 'PageView');
+    // }
   }, [pathname]);
 
   return null;
@@ -129,7 +134,9 @@ function AppWrapper() {
   const handleBackToLogin = () => setActiveModal("login");
   const handleBackToEmail = () => setActiveModal("forgotPasswordEmail");
   const handleBackToOtp = () => setActiveModal("forgotPasswordOtp");
-
+  // ------Add By Pawan for currency hooks--------------
+     useCurrencyInit(); 
+  // ------Add By Pawan for currency hooks--------------
 
   return (
     <>
@@ -140,11 +147,13 @@ function AppWrapper() {
         <Route path="/" element={<Home />} />
 {/*---------------------------------- Add By Pawan ----------------------------------------*/}
         <Route path="/slide-image" element={<SlideImage />} />
-{/*---------------------------------- Add By Pawan ----------------------------------------*/}
+        <Route path="/exclusive-jewellery" element={<ExclusiveJewellery/>}/>
+         <Route path="/currency-selector" element={<CurrencySelector/>}/>
+{/*-------------------------------- Add By Pawan -----------------*/}
         <Route path="/gemstone/:slug" element={<ProductList />} />
         <Route path="/gemstone/filter/:slug" element={<FilterProductPage />} />
         <Route  path="/gemstones/:slug/:random?" element={<DetailPage />} />
-        <Route path="/gemstones/:slug/:generateRandomString?" element={<DetailPage />} />
+        {/* <Route path="/gemstones/:slug/:generateRandomString?" element={<DetailPage />} /> */}
         <Route path="/search-results" element={<SearchResultsPage />} />
         <Route path="/aboutUs" element={<AboutUs />} />
         <Route path="/contactUs" element={<ContactUs />} />
@@ -231,7 +240,7 @@ function AppWrapper() {
         {/* Routes from second App */}
         <Route path="/jewelry" element={<Jewellery />} />
         <Route  path="/jewelry/:slug/:random?" element={<Productpage />} />
-        <Route path="/jewelry/:slug/:generateRandomString?" element={<Productpage />} />
+        {/* <Route path="/jewelry/:slug/:generateRandomString?" element={<Productpage />} /> */}
         <Route path="/jewelry-list" element={<JewelryListPage />} />
         <Route path="/details/product/:slugOrId/:generateRandomString?" element={<ProductDetails />} />
    <Route path="/gemstone" element={<Gemstone />} />

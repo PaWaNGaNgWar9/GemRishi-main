@@ -1,6 +1,9 @@
 import React from "react";
 import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+// --------add by pawan for currency---------------------------
+import Price from "../../components/Price";
+// --------add by pawan for currency---------------------------
 
 function CartModal({ isOpen, onClose, cartItems = [] }) {
 	if (!isOpen) return null;
@@ -61,9 +64,11 @@ function CartModal({ isOpen, onClose, cartItems = [] }) {
 										<p className="text-[12px] text-gray-600">
 											Qty : {item.quantity}
 										</p>
+						{/* -----------add by pawan for currency--------------------------- */}
 										<p className="text-[14px]  font-semibold text-gray-800 mt-2">
-											₹ {item.price.toLocaleString()}
+											<Price amount={item.price} />
 										</p>
+						{/* --------------add by pawan for currency--------------------------- */}				
 									</div>
 								</div>
 							))}
@@ -77,9 +82,11 @@ function CartModal({ isOpen, onClose, cartItems = [] }) {
 						{/* Total */}
 						<div className="flex justify-between items-center mb-4">
 							<span className="text-[16px]  font-semibold">Total :</span>
+					{/* -----------add by pawan for currency--------------------------- */}
 							<span className="text-[16px]  font-semibold">
-								₹ {total.toLocaleString()}
+								<Price amount={total} />
 							</span>
+					{/* -----------add by pawan for currency--------------------------- */}
 						</div>
 
 						{/* Buttons */}

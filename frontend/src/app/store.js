@@ -3,6 +3,8 @@ import authSliceReducer from "../features/api/authSlice";
 import { apiSlice } from "../features/api/apiSlice";
 import cartReducer from "../redux/cartSlice";
 import wishlistReducer from "../redux/wishlistSlice";
+// -----------Add By Pawan For currency-----------------
+import currencyReducer from "../redux/currencySlice";
 
 export const store = configureStore({
 	reducer: {
@@ -10,6 +12,8 @@ export const store = configureStore({
 		auth: authSliceReducer,
 		cart: cartReducer,
 		wishlist: wishlistReducer,
+//----------------Add by pawan----------------------
+		currency:currencyReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().concat(apiSlice.middleware),

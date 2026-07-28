@@ -6,7 +6,10 @@ import {
   useSimilarProducts,
 } from "../hooks/usesimilarJewelry";
 import { appendRandomString } from "../utils/randomString";
-
+// --------------add for currrency by Pawan-------------------
+import { useSelector } from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../utils/currency";
+// ---------------add for currrency by Pawan-------------------
 export default function BlueSapphireJewellery({ gemstone, gemstoneId }) {
   const scrollRef = useRef(null);
   const { data, loading, error } = useSimilarProducts(gemstoneId);
@@ -24,11 +27,12 @@ export default function BlueSapphireJewellery({ gemstone, gemstoneId }) {
     }
   };
 
-  // Premium Price Formatter
+  // --------------add for currrency by Pawan------------------------
+  const { currency, rates } = useSelector((s) => s.currency);
   const formatPrice = (price) => {
-    return Number(price || 0).toLocaleString("en-IN");
+    return formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
   };
-
+// --------------add for currrency by Pawan--------------------------
   // Loading State
   if (loading) {
     return (
@@ -106,10 +110,11 @@ export default function BlueSapphireJewellery({ gemstone, gemstoneId }) {
                 <p className="text-[10px] sm:text-[12px] text-gray-500 uppercase tracking-wider mb-1.5 sm:mb-2">
                   {p.carat ? `${p.carat} Carats` : "Premium Quality"}
                 </p>
-
+{/* ---------------------Add By pawan for currency-------------------------------------- */}
                 <p className="text-[#264A3F] font-bold text-[15px] sm:text-[16px]">
-                  ₹{formatPrice(p.price)}
+                 {formatPrice(p.price)}
                 </p>
+{/* ---------------------Add By pawan for currency-------------------------------------- */}
               </div>
             </div>
           ))}

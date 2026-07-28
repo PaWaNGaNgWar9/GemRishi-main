@@ -12,10 +12,14 @@ import googleMerchantRoutes from "./routers/googleMerchant.route.js";
 // Add By Pawan for fixing google Analytics Error ---------------------------------------
 import { Product } from "./models/product.model.js";
 // Add By Pawan for fixing google Analytics Error ---------------------------------------
+// Add By Pawan for currency ---------------------------------------
+import "./cron/currencyRateUpdate.js";
+import currencyRoutes from "./routers/currency.routes.js";
+const router = express.Router();
+// Add By Pawan for currency ---------------------------------------
 
-// Setup
+//-----------------------Setup-----------------------------------------------------------
 const app = express();
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,6 +72,10 @@ const corsOptions = {
 
 // Apply CORS globally
 app.use(cors(corsOptions));
+
+//------------------Add By Pawan for currency ---------------------------------------
+app.use("/api/v1/currency",currencyRoutes);
+// -----------------Add By Pawan for currency ---------------------------------------
 
 // ✅ THIS LINE IS CRITICAL
 app.use("/uploads", express.static(path.join(process.cwd(), "public/uploads")));
@@ -316,7 +324,6 @@ app.get("/", (req, res) => {
     message: "API Server is up and running!",
   });
 });
-
 app.use((req, res, next) => {
   res.setHeader(
     "Cache-Control",
@@ -326,12 +333,10 @@ app.use((req, res, next) => {
   res.setHeader("Expires", "0");
   next();
 });
-
 // Route Declarations
 const apiVersion = "/api/v1";
 app.use(`${apiVersion}/superAdmin`, superAdminRouter); // Not Using
 app.use(`${apiVersion}/admin`, adminRouter);
-
 app.use("/api/v1/superAdmin", superAdminRouter);
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/retailer", retailerRoutes);
@@ -353,9 +358,7 @@ app.use("/api/v1/reviewRating", reviewRatingRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/metalRates", metalRates);
-
 app.use("/api/v1/breeze", breezeRoutes);
-
 app.use("/api/v1/originCountryMap", originCountryMap);
 app.use("/api/v1/retailerCart", retailerCartRoutes);
 app.use("/api/v1/emailSub", emailSubRoutes);
