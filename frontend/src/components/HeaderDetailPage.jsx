@@ -80,7 +80,7 @@ function HeaderDetailPage({ product = {}, metalRates = {} }) {
 		window.addEventListener("resize", checkMobile);
 		return () => window.removeEventListener("resize", checkMobile);
 	}, []);
-// -----------------------------Fix Mobile By Pawan--------------------------------------------------
+// -------------------------------Fix Mobile By Pawan--------------------------------------------------
 	useEffect(() => {
 		if (product && metalRates) {
 			calculateTotalPrice();
