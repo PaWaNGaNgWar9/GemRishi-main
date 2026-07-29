@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import GemstoneHero from "../../assets/PawanBackground.webp"
-import MobileGemstoneHero from "../../assets/MobileGemstoneHero.png"
+import MobileGemstoneHero from "../../assets/MobileGemstoneHero.webp"
 import axios from "axios";
 import {
   Search,
