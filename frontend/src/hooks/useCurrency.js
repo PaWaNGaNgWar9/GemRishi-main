@@ -27,7 +27,7 @@ useEffect(()=>
    isError,
    dispatch]
 );
-//------------------------Auto-detect country on first visit only------------------(Pawan)
+//------------------------Auto-detect country on first visit only-----------------------(Pawan)
 useEffect(()=>{
     const hasManualPreference=!!localStorage.getItem("preferredCurrency");
     if(hasManualPreference)
