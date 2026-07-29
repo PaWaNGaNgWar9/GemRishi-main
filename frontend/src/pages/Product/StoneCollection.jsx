@@ -384,7 +384,7 @@ const formatPrice = (price) =>
               <option value="Trillion">Trillion</option>
               <option value="Various">Various</option>
             </select>
-
+{/* ----------------------------fix filter  By Pawan--------------------------------- */}
             {/** Treatment */}
             <select
               className="border px-3 py-2 rounded"
@@ -393,11 +393,13 @@ const formatPrice = (price) =>
                 setSelectedFilters((prev) => ({ ...prev, treatment: e.target.value }))
               }
             >
-              <option value="">Treatment</option>
-              <option value="Oil">Oil</option>
-              <option value="No Oil">No Oil</option>
-              <option value="Heated">Heated</option>
-              <option value="Non Heated">Non Heated</option>
+               <option value="">Treatment</option>
+          <option value="Oil">Oil</option>
+          <option value="Minor oil">Minor Oil</option>
+         <option value="beryllium diffusioned">beryllium diffusioned</option>
+          <option value="No Oil">No Oil</option>
+          <option value="Heated">Heated</option>
+          <option value="Unheated and Untreated">Unheated and Untreated</option>
             </select>
 {/* ----------------------------_Add By Pawan--------------------------------- */}
              {/* Quality */}
@@ -427,7 +429,7 @@ const formatPrice = (price) =>
           </div>
         </details>
       </div>
-  {/* ------------------------------------------------------------------------------ */}
+  {/* -------------------------------------------------------------------------------- */}
 
       {/* DESKTOP FILTERS */}
       <div className="hidden lg:flex flex-wrap items-center gap-3 overflow-x-auto whitespace-nowrap pb-3 scrollbar-hide">
@@ -555,7 +557,7 @@ const formatPrice = (price) =>
           <option value="Trillion">Trillion</option>
           <option value="Various">Various</option>
         </select>
-
+{/* -----------------fix filter issue by pawan--------------------------- */}
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
           value={selectedFilters.treatment} 
@@ -563,11 +565,13 @@ const formatPrice = (price) =>
         >
           <option value="">Treatment</option>
           <option value="Oil">Oil</option>
+          <option value="Minor oil">Minor Oil</option>
+         <option value="beryllium diffusioned">Beryllium diffusioned</option>
           <option value="No Oil">No Oil</option>
           <option value="Heated">Heated</option>
-          <option value="Non Heated">Non Heated</option>
+          <option value="Unheated and Untreated">Unheated and Untreated</option>
         </select>
-
+{/* -----------------fix filter issue by pawan--------------------------- */}
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
           value={selectedFilters.featured}
