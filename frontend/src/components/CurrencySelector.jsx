@@ -19,7 +19,7 @@ const CurrencySelector = () => {
     <select
       value={currency}
       onChange={(e) => dispatch(setCurrency(e.target.value))}
-      className="lg:text-sm text-[10px] text-black hover:text-cyan-700 font-bold bg-transparent rounded border border-gray-300 lg:px-2 py-1"
+      className="lg:text-sm text-[10px] text-black hover:text-cyan-700 font-bold bg-transparent rounded border border-gray-300 lg:px-2 px-1 py-1"
     >
       {options.map((opt) => (
         <option
