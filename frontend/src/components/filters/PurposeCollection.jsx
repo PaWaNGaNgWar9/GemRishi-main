@@ -38,7 +38,7 @@ function PurposeCollection() {
                 `${URL}/product/filter-by-purpose?purpose=${purpose}&page=${currentPage}&limit=${itemsPerPage}`
             );
             console.log("API Response:", response.data); // Debug log
-            
+
             // Handle different response structures
             let fetchedProducts = [];
             if (response.data?.products && Array.isArray(response.data.products)) {
@@ -46,7 +46,7 @@ function PurposeCollection() {
             } else if (Array.isArray(response.data)) {
                 fetchedProducts = response.data;
             }
-            
+
             setProducts(fetchedProducts);
             setTotalPages(response.data?.totalPages || response.data?.totalPage || 1);
         } catch (err) {
@@ -66,17 +66,17 @@ function PurposeCollection() {
     // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
     const getVisiblePages = () => {
         if (totalPages <= 1) return [];
- 
+
         const firstCount = 4;   // always show pages 1,2,3,4
         const siblingCount = 1; // show one neighbor on each side of the current page
- 
+
         const shown = new Set();
         for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
         for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
         shown.add(totalPages); // always show the last page
- 
+
         const sorted = Array.from(shown).sort((a, b) => a - b);
- 
+
         const pages = [];
         let prev = 0;
         sorted.forEach((page) => {
@@ -86,7 +86,7 @@ function PurposeCollection() {
             pages.push(page);
             prev = page;
         });
- 
+
         return pages;
     };
     // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
@@ -169,7 +169,11 @@ const formatPrice = (price) =>
                     <div className="bg-white border border-stone-200 rounded-2xl p-8 max-w-md text-center">
                         <div className="mb-4 text-5xl">💎</div>
                         <h3 className="text-lg font-semibold text-stone-900 mb-2">No Gemstones Available</h3>
-                        <p className="text-stone-500 mb-6">We don't have any gemstones for <span className="font-semibold text-[#264A3F]">{purpose}</span> at the moment. Please check back soon or explore other categories.</p>
+                        <p className="text-stone-500 mb-6">
+                            We don't have any gemstones for{" "}
+                            <span className="font-semibold text-[#264A3F]">{purpose}</span> at the moment.
+                            Please check back soon or explore other categories.
+                        </p>
                         <a
                             href="/gemstone"
                             className="inline-block px-6 py-2.5 bg-[#264A3F] text-white rounded-lg hover:bg-[#1a3329] transition-colors font-medium text-sm"
@@ -267,14 +271,14 @@ const formatPrice = (price) =>
 
             {/* PAGINATION */}
             {totalPages > 1 && (
-                <div className="flex  flex-wrap justify-center items-center mt-10 gap-2 px-2 relative z-10">
+                <div className="flex flex-nowrap justify-center items-center mt-10 gap-1.5 sm:gap-2 relative z-10 px-2 w-full">
                     <button
                         onClick={() => {
                             setCurrentPage((p) => Math.max(p - 1, 1));
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === 1}
-                        className={`px-4 sm:px-6 py-2 border rounded-xl text-xs lg:text-sm font-medium transition-all
+                        className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all
                             ${currentPage === 1
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
@@ -284,12 +288,12 @@ const formatPrice = (price) =>
                     </button>
 
                     {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-                     <div className="flex flex-wrap justify-center  gap-2 sm:gap-1">
+                     <div className="flex gap-1.5 mx-1 sm:mx-2 overflow-x-auto scrollbar-hide max-w-[40vw] sm:max-w-none">
                         {getVisiblePages().map((page, idx) =>
                             typeof page !== "number" ? (
                                 <span
                                     key={`${page}-${idx}`}
-                                    className="w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center sm:text-xs text-sm font-semibold text-stone-400 select-none"
+                                    className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
                                 >
                                     ...
                                 </span>
@@ -300,7 +304,7 @@ const formatPrice = (price) =>
                                         setCurrentPage(page);
                                         window.scrollTo({ top: 300, behavior: "smooth" });
                                     }}
-                                    className={`w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl sm:text-xs text-sm font-semibold transition-all
+                                    className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
                                         ${currentPage === page
                                             ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
                                             : "text-stone-500 hover:bg-stone-100"
@@ -319,7 +323,7 @@ const formatPrice = (price) =>
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === totalPages}
-                        className={`px-3 sm:px-5 py-2 border rounded-xl sm:text-xs text-sm font-medium transition-all  whitespace-nowrap
+                        className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all
                             ${currentPage === totalPages
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
