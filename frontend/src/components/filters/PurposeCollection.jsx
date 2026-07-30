@@ -64,10 +64,11 @@ function PurposeCollection() {
     }, [purpose, currentPage]);
 
     // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
-    const getVisiblePages = () => {
+    // firstCount controls how many leading pages are always pinned:
+    // mobile -> 1,2....last | desktop -> 1,2,3,4....last
+    const getVisiblePages = (firstCount) => {
         if (totalPages <= 1) return [];
 
-        const firstCount = 4;   // always show pages 1,2,3,4
         const siblingCount = 1; // show one neighbor on each side of the current page
 
         const shown = new Set();
@@ -89,6 +90,9 @@ function PurposeCollection() {
 
         return pages;
     };
+
+    const visiblePagesMobile = getVisiblePages(2);   // 1,2....last
+    const visiblePagesDesktop = getVisiblePages(4);  // 1,2,3,4....last
     // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
 
     const handleProductClick = (productSlug, e) => {
@@ -288,23 +292,53 @@ const formatPrice = (price) =>
                     </button>
 
                     {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-                     <div className="flex gap-1.5 mx-1 sm:mx-2 overflow-x-auto scrollbar-hide max-w-[40vw] sm:max-w-none">
-                        {getVisiblePages().map((page, idx) =>
+                    {/* Mobile: 1,2....last */}
+                    <div className="flex sm:hidden gap-1.5 mx-1 overflow-x-auto scrollbar-hide max-w-[40vw]">
+                        {visiblePagesMobile.map((page, idx) =>
                             typeof page !== "number" ? (
                                 <span
-                                    key={`${page}-${idx}`}
-                                    className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
+                                    key={`m-${page}-${idx}`}
+                                    className="w-8 h-8 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
                                 >
                                     ...
                                 </span>
                             ) : (
                                 <button
-                                    key={page}
+                                    key={`m-${page}`}
                                     onClick={() => {
                                         setCurrentPage(page);
                                         window.scrollTo({ top: 300, behavior: "smooth" });
                                     }}
-                                    className={`w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
+                                    className={`w-8 h-8 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
+                                        ${currentPage === page
+                                            ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
+                                            : "text-stone-500 hover:bg-stone-100"
+                                        }`}
+                                >
+                                    {page}
+                                </button>
+                            )
+                        )}
+                    </div>
+
+                    {/* Desktop: 1,2,3,4....last */}
+                    <div className="hidden sm:flex gap-2 mx-2">
+                        {visiblePagesDesktop.map((page, idx) =>
+                            typeof page !== "number" ? (
+                                <span
+                                    key={`d-${page}-${idx}`}
+                                    className="w-10 h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
+                                >
+                                    ...
+                                </span>
+                            ) : (
+                                <button
+                                    key={`d-${page}`}
+                                    onClick={() => {
+                                        setCurrentPage(page);
+                                        window.scrollTo({ top: 300, behavior: "smooth" });
+                                    }}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
                                         ${currentPage === page
                                             ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
                                             : "text-stone-500 hover:bg-stone-100"
