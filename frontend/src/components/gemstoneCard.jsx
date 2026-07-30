@@ -85,23 +85,23 @@ const GemstoneCard = ({ color, products }) => {
 			</div>
 
 			{totalPages > 1 && (
-				<div className="flex flex-nowrap justify-center items-center gap-1.5 sm:gap-3 my-6 px-2 w-full">
+				<div className="flex flex-nowrap justify-center items-center gap-1 sm:gap-3 my-6 px-1 w-full">
 					<button
 						onClick={() => goToPage(currentPage - 1)}
 						disabled={currentPage === 1}
-						className="shrink-0 p-2 border rounded-full disabled:opacity-50"
+						className="shrink-0 p-1.5 sm:p-2 border rounded-full disabled:opacity-50"
 					>
-						<ChevronLeft className="w-4 h-4" />
+						<ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
 					</button>
 
 					{/* ---------------------------- Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
 					{/* Mobile: 1,2....last */}
-					<div className="flex sm:hidden gap-1 mx-1 overflow-x-auto scrollbar-hide">
+					<div className="flex sm:hidden gap-0.5 overflow-x-auto scrollbar-hide">
 						{visiblePagesMobile.map((page, idx) =>
 							typeof page !== "number" ? (
 								<span
 									key={`m-${page}-${idx}`}
-									className="px-2 py-1 text-sm font-semibold text-gray-400 select-none shrink-0"
+									className="px-1 py-1 text-[11px] font-semibold text-gray-400 select-none shrink-0"
 								>
 									...
 								</span>
@@ -109,7 +109,7 @@ const GemstoneCard = ({ color, products }) => {
 								<button
 									key={`m-${page}`}
 									onClick={() => goToPage(page)}
-									className={`px-3 py-1 rounded shrink-0 ${currentPage === page
+									className={`px-1.5 py-1 rounded shrink-0 text-[11px] ${currentPage === page
 										? "text-blue-600 font-semibold"
 										: "text-gray-500 hover:text-blue-600"
 										}`}
@@ -149,9 +149,9 @@ const GemstoneCard = ({ color, products }) => {
 					<button
 						onClick={() => goToPage(currentPage + 1)}
 						disabled={currentPage === totalPages}
-						className="shrink-0 p-2 border rounded-full disabled:opacity-50"
+						className="shrink-0 p-1.5 sm:p-2 border rounded-full disabled:opacity-50"
 					>
-						<ChevronRight className="w-4 h-4" />
+						<ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
 					</button>
 				</div>
 			)}
