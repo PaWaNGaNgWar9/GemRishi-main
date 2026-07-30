@@ -12,10 +12,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import countries from "../../JSON/countries.json";
 import { appendRandomString } from "../../utils/randomString";
-// ----------- Add By Pawan For the currency--------------------------------
-import { useSelector } from "react-redux";
-import { ConvertFromINR, formatCurrency } from "../../utils/currency";
-// ----------- Add By Pawan For the currency--------------------------------
+
 function StoneCollection() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -130,17 +127,16 @@ const [totalProducts, setTotalProducts] = useState(0);
     }));
   };
 
-  // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
-  const getVisiblePages = () => {
+  // ---------------------------- Add By Pawan for 1,2,....last page (mobile) / 1,2,3,4....last page (desktop) ----------------------------
+  const getVisiblePages = (firstCount) => {
     if (totalPages <= 1) return [];
 
-    const firstCount = 4;  
-    const siblingCount = 1; 
+    const siblingCount = 1;
 
     const shown = new Set();
     for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
     for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
-    shown.add(totalPages); 
+    shown.add(totalPages);
 
     const sorted = Array.from(shown).sort((a, b) => a - b);
 
@@ -156,7 +152,10 @@ const [totalProducts, setTotalProducts] = useState(0);
 
     return pages;
   }
-  // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
+
+  const visiblePagesMobile = getVisiblePages(2);   // 1,2....last
+  const visiblePagesDesktop = getVisiblePages(4);  // 1,2,3,4....last
+  // ---------------------------- End Add By Pawan for 1,2,....last / 1,2,3,4....last page ----------------------------
 
   useEffect(() => {
     fetchProducts();
@@ -183,11 +182,8 @@ const [totalProducts, setTotalProducts] = useState(0);
       "noopener,noreferrer"
     );
   };
-// ----------- Add By Pawan For the currency--------------------------------
- const { currency, rates } = useSelector((s) => s.currency);
-const formatPrice = (price) =>
-  formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
-// ----------- Add By Pawan For the currency--------------------------------
+
+  const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
 
   if (loading)
     return (
@@ -384,7 +380,7 @@ const formatPrice = (price) =>
               <option value="Trillion">Trillion</option>
               <option value="Various">Various</option>
             </select>
-{/* ----------------------------fix filter  By Pawan--------------------------------- */}
+
             {/** Treatment */}
             <select
               className="border px-3 py-2 rounded"
@@ -393,13 +389,11 @@ const formatPrice = (price) =>
                 setSelectedFilters((prev) => ({ ...prev, treatment: e.target.value }))
               }
             >
-               <option value="">Treatment</option>
-          <option value="Oil">Oil</option>
-          <option value="Minor oil">Minor Oil</option>
-         <option value="beryllium diffusioned">beryllium diffusioned</option>
-          <option value="No Oil">No Oil</option>
-          <option value="Heated">Heated</option>
-          <option value="Unheated and Untreated">Unheated and Untreated</option>
+              <option value="">Treatment</option>
+              <option value="Oil">Oil</option>
+              <option value="No Oil">No Oil</option>
+              <option value="Heated">Heated</option>
+              <option value="Non Heated">Non Heated</option>
             </select>
 {/* ----------------------------_Add By Pawan--------------------------------- */}
              {/* Quality */}
@@ -429,7 +423,7 @@ const formatPrice = (price) =>
           </div>
         </details>
       </div>
-  {/* -------------------------------------------------------------------------------- */}
+  {/* ------------------------------------------------------------------------------ */}
 
       {/* DESKTOP FILTERS */}
       <div className="hidden lg:flex flex-wrap items-center gap-3 overflow-x-auto whitespace-nowrap pb-3 scrollbar-hide">
@@ -557,7 +551,7 @@ const formatPrice = (price) =>
           <option value="Trillion">Trillion</option>
           <option value="Various">Various</option>
         </select>
-{/* -----------------fix filter issue by pawan--------------------------- */}
+
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
           value={selectedFilters.treatment} 
@@ -565,13 +559,11 @@ const formatPrice = (price) =>
         >
           <option value="">Treatment</option>
           <option value="Oil">Oil</option>
-          <option value="Minor oil">Minor Oil</option>
-         <option value="beryllium diffusioned">Beryllium diffusioned</option>
           <option value="No Oil">No Oil</option>
           <option value="Heated">Heated</option>
-          <option value="Unheated and Untreated">Unheated and Untreated</option>
+          <option value="Non Heated">Non Heated</option>
         </select>
-{/* -----------------fix filter issue by pawan--------------------------- */}
+
         <select
           className="border border-gray-300 rounded-md px-3 py-2 text-sm hover:border-[#264A3F] focus:ring-2 focus:ring-[#264A3F] transition"
           value={selectedFilters.featured}
@@ -683,14 +675,14 @@ const formatPrice = (price) =>
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-10 gap-2">
+        <div className="flex flex-nowrap justify-center items-center mt-10 gap-1.5 sm:gap-2 px-2 w-full">
           <button
             onClick={() => {
               setCurrentPage((p) => Math.max(p - 1, 1))
               window.scrollTo({ top: 300, behavior: "smooth" });
             }}
             disabled={currentPage === 1}
-            className={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors
+            className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-lg text-xs sm:text-sm font-medium transition-colors
               ${currentPage === 1
                 ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
@@ -698,24 +690,25 @@ const formatPrice = (price) =>
             Previous
           </button>
 
-          {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-          <div className="flex gap-1 sm:gap-2 mx-2">
-            {getVisiblePages().map((page, idx) =>
+          {/* ---------------------------- Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
+          {/* Mobile: 1,2....last */}
+          <div className="flex sm:hidden gap-1.5 mx-1 overflow-x-auto scrollbar-hide">
+            {visiblePagesMobile.map((page, idx) =>
               typeof page !== "number" ? (
                 <span
-                  key={`${page}-${idx}`}
-                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-gray-400 select-none"
+                  key={`m-${page}-${idx}`}
+                  className="w-8 h-8 flex items-center justify-center text-sm font-semibold text-gray-400 select-none shrink-0"
                 >
                   ...
                 </span>
               ) : (
                 <button
-                  key={page}
+                  key={`m-${page}`}
                   onClick={() => {
                     setCurrentPage(page)
                     window.scrollTo({ top: 300, behavior: "smooth" });
                   }}
-                  className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all ${currentPage === page
+                  className={`w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold transition-all shrink-0 ${currentPage === page
                     ? "bg-[#264A3F] text-white shadow-md"
                     : "text-gray-600 hover:bg-gray-100"
                     }`}
@@ -725,7 +718,35 @@ const formatPrice = (price) =>
               )
             )}
           </div>
-          {/* ---------------------------- End Add By Pawan for 1,2,3,....last page ---------------------------- */}
+
+          {/* Desktop: 1,2,3,4....last */}
+          <div className="hidden sm:flex gap-2 mx-2">
+            {visiblePagesDesktop.map((page, idx) =>
+              typeof page !== "number" ? (
+                <span
+                  key={`d-${page}-${idx}`}
+                  className="w-10 h-10 flex items-center justify-center text-sm font-semibold text-gray-400 select-none shrink-0"
+                >
+                  ...
+                </span>
+              ) : (
+                <button
+                  key={`d-${page}`}
+                  onClick={() => {
+                    setCurrentPage(page)
+                    window.scrollTo({ top: 300, behavior: "smooth" });
+                  }}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all shrink-0 ${currentPage === page
+                    ? "bg-[#264A3F] text-white shadow-md"
+                    : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                >
+                  {page}
+                </button>
+              )
+            )}
+          </div>
+          {/* ---------------------------- End Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
 
           <button
             onClick={() => {
@@ -733,7 +754,7 @@ const formatPrice = (price) =>
               window.scrollTo({ top: 300, behavior: "smooth" });
             }}
             disabled={currentPage === totalPages}
-            className={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors
+            className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-lg text-xs sm:text-sm font-medium transition-colors
               ${currentPage === totalPages
                 ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
@@ -747,4 +768,4 @@ const formatPrice = (price) =>
   );
 }
 
-export default StoneCollection;   
+export default StoneCollection;

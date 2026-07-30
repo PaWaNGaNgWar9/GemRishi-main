@@ -60,6 +60,36 @@ const getMetalRate = (product) => {
 		if (page >= 1 && page <= totalPages) setCurrentPage(page);
 	};
 
+	// ---------------------------- Add By Pawan for 1,2,....last page (mobile) / 1,2,3,4....last page (desktop) ----------------------------
+	const getVisiblePages = (firstCount) => {
+		if (totalPages <= 1) return [];
+
+		const siblingCount = 1;
+
+		const shown = new Set();
+		for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
+		for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
+		shown.add(totalPages);
+
+		const sorted = Array.from(shown).sort((a, b) => a - b);
+
+		const pages = [];
+		let prev = 0;
+		sorted.forEach((page) => {
+			if (prev && page - prev > 1) {
+				pages.push(`ellipsis-${prev}`);
+			}
+			pages.push(page);
+			prev = page;
+		});
+
+		return pages;
+	};
+
+	const visiblePagesMobile = getVisiblePages(2);   // 1,2....last
+	const visiblePagesDesktop = getVisiblePages(4);  // 1,2,3,4....last
+	// ---------------------------- End Add By Pawan for 1,2,....last / 1,2,3,4....last page ----------------------------
+
 	return (
 		<div className="w-full mt-14">
 			{/* Product Grid */}
@@ -95,31 +125,70 @@ jewelryPrice={
 
 			{/* Pagination */}
 			{totalPages > 1 && (
-				<div className="flex flex-wrap justify-center items-center gap-2 mt-8 mb-10">
+				<div className="flex flex-nowrap justify-center items-center gap-1.5 sm:gap-2 mt-8 mb-10 px-2 w-full">
 					<button
 						onClick={() => goToPage(currentPage - 1)}
 						disabled={currentPage === 1}
-						className="p-2 border rounded-full disabled:opacity-50">
+						className="shrink-0 p-2 border rounded-full disabled:opacity-50">
 						<ChevronLeft className="w-4 h-4 cursor-pointer" />
 					</button>
 
-					{[...Array(totalPages)].map((_, i) => (
-						<button
-							key={i + 1}
-							onClick={() => goToPage(i + 1)}
-							className={`px-3 py-1 rounded ${
-								currentPage === i + 1
-									? "text-blue-600 font-semibold"
-									: "text-gray-500 hover:text-blue-600"
-							}`}>
-							{i + 1}
-						</button>
-					))}
+					{/* ---------------------------- Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
+					{/* Mobile: 1,2....last */}
+					<div className="flex sm:hidden gap-1 mx-1 overflow-x-auto scrollbar-hide">
+						{visiblePagesMobile.map((page, idx) =>
+							typeof page !== "number" ? (
+								<span
+									key={`m-${page}-${idx}`}
+									className="px-2 py-1 text-sm font-semibold text-gray-400 select-none shrink-0"
+								>
+									...
+								</span>
+							) : (
+								<button
+									key={`m-${page}`}
+									onClick={() => goToPage(page)}
+									className={`px-3 py-1 rounded shrink-0 ${
+										currentPage === page
+											? "text-blue-600 font-semibold"
+											: "text-gray-500 hover:text-blue-600"
+									}`}>
+									{page}
+								</button>
+							)
+						)}
+					</div>
+
+					{/* Desktop: 1,2,3,4....last */}
+					<div className="hidden sm:flex gap-2 mx-2">
+						{visiblePagesDesktop.map((page, idx) =>
+							typeof page !== "number" ? (
+								<span
+									key={`d-${page}-${idx}`}
+									className="px-2 py-1 text-sm font-semibold text-gray-400 select-none shrink-0"
+								>
+									...
+								</span>
+							) : (
+								<button
+									key={`d-${page}`}
+									onClick={() => goToPage(page)}
+									className={`px-3 py-1 rounded shrink-0 ${
+										currentPage === page
+											? "text-blue-600 font-semibold"
+											: "text-gray-500 hover:text-blue-600"
+									}`}>
+									{page}
+								</button>
+							)
+						)}
+					</div>
+					{/* ---------------------------- End Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
 
 					<button
 						onClick={() => goToPage(currentPage + 1)}
 						disabled={currentPage === totalPages}
-						className="p-2 border rounded-full disabled:opacity-50">
+						className="shrink-0 p-2 border rounded-full disabled:opacity-50">
 						<ChevronRight className="w-4 h-4 cursor-pointer" />
 					</button>
 				</div>
