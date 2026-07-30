@@ -8,7 +8,10 @@ import WishlistButton from "../../components/wishlistButton";
 import VideoModal from "../../components/models/VideoModal";
 import { Play, Sparkles, ShieldCheck, Award, Globe } from "lucide-react";
 import { appendRandomString } from "../../utils/randomString";
-
+// -----=---------Add By Pawan for currency---------------------------------------
+import {useSelector} from "react-redux";
+import { ConvertFromINR, formatCurrency } from "../../utils/currency";
+// -----=---------Add By Pawan for currency---------------------------------------
 function PurposeCollection() {
     const { slug } = useParams();
     const [searchParams] = useSearchParams();
@@ -60,19 +63,20 @@ function PurposeCollection() {
         fetchProducts();
     }, [purpose, currentPage]);
 
-    // ---------------------------- Add By Pawan for 1,2,....last page (mobile) / 1,2,3,4....last page (desktop) ----------------------------
-    const getVisiblePages = (firstCount) => {
+    // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
+    const getVisiblePages = () => {
         if (totalPages <= 1) return [];
-
+ 
+        const firstCount = 2;   // always show pages 1,2
         const siblingCount = 1; // show one neighbor on each side of the current page
-
+ 
         const shown = new Set();
         for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
         for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
         shown.add(totalPages); // always show the last page
-
+ 
         const sorted = Array.from(shown).sort((a, b) => a - b);
-
+ 
         const pages = [];
         let prev = 0;
         sorted.forEach((page) => {
@@ -82,20 +86,20 @@ function PurposeCollection() {
             pages.push(page);
             prev = page;
         });
-
+ 
         return pages;
     };
-
-    const visiblePagesMobile = getVisiblePages(2);   // 1,2....last
-    const visiblePagesDesktop = getVisiblePages(4);  // 1,2,3,4....last
-    // ---------------------------- End Add By Pawan for 1,2,....last / 1,2,3,4....last page ----------------------------
+    // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
 
     const handleProductClick = (productSlug, e) => {
         if (e.target.closest("button")) return;
         window.open(appendRandomString(`/gemstones/${productSlug}`), "_blank", "noopener,noreferrer");
     };
-
-    const formatPrice = (price) => `Rs.${price?.toLocaleString() || "0"}`;
+// -----=---------Add By Pawan for currency---------------------------------------
+   const { currency, rates } = useSelector((s) => s.currency);
+const formatPrice = (price) =>
+  formatCurrency(ConvertFromINR(Number(price) || 0, rates, currency), currency);
+// -----=---------Add By Pawan for currency---------------------------------------
 
     if (loading)
         return (
@@ -263,41 +267,40 @@ function PurposeCollection() {
 
             {/* PAGINATION */}
             {totalPages > 1 && (
-                <div className="flex flex-nowrap justify-center items-center mt-10 gap-1 sm:gap-2 relative z-10 px-1 w-full">
+                <div className="flex justify-center items-center mt-10 gap-2 relative z-10">
                     <button
                         onClick={() => {
                             setCurrentPage((p) => Math.max(p - 1, 1));
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === 1}
-                        className={`shrink-0 px-2 py-1.5 sm:px-4 sm:py-2 border rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium transition-all
+                        className={`px-4 py-2 border rounded-xl text-sm font-medium transition-all
                             ${currentPage === 1
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
                             }`}
                     >
-                        Prev
+                        Previous
                     </button>
 
-                    {/* ---------------------------- Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
-                    {/* Mobile: 1,2....last */}
-                    <div className="flex sm:hidden gap-1 overflow-x-auto scrollbar-hide">
-                        {visiblePagesMobile.map((page, idx) =>
+                    {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
+                     <div className="flex gap-1.5 mx-2">
+                        {getVisiblePages().map((page, idx) =>
                             typeof page !== "number" ? (
                                 <span
-                                    key={`m-${page}-${idx}`}
-                                    className="w-6 h-6 flex items-center justify-center text-[11px] font-semibold text-stone-400 select-none shrink-0"
+                                    key={`${page}-${idx}`}
+                                    className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none"
                                 >
                                     ...
                                 </span>
                             ) : (
                                 <button
-                                    key={`m-${page}`}
+                                    key={page}
                                     onClick={() => {
                                         setCurrentPage(page);
                                         window.scrollTo({ top: 300, behavior: "smooth" });
                                     }}
-                                    className={`w-6 h-6 flex items-center justify-center rounded-lg text-[11px] font-semibold transition-all shrink-0
+                                    className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all
                                         ${currentPage === page
                                             ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
                                             : "text-stone-500 hover:bg-stone-100"
@@ -308,36 +311,7 @@ function PurposeCollection() {
                             )
                         )}
                     </div>
-
-                    {/* Desktop: 1,2,3,4....last */}
-                    <div className="hidden sm:flex gap-2 mx-2">
-                        {visiblePagesDesktop.map((page, idx) =>
-                            typeof page !== "number" ? (
-                                <span
-                                    key={`d-${page}-${idx}`}
-                                    className="w-10 h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
-                                >
-                                    ...
-                                </span>
-                            ) : (
-                                <button
-                                    key={`d-${page}`}
-                                    onClick={() => {
-                                        setCurrentPage(page);
-                                        window.scrollTo({ top: 300, behavior: "smooth" });
-                                    }}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
-                                        ${currentPage === page
-                                            ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
-                                            : "text-stone-500 hover:bg-stone-100"
-                                        }`}
-                                >
-                                    {page}
-                                </button>
-                            )
-                        )}
-                    </div>
-                    {/* ---------------------------- End Add By Pawan for 1,2,....last / 1,2,3,4....last page ---------------------------- */}
+                    {/* ---------------------------- End Add By Pawan for 1,2,3,....last page ---------------------------- */}
 
                     <button
                         onClick={() => {
@@ -345,7 +319,7 @@ function PurposeCollection() {
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === totalPages}
-                        className={`shrink-0 px-2 py-1.5 sm:px-4 sm:py-2 border rounded-lg sm:rounded-xl text-[11px] sm:text-sm font-medium transition-all
+                        className={`px-4 py-2 border rounded-xl text-sm font-medium transition-all
                             ${currentPage === totalPages
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
