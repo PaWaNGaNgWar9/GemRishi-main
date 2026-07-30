@@ -37,7 +37,7 @@ const images = [
 export default function SlideImage() {
   const [current, setCurrent] = useState(0);
 
-  // Responsive
+  //--------------------Responsive----------------------------------
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   useEffect(() => {

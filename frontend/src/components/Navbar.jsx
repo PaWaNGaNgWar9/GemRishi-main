@@ -796,7 +796,7 @@ export default function Navbar({ handleLoginClick }) {
           )}
         </AnimatePresence>
 
-        {/* 3. MOBILE SLIDE-IN MENU (DRAWER) */}
+        {/* ----3. MOBILE SLIDE-IN MENU (DRAWER)----*/}
         <AnimatePresence>
           {isNavOpen && (
             <>
