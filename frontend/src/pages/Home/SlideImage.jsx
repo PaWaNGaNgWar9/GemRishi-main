@@ -57,7 +57,7 @@ export default function SlideImage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % images.length);
-    }, 2000);
+    }, 2500);
 
     return () => clearInterval(interval);
   }, []);
@@ -67,7 +67,7 @@ export default function SlideImage() {
 
       {/* Background */}
       <div
-        className="absolute inset-0 bg-cover bg-center transition-all duration-700 scale-110"
+        className="absolute inset-0 bg-contain bg-center transition-all duration-700 scale-100"
         style={{
           backgroundImage: `url(${images[current]})`,
         }}
@@ -79,17 +79,17 @@ export default function SlideImage() {
 
         {/* Heading */}
 
-        <div className="text-center mb-5">
+        <div className="text-center mb-2">
 
           <span className="text-[#D4AF37] uppercase tracking-[0.3em] text-xs font-semibold">
             Our Gallery
           </span>
 
-          <h2 className="mt-2 text-3xl md:text-4xl font-serif text-white">
-            Celebrating Excellence
+          <h2 className="mt-1 text-sm font-bold md:text-xl font-serif text-white">
+             Celebrating Excellence
           </h2>
 
-          <p className="mt-2 text-white/70 w-full mx-auto">
+          <p className=" text-white/70 w-full text-[7px] lg:text-[12px] mx-auto">
             Every photograph reflects our heritage, craftsmanship, and the
             trust we've built over generations.
           </p>
@@ -142,15 +142,15 @@ export default function SlideImage() {
 
         {/* Dots */}
 
-        <div className="flex justify-center gap-1 mt-5">
+        <div className="flex justify-center gap-1 mt-2">
           {images.map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrent(i)}
               className={`transition-all rounded-full ${
                 current === i
-                  ? "w-10 h-2 bg-[#1bafe0]"
-                  : "w-2 h-2 bg-white/40"
+                  ? "w-8 h-1 bg-[#1bafe0]"
+                  : "w-1 h-1 bg-white/40"
               }`}
             />
           ))}
@@ -159,4 +159,4 @@ export default function SlideImage() {
       </div>
     </section>
   );
-}
+} 
