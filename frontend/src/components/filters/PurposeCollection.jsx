@@ -272,101 +272,69 @@ const formatPrice = (price) =>
                     <span className="text-xs font-semibold uppercase tracking-wide">Shipping Globally</span>
                 </div>
             </div>
-
             {/* PAGINATION */}
-            {totalPages > 1 && (
-                <div className="flex flex-nowrap justify-center items-center mt-10 gap-1.5 sm:gap-2 relative z-10 px-2 w-full">
+{totalPages > 1 && (
+    <div className="flex justify-center mt-10 relative z-10 px-2 w-full">
+        <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide max-w-full py-1">
+            <button
+                onClick={() => {
+                    setCurrentPage((p) => Math.max(p - 1, 1));
+                    window.scrollTo({ top: 300, behavior: "smooth" });
+                }}
+                disabled={currentPage === 1}
+                className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all
+                    ${currentPage === 1
+                        ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
+                        : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
+                    }`}
+            >
+                Prev
+            </button>
+
+            {/* Same page list on all breakpoints — scrolls horizontally instead of overflowing */}
+            {visiblePagesMobile.map((page, idx) =>
+                typeof page !== "number" ? (
+                    <span
+                        key={`p-${page}-${idx}`}
+                        className="w-7 h-7 sm:w-9 sm:h-9 flex items-center justify-center text-xs sm:text-sm font-semibold text-stone-400 select-none shrink-0"
+                    >
+                        ...
+                    </span>
+                ) : (
                     <button
+                        key={`p-${page}`}
                         onClick={() => {
-                            setCurrentPage((p) => Math.max(p - 1, 1));
+                            setCurrentPage(page);
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
-                        disabled={currentPage === 1}
-                        className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all
-                            ${currentPage === 1
-                                ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
-                                : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
+                        className={`w-7 h-7 sm:w-9 sm:h-9 shrink-0 flex items-center justify-center rounded-xl text-xs sm:text-sm font-semibold transition-all
+                            ${currentPage === page
+                                ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
+                                : "text-stone-500 hover:bg-stone-100"
                             }`}
                     >
-                        Previous
+                        {page}
                     </button>
-
-                    {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-                    {/* Mobile: 1,2....last */}
-                    <div className="flex sm:hidden gap-1.5 mx-1 overflow-x-auto scrollbar-hide max-w-[40vw]">
-                        {visiblePagesMobile.map((page, idx) =>
-                            typeof page !== "number" ? (
-                                <span
-                                    key={`m-${page}-${idx}`}
-                                    className="w-8 h-8 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
-                                >
-                                    ...
-                                </span>
-                            ) : (
-                                <button
-                                    key={`m-${page}`}
-                                    onClick={() => {
-                                        setCurrentPage(page);
-                                        window.scrollTo({ top: 300, behavior: "smooth" });
-                                    }}
-                                    className={`w-8 h-8 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
-                                        ${currentPage === page
-                                            ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
-                                            : "text-stone-500 hover:bg-stone-100"
-                                        }`}
-                                >
-                                    {page}
-                                </button>
-                            )
-                        )}
-                    </div>
-
-                    {/* Desktop: 1,2,3,4....last */}
-                    <div className="hidden sm:flex gap-2 mx-2">
-                        {visiblePagesDesktop.map((page, idx) =>
-                            typeof page !== "number" ? (
-                                <span
-                                    key={`d-${page}-${idx}`}
-                                    className="w-10 h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none shrink-0"
-                                >
-                                    ...
-                                </span>
-                            ) : (
-                                <button
-                                    key={`d-${page}`}
-                                    onClick={() => {
-                                        setCurrentPage(page);
-                                        window.scrollTo({ top: 300, behavior: "smooth" });
-                                    }}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all shrink-0
-                                        ${currentPage === page
-                                            ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
-                                            : "text-stone-500 hover:bg-stone-100"
-                                        }`}
-                                >
-                                    {page}
-                                </button>
-                            )
-                        )}
-                    </div>
-                    {/* ---------------------------- End Add By Pawan for 1,2,3,....last page ---------------------------- */}
-
-                    <button
-                        onClick={() => {
-                            setCurrentPage((p) => Math.min(p + 1, totalPages));
-                            window.scrollTo({ top: 300, behavior: "smooth" });
-                        }}
-                        disabled={currentPage === totalPages}
-                        className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all
-                            ${currentPage === totalPages
-                                ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
-                                : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
-                            }`}
-                    >
-                        Next
-                    </button>
-                </div>
+                )
             )}
+
+            <button
+                onClick={() => {
+                    setCurrentPage((p) => Math.min(p + 1, totalPages));
+                    window.scrollTo({ top: 300, behavior: "smooth" });
+                }}
+                disabled={currentPage === totalPages}
+                className={`shrink-0 px-2.5 sm:px-4 py-2 border rounded-xl text-xs sm:text-sm font-medium transition-all
+                    ${currentPage === totalPages
+                        ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
+                        : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
+                    }`}
+            >
+                Next
+            </button>
+        </div>
+    </div>
+)}
         </section>
     );
 }
