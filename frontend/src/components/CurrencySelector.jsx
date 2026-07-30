@@ -25,7 +25,7 @@ const CurrencySelector = () => {
         <option
           key={opt.currency}
           value={opt.currency}
-          className="py-2"
+          className="py-2 px-5"
         >
           {opt.label} ({opt.currency})
         </option>
