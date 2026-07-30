@@ -804,7 +804,7 @@ export default function Navbar({ handleLoginClick }) {
               <motion.div initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed top-0 left-0 h-full w-[80%] max-w-[320px] bg-white z-[100] shadow-2xl overflow-y-auto lg:hidden">
                 <div className="flex items-center justify-between p-5 border-b border-gray-100">
                   <img src="/GemRishi.svg" alt="Logo" className="h-[35px] w-auto" />
-{/* ---------------------Add By Pawan For Currency for mobile------------------------------- */}
+{/* ---------------------Add By Pawan For Currency for mobile-------------------------------- */}
                                 <div className="px-5">
                                   <CurrencySelector/>
                                 </div>
