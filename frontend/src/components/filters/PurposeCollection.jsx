@@ -65,60 +65,30 @@ function PurposeCollection() {
 
     // ---------------------------- Add By Pawan for 1,2,3,....last page ----------------------------
     const getVisiblePages = () => {
-  if (totalPages <= 1) return [];
-
-  const isMobile = window.innerWidth < 640;
-
-  // Mobile: Show 2 previous + current + 2 next
-  if (isMobile) {
-    const pages = [];
-
-    const start = Math.max(1, currentPage - 2);
-    const end = Math.min(totalPages, currentPage + 2);
-
-    for (let i = start; i <= end; i++) {
-      pages.push(i);
-    }
-
-    return pages;
-  }
-
-  // Desktop
-  const firstCount = 2;
-  const siblingCount = 1;
-
-  const shown = new Set();
-
-  for (let i = 1; i <= Math.min(firstCount, totalPages); i++) {
-    shown.add(i);
-  }
-
-  for (
-    let i = Math.max(1, currentPage - siblingCount);
-    i <= Math.min(totalPages, currentPage + siblingCount);
-    i++
-  ) {
-    shown.add(i);
-  }
-
-  shown.add(totalPages);
-
-  const sorted = [...shown].sort((a, b) => a - b);
-
-  const pages = [];
-  let prev = 0;
-
-  sorted.forEach((page) => {
-    if (prev && page - prev > 1) {
-      pages.push(`ellipsis-${prev}`);
-    }
-
-    pages.push(page);
-    prev = page;
-  });
-
-  return pages;
-};
+        if (totalPages <= 1) return [];
+ 
+        const firstCount = 4;   // always show pages 1,2,3,4
+        const siblingCount = 1; // show one neighbor on each side of the current page
+ 
+        const shown = new Set();
+        for (let i = 1; i <= Math.min(firstCount, totalPages); i++) shown.add(i);
+        for (let i = Math.max(1, currentPage - siblingCount); i <= Math.min(totalPages, currentPage + siblingCount); i++) shown.add(i);
+        shown.add(totalPages); // always show the last page
+ 
+        const sorted = Array.from(shown).sort((a, b) => a - b);
+ 
+        const pages = [];
+        let prev = 0;
+        sorted.forEach((page) => {
+            if (prev && page - prev > 1) {
+                pages.push(`ellipsis-${prev}`);
+            }
+            pages.push(page);
+            prev = page;
+        });
+ 
+        return pages;
+    };
     // ---------------------------- End Add By Pawan for 1,2,3,....last page ----------------------------
 
     const handleProductClick = (productSlug, e) => {
@@ -297,7 +267,7 @@ const formatPrice = (price) =>
 
             {/* PAGINATION */}
             {totalPages > 1 && (
-                <div className="flex flex-wrap justify-center items-center mt-10 gap-2 px-4 relative z-10">
+                <div className="flex justify-center items-center mt-10 gap-2 relative z-10">
                     <button
                         onClick={() => {
                             setCurrentPage((p) => Math.max(p - 1, 1));

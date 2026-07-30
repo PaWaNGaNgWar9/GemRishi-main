@@ -2,7 +2,7 @@
 import { createClient } from "redis";
 
 const redisClient = createClient({
-  url: process.env.REDIS_URL || "redis://localhost:6379",
+  url: process.env.REDIS_URL || "redis://127.0.0.1:6379" || "redis://localhost:6379",
 });
 
 redisClient.on("connect", () => console.log("Redis connected"));

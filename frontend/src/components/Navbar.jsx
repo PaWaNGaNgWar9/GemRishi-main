@@ -517,7 +517,7 @@ export default function Navbar({ handleLoginClick }) {
       </div>
       {/* 2. MAIN NAVBAR */}
       <div className="w-full bg-green-100 border-b border-gray-100 sticky top-0 z-[50] shadow-sm relative">
-        <div className="container mx-auto px-4 sm:px-8 h-[64px] lg:h-[68px] flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-8 h-[58px] lg:h-[60px] flex items-center justify-between">
           {/* A. LOGO */}
           <div className="flex-shrink-0 cursor-pointer relative z-50 transition-transform duration-200 hover:scale-[1.02]" onClick={() => navigate("/")}>
             <img
@@ -805,7 +805,7 @@ export default function Navbar({ handleLoginClick }) {
                 <div className="flex items-center justify-between p-5 border-b border-gray-100">
                   <img src="/GemRishi.svg" alt="Logo" className="h-[35px] w-auto" />
 {/* ---------------------Add By Pawan For Currency for mobile------------------------------- */}
-                                <div className="">
+                                <div className="px-5">
                                   <CurrencySelector/>
                                 </div>
 {/* ---------------------Add By Pawan For Currency for mobile------------------------------- */}
