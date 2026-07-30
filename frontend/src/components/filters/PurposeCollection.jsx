@@ -267,14 +267,14 @@ const formatPrice = (price) =>
 
             {/* PAGINATION */}
             {totalPages > 1 && (
-                <div className="flex justify-center items-center mt-10 gap-2 relative z-10">
+                <div className="flex justify-center items-center  px-10 mt-10 gap-2 relative z-10">
                     <button
                         onClick={() => {
                             setCurrentPage((p) => Math.max(p - 1, 1));
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === 1}
-                        className={`px-4 py-2 border rounded-xl text-sm font-medium transition-all
+                        className={`px-2 py-2 border rounded-xl text-xs font-medium transition-all
                             ${currentPage === 1
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
@@ -289,7 +289,7 @@ const formatPrice = (price) =>
                             typeof page !== "number" ? (
                                 <span
                                     key={`${page}-${idx}`}
-                                    className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none"
+                                    className="w-9 h-9 sm:w-5 sm:h-5 flex items-center justify-center text-xs font-semibold text-stone-400 select-none"
                                 >
                                     ...
                                 </span>
@@ -319,7 +319,7 @@ const formatPrice = (price) =>
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === totalPages}
-                        className={`px-4 py-2 border rounded-xl text-sm font-medium transition-all
+                        className={`px-2 py-2 border rounded-xl text-xs font-medium transition-all
                             ${currentPage === totalPages
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"

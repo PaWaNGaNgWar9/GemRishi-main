@@ -210,7 +210,7 @@ const formatPrice = (price) =>
           Explore our stunning online collection!
         </p>
          {/* -------------------------Add By Pawan total Products----------------------------- */}
-        <p className="text-sm sm:text-lg text-black border border-dotted border-gray-300 px-3 py-2 sm:p-4 rounded-md font-semibold inline-block">
+        <p className="text-lg  text-black  border border-dotted border-gray-300 p-4 rounded-md font-semibold">
          Total Products : {totalProducts}
        </p>
         {/* -------------------------Add By Pawan total Products--------------------------- */}
@@ -683,14 +683,14 @@ const formatPrice = (price) =>
 
       {/* PAGINATION */}
       {totalPages > 1 && (
-        <div className="flex flex-wrap justify-center items-center mt-10 gap-2 px-2 w-full">
+        <div className="flex justify-center items-center mt-10 gap-2">
           <button
             onClick={() => {
               setCurrentPage((p) => Math.max(p - 1, 1))
               window.scrollTo({ top: 300, behavior: "smooth" });
             }}
             disabled={currentPage === 1}
-            className={`px-3 sm:px-4 py-2 border rounded-lg text-xs sm:text-sm font-medium transition-colors shrink-0
+            className={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors
               ${currentPage === 1
                 ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
@@ -699,12 +699,12 @@ const formatPrice = (price) =>
           </button>
 
           {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-          <div className="flex flex-wrap justify-center gap-1 sm:gap-2 mx-1 sm:mx-2">
+          <div className="flex gap-1 sm:gap-2 mx-2">
             {getVisiblePages().map((page, idx) =>
               typeof page !== "number" ? (
                 <span
                   key={`${page}-${idx}`}
-                  className="w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center text-xs sm:text-sm font-semibold text-gray-400 select-none"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-gray-400 select-none"
                 >
                   ...
                 </span>
@@ -715,7 +715,7 @@ const formatPrice = (price) =>
                     setCurrentPage(page)
                     window.scrollTo({ top: 300, behavior: "smooth" });
                   }}
-                  className={`w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-xs sm:text-sm font-semibold transition-all shrink-0 ${currentPage === page
+                  className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-all ${currentPage === page
                     ? "bg-[#264A3F] text-white shadow-md"
                     : "text-gray-600 hover:bg-gray-100"
                     }`}
@@ -733,7 +733,7 @@ const formatPrice = (price) =>
               window.scrollTo({ top: 300, behavior: "smooth" });
             }}
             disabled={currentPage === totalPages}
-            className={`px-3 sm:px-4 py-2 border rounded-lg text-xs sm:text-sm font-medium transition-colors shrink-0
+            className={`px-4 py-2 border rounded-lg text-sm font-medium transition-colors
               ${currentPage === totalPages
                 ? "bg-gray-50 text-gray-400 border-gray-200 cursor-not-allowed"
                 : "bg-white text-gray-700 hover:bg-gray-50 hover:border-gray-300"
@@ -747,4 +747,4 @@ const formatPrice = (price) =>
   );
 }
 
-export default StoneCollection;
+export default StoneCollection;   
