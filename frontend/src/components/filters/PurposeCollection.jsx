@@ -267,14 +267,14 @@ const formatPrice = (price) =>
 
             {/* PAGINATION */}
             {totalPages > 1 && (
-                <div className="flex justify-center items-center mt-10 gap-2 relative z-10">
+                <div className="flex  flex-wrap justify-center items-center mt-10 gap-2 px-2 relative z-10">
                     <button
                         onClick={() => {
                             setCurrentPage((p) => Math.max(p - 1, 1));
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === 1}
-                        className={`px-4 py-2 border rounded-xl text-sm font-medium transition-all
+                        className={`px-4 sm:px-6 py-2 border rounded-xl text-xs lg:text-sm font-medium transition-all
                             ${currentPage === 1
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
@@ -284,12 +284,12 @@ const formatPrice = (price) =>
                     </button>
 
                     {/* ---------------------------- Add By Pawan for 1,2,3,....last page ---------------------------- */}
-                     <div className="flex gap-1.5 mx-2">
+                     <div className="flex flex-wrap justify-center  gap-2 sm:gap-1">
                         {getVisiblePages().map((page, idx) =>
                             typeof page !== "number" ? (
                                 <span
                                     key={`${page}-${idx}`}
-                                    className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center text-sm font-semibold text-stone-400 select-none"
+                                    className="w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center sm:text-xs text-sm font-semibold text-stone-400 select-none"
                                 >
                                     ...
                                 </span>
@@ -300,7 +300,7 @@ const formatPrice = (price) =>
                                         setCurrentPage(page);
                                         window.scrollTo({ top: 300, behavior: "smooth" });
                                     }}
-                                    className={`w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl text-sm font-semibold transition-all
+                                    className={`w-7 h-7 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl sm:text-xs text-sm font-semibold transition-all
                                         ${currentPage === page
                                             ? "bg-[#264A3F] text-white shadow-[0_4px_12px_rgba(38,74,63,0.25)]"
                                             : "text-stone-500 hover:bg-stone-100"
@@ -319,7 +319,7 @@ const formatPrice = (price) =>
                             window.scrollTo({ top: 300, behavior: "smooth" });
                         }}
                         disabled={currentPage === totalPages}
-                        className={`px-4 py-2 border rounded-xl text-sm font-medium transition-all
+                        className={`px-3 sm:px-5 py-2 border rounded-xl sm:text-xs text-sm font-medium transition-all  whitespace-nowrap
                             ${currentPage === totalPages
                                 ? "bg-stone-50 text-stone-300 border-stone-200 cursor-not-allowed"
                                 : "bg-white text-stone-600 hover:bg-stone-50 hover:border-stone-300 border-stone-200"
